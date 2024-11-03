@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 
 class StationAreaController extends Controller
 {
-    // Lấy danh sách tất cả station areas
     public function index()
     {
         return StationArea::all();
     }
 
-    // Tạo một station area mới
     public function store(Request $request)
     {
         $request->validate([
@@ -25,13 +23,11 @@ class StationAreaController extends Controller
         return StationArea::create($request->all());
     }
 
-    // Lấy thông tin một station area
     public function show($id)
     {
         return StationArea::findOrFail($id);
     }
 
-    // Cập nhật thông tin một station area
     public function update(Request $request, $id)
     {
         $stationArea = StationArea::findOrFail($id);
@@ -40,7 +36,6 @@ class StationAreaController extends Controller
         return $stationArea;
     }
 
-    // Xóa một station area
     public function destroy($id)
     {
         $stationArea = StationArea::findOrFail($id);
