@@ -15,8 +15,8 @@ class StationAreaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'stationCode' => 'required|string',
-            'stationName' => 'required|string',
+            'station_code' => 'required|string',
+            'station_name' => 'required|string',
             'km' => 'required|integer',
         ]);
 
@@ -42,5 +42,10 @@ class StationAreaController extends Controller
         $stationArea->delete();
 
         return response()->noContent();
+    }
+
+    public function showStations()
+    {
+        return view('stations');
     }
 }

@@ -1,4 +1,3 @@
-<!-- Thiết lập api ở đây -->
 <?php
 
 use Illuminate\Support\Facades\Route;

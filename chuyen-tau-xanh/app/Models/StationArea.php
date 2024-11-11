@@ -10,8 +10,8 @@ class StationArea extends Model
     use HasFactory;
 
     protected $fillable = [
-        'stationCode',
-        'stationName',
+        'station_code',
+        'station_name',
         'km',
     ];
 }
