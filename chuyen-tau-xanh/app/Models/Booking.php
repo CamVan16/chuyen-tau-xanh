@@ -12,7 +12,6 @@ class Booking extends Model
     protected $fillable = [
         'customer_id',
         'total_price',
-        'discount_price',
         'booked_time',
         'booking_status',
     ];

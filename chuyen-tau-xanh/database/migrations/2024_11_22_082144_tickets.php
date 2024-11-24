@@ -16,6 +16,7 @@ class Tickets extends Migration
             $table->integer('exchange_id');
             $table->integer('schedule_id');
             $table->double('price');
+            $table->double('discount_price');
             $table->timestamps();
         });
     }

@@ -12,7 +12,6 @@ class Bookings extends Migration
             $table->id();
             $table->integer('customer_id');
             $table->double('total_price');
-            $table->double('discount_price');
             $table->dateTime('booked_time');
             $table->integer('booking_status');
             $table->timestamps();

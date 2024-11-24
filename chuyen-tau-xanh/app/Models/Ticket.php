@@ -16,5 +16,6 @@ class Ticket extends Model
         'exchange_id',
         'schedule_id',
         'price',
+        'discount_price',
     ];
 }
