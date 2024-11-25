@@ -13,5 +13,5 @@ $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
 $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
 //Config input format
 //Expire
-$startTime = date("YmdHis");
-$expire = date('YmdHis', strtotime('+15 minutes', strtotime($startTime)));
+// $startTime = date("YmdHis");
+// $expire = date('YmdHis', strtotime('+15 minutes', strtotime($startTime)));

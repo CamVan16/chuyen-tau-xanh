@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 
 class Ticket extends Model
 {
@@ -16,9 +14,11 @@ class Ticket extends Model
         'booking_id',
         'customer_id',
         'refund_id',
+        'exchange_id',
+        'schedule_id',
         'price',
+        'discount_price',
     ];
-
     public function bookings()
     {
         return $this->belongsTo(Booking::class);

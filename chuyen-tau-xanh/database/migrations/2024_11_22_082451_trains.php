@@ -4,21 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class StationAreas extends Migration
+class Trains extends Migration
 {
     public function up()
     {
-        Schema::create('station_areas', function (Blueprint $table) {
+        Schema::create('trains', function (Blueprint $table) {
             $table->id();
-            $table->string('station_code');
-            $table->string('station_name');
-            $table->integer('km');
+            $table->integer('num_of_seats');
+            $table->integer('num_of_available_seats');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('station_areas');
+        Schema::dropIfExists('trains');
     }
 }

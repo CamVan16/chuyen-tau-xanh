@@ -1,21 +1,18 @@
 <?php
 
-
 namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use PHPUnit\Framework\Attributes\Ticket;
 
 class Booking extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'customer_id',
-        'total_price',
         'discount_price',
         'booked_time',
         'booking_status',

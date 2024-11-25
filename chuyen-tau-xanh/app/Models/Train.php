@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StationArea extends Model
+class Train extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'station_code',
-        'station_name',
-        'km',
+        'num_of_seats',
+        'num_of_available_seats',
     ];
 }

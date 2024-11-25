@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StationAreaController;
+use App\Http\Controllers\VoucherController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [StationAreaController::class, 'showStations']);
+Route::get('/', [VoucherController::class, 'showVouchers']);
+
 
 
 
@@ -128,4 +130,3 @@ Route::post('/tra-ve/step-2/xac-nhan', [RefundController::class, 'verifyConfirma
 Route::get('/tra-ve/step-2', [RefundController::class, 'getPageRefundStep2'])->name('refund.getPageRefundStep2');
 Route::get('/tra-ve/thanh-cong/{refund_id}', [RefundController::class, 'success'])->name('refund.success');
 Route::get('/admin/get-list-refund', [RefundController::class, 'getListAll'])->name('refund.getListAll');
-
