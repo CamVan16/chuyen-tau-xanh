@@ -2,24 +2,33 @@
 
 namespace App\Http\Controllers;
 
+// use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use App\Mail\BookingCodeEmail;
 use App\Mail\RefundConfirmation;
+use App\Mail\RefundSuccessMail;
 use Illuminate\Http\Request;
 use App\Models\Refund;
 use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Ticket;
-use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
 class RefundController extends Controller
 {
-    public function getPageRefund(){
+    public function getPageRefund()
+    {
         return view('pages.refund');
     }
 
-    public function getPageRefundStep2(){
+    public function getPageRefundStep1()
+    {
+        return view('pages.refund-selection');
+    }
+
+    public function getPageRefundStep2()
+    {
         return view('pages.refund-verify');
     }
 
@@ -42,8 +51,8 @@ class RefundController extends Controller
         }
 
         $booking = Booking::where('id', $request->booking_id)
-        ->where('customer_id', $customer->id)
-        ->first();
+            ->where('customer_id', $customer->id)
+            ->first();
 
         if (!$booking) {
             return redirect()->back()
@@ -76,9 +85,9 @@ class RefundController extends Controller
             return redirect()->back()->withErrors(['error' => 'Không tìm thấy khách hàng với email này.']);
         }
 
-        $booking = Booking::where('customer_id',  $customer->id)->get();
+        $booking = Booking::where('customer_id', $customer->id)->first();;
 
-        if ($booking->isEmpty()) {
+        if (!$booking) {
             return redirect()->back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ liên quan đến email này.']);
         }
 
@@ -103,11 +112,11 @@ class RefundController extends Controller
         $totalRefund = 0;
         foreach ($request->ticket_array as $ticket_id) {
             $ticket = Ticket::where('id', $ticket_id)
-                            ->whereNull('refund_id')
-                            ->where('booking_id', $booking->id)
-                            ->first();
+                ->whereNull('refund_id')
+                ->where('booking_id', $booking->id)
+                ->first();
             if ($ticket) {
-                $totalRefund += $ticket->price * (1 - 0.2);
+                $totalRefund += $ticket->price * (1 - $ticket->discount_price - 0.2);
             }
         }
 
@@ -125,15 +134,15 @@ class RefundController extends Controller
 
         foreach ($request->ticket_array as $ticket_id) {
             $ticket = Ticket::where('id', $ticket_id)
-                            ->whereNull('refund_id')
-                            ->where('booking_id', $booking->id)
-                            ->first();
+                ->whereNull('refund_id')
+                ->where('booking_id', $booking->id)
+                ->first();
             if ($ticket) {
                 $ticket->update(['refund_id' => $refund->id]);
             }
         }
 
-        $confirmation_code = Str::random(rand(6,6));
+        $confirmation_code = Str::random(rand(6, 6));
 
         session(['refund_id' => $refund->id, 'confirmation_code' => $confirmation_code]);
 
@@ -173,7 +182,7 @@ class RefundController extends Controller
                 $refund->save();
             }
 
-            return redirect()->route('refund.success',['refund_id' => $refund_id])->with('message', 'Xác nhận thành công!');
+            return redirect()->route('refund.success', ['refund_id' => $refund_id])->with('message', 'Xác nhận thành công!');
         } else {
             return redirect()->back()->withErrors(['error' => 'Mã xác nhận không chính xác.']);
         }
@@ -181,10 +190,24 @@ class RefundController extends Controller
 
     public function success($refund_id)
     {
-        $refund = Refund::find($refund_id);
-
+        $refund = Refund::with('booking')->find($refund_id);
+        Mail::to($refund->booking->customer->email)->send(new RefundSuccessMail($refund));
         return view('pages.refund-success', [
             'refund' => $refund
+        ]);
+    }
+
+    public function showTransactionDetails($refund_id)
+    {
+        $refund = Refund::with('tickets')->find($refund_id);
+
+        if (!$refund) {
+            return redirect()->route('refund.success', ['refund_id' => $refund_id])->withErrors(['error' => 'Không có vé nào được hủy!']);
+        }
+
+        return view('pages.refund-details', [
+            'refund' => $refund,
+            'tickets' => $refund->tickets
         ]);
     }
 
@@ -302,7 +325,7 @@ class RefundController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Có lỗi xảy ra khi xóa hoàn tiền: ' . $e->getMessage()], 500);
-    }
+        }
     }
 
     public function store(Request $request)
@@ -326,7 +349,7 @@ class RefundController extends Controller
         }
 
         $totalRefund = $tickets->sum(function ($ticket) {
-            return $ticket->price * (1 - 0.2);
+            return $ticket->price * (1 - $ticket->discount_price - 0.2);
         });
 
         $refund = Refund::create([

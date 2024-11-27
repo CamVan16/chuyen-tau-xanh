@@ -53,6 +53,6 @@ class VoucherController extends Controller
 
     public function showVouchers()
     {
-        return view('vouchers');
+        // return view('vouchers');
     }
 }

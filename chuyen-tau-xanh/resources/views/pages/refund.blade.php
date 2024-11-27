@@ -27,14 +27,14 @@
         Nếu quý khách thanh toán bằng tiền mặt, trả sau qua ứng dụng ngân hàng và ATM, chuyển khoản hoặc trả vé khi có sự cố bãi bỏ tàu vui lòng thực hiện thủ tục tại các nhà ga, đại lý bán vé.</p>
     </div>
 
-    <form action="{{ route('refund.findBooking') }}" method="POST">
+    <form action="{{ route('refund.findBooking') }}" method="GET">
         @csrf
         <p><strong>Để hiển thị các vé cần trả, vui lòng điền chính xác 3 thông tin dưới đây:</strong></p>
 
         <!-- Mã đặt chỗ -->
         <div class="form-group">
-            <label for="booking_code">Mã đặt chỗ</label>
-            <input type="text" class="form-control" id="booking_code" name="booking_code" value="{{ old('booking_code') }}" required>
+            <label for="booking_id">Mã đặt chỗ</label>
+            <input type="text" class="form-control" id="booking_id" name="booking_id" value="{{ old('booking_id') }}" required>
         </div>
 
         <!-- Email -->

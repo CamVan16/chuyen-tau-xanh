@@ -28,7 +28,7 @@
     <div class="card mt-4">
         <div class="card-body">
             <h5 class="card-title">Thông tin giao dịch</h5>
-            <p><strong>Mã đặt chỗ:</strong> {{ $refund->booking_code }} </p>
+            <p><strong>Mã đặt chỗ:</strong> {{ $refund->booking_id }} </p>
             <p><strong>Ngày trả vé:</strong> {{ $refund->refund_date }}</p>
             <p><strong>Số tiền hoàn:</strong> {{ number_format($refund->refund_amount) }} VNĐ </p>
         </div>
@@ -36,7 +36,7 @@
 
     <div class="mt-4">
         <a href="/" class="btn btn-primary">Quay về trang chủ</a>
-        <a href="#" class="btn btn-link">Xem chi tiết giao dịch</a>
+        <a href="{{ route('refund.showTransactionDetails', ['refund_id' => $refund->id]) }}" class="btn btn-link">Xem chi tiết giao dịch</a>
     </div>
 </div>
 
