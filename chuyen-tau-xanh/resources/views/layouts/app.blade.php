@@ -110,15 +110,15 @@
         <nav class="navbar">
             <ul>
                 <li><a href="#">Trang chủ</a></li>
-                <li><a href="#">Tìm vé</a></li>
-                <li><a href="#">Thông tin đặt chỗ</a></li>
+                <li><a href="/tim-cho">Tìm vé</a></li>
+                <li><a href="/thong-tin-dat-cho">Thông tin đặt chỗ</a></li>
                 <li><a href="/tra-ve">Trả vé</a></li>
-                <li><a href="#">Kiểm tra vé</a></li>
-                <li><a href="#">Giờ tàu - Giá vé</a></li>
-                <li><a href="#">Khuyến mại</a></li>
+                <li><a href="/kiem-tra/ve">Kiểm tra vé</a></li>
+                <li><a href="/giotau-giave">Giờ tàu - Giá vé</a></li>
+                <li><a href="/khuyen-mau">Khuyến mại</a></li>
                 <li><a href="/quy-dinh">Các quy định</a></li>
                 <li><a href="/huong-dan">Hướng dẫn</a></li>
-                <li><a href="#">Liên hệ</a></li>
+                <li><a href="/lien-he">Liên hệ</a></li>
             </ul>
         </nav>
     </header>

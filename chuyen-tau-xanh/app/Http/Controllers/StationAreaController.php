@@ -46,6 +46,6 @@ class StationAreaController extends Controller
 
     public function showStations()
     {
-        return view('stations');
+        return view('pages.stations');
     }
 }
