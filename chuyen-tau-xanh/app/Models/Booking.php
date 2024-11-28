@@ -39,6 +39,11 @@ class Booking extends Model
         return $this->hasMany(Refund::class,'booking_id');
     }
 
+    public function exchanges()
+    {
+        return $this->hasMany(Exchange::class,'booking_id');
+    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'booking_id');

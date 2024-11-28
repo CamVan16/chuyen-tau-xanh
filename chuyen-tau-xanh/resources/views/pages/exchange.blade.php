@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
-
 @section('content')
 <div class="container mt-4">
     <!-- Progress Steps -->
     <div class="d-flex justify-content-between mb-4">
         <div class="step text-center">
             <span class="badge badge-primary">1</span>
-            <p class="text-primary">Chọn vé trả</p>
+            <p class="text-primary">Chọn vé đổi</p>
         </div>
         <div class="step text-center">
             <span class="badge badge-secondary">2</span>
@@ -19,17 +18,23 @@
         </div>
     </div>
 
-    <h2 class="text-primary text-center mb-4">TRẢ VÉ TRỰC TUYẾN</h2>
+    <!-- Title -->
+    <h2 class="text-primary text-center mb-4">ĐỔI VÉ TRỰC TUYẾN</h2>
 
+    <!-- Instructions -->
     <div class="alert alert-info">
-        <p>Trả vé trực tuyến chỉ áp dụng với trường hợp khách hàng đã thanh toán trực tuyến (qua cổng thanh toán, ví điện tử, app ngân hàng) và có điền email khi mua vé.
-            Nếu quý khách thanh toán bằng tiền mặt, trả sau qua ứng dụng ngân hàng và ATM, chuyển khoản hoặc trả vé khi có sự cố bãi bỏ tàu vui lòng thực hiện thủ tục tại các nhà ga, đại lý bán vé.</p>
+        <p>
+            Quý khách chỉ có thể đổi vé đã thanh toán trực tuyến qua cổng thanh toán, ví điện tử hoặc app ngân hàng.
+            Nếu thanh toán bằng tiền mặt hoặc gặp sự cố bãi bỏ tàu, vui lòng thực hiện đổi vé tại nhà ga hoặc đại lý bán vé.
+        </p>
     </div>
 
-    <form action="{{ route('refund.findBooking') }}" method="GET">
+    <!-- Form -->
+    <form action="{{ route('exchange.findBooking') }}" method="GET">
         @csrf
         <div class="card shadow-sm p-4">
-            <p><strong>Vui lòng nhập chính xác các thông tin dưới đây để tìm vé cần trả:</strong></p>
+            <p><strong>Vui lòng nhập chính xác các thông tin dưới đây để tìm vé cần đổi:</strong></p>
+            <!-- Booking Code -->
             <div class="form-group">
                 <label for="booking_id">Mã đặt chỗ</label>
                 <input
@@ -77,12 +82,13 @@
             <!-- Buttons -->
             <div class="d-flex justify-content-between mt-4">
                 <button type="submit" class="btn btn-primary px-4">Tra cứu vé</button>
-                <a href="{{ route('refund.showBookingCodeForm') }}" class="btn btn-link">Quên mã đặt chỗ?</a>
+                <a href="{{ route('exchange.showBookingCodeForm') }}" class="btn btn-link">Quên mã đặt chỗ?</a>
             </div>
         </div>
     </form>
 </div>
 
+<!-- Styling -->
 <style>
     .step {
         flex: 1;
