@@ -10,10 +10,14 @@
         </div>
         <div class="step text-center">
             <span class="badge badge-secondary">2</span>
-            <p>Xác nhận</p>
+            <p>Tìm vé đổi</p>
         </div>
         <div class="step text-center">
             <span class="badge badge-secondary">3</span>
+            <p>Xác nhận</p>
+        </div>
+        <div class="step text-center">
+            <span class="badge badge-secondary">4</span>
             <p>Hoàn tất</p>
         </div>
     </div>

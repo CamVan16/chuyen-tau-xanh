@@ -35,6 +35,6 @@ class Exchanges extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('exchanges');
     }
 };

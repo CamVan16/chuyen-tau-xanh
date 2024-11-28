@@ -10,10 +10,14 @@
             </div>
             <div class="step text-center">
                 <span class="badge badge-secondary">2</span>
-                <p>Xác nhận</p>
+                <p>Tìm vé đổi</p>
             </div>
             <div class="step text-center">
                 <span class="badge badge-secondary">3</span>
+                <p>Xác nhận</p>
+            </div>
+            <div class="step text-center">
+                <span class="badge badge-secondary">4</span>
                 <p>Hoàn tất</p>
             </div>
         </div>
@@ -72,9 +76,9 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td class="text-start">
-                                    <p>{{ $ticket->customer->customer_name }}</p>
-                                    <p>Đối tượng: {{ $ticket->customer->customer_type }}</p>
-                                    <p>Số giấy tờ: {{ $ticket->customer->citizen_id }}</p>
+                                    <p>{{ $ticket?->customer?->customer_name }}</p>
+                                    <p>Đối tượng: {{ $ticket?->customer?->customer_type }}</p>
+                                    <p>Số giấy tờ: {{ $ticket?->customer?->citizen_id }}</p>
                                 </td>
                                 <td class="text-start">
                                     <p><strong>Mã vé:</strong> {{ $ticket?->id }}</p>

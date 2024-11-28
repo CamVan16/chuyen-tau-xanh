@@ -9,10 +9,14 @@
         </div>
         <div class="step text-center">
             <span class="badge badge-primary">2</span>
+            <p>Tìm vé đổi</p>
+        </div>
+        <div class="step text-center">
+            <span class="badge badge-primary">3</span>
             <p>Xác nhận</p>
         </div>
         <div class="step text-center">
-            <span class="badge badge-secondary">3</span>
+            <span class="badge badge-secondary">4</span>
             <p>Hoàn tất</p>
         </div>
     </div>
@@ -20,7 +24,7 @@
     <h2 class="text-primary">XÁC NHẬN MÃ ĐỔI VÉ</h2>
     <p>Vui lòng nhập mã xác nhận để tiếp tục quá trình đổi vé.</p>
 
-    <form action="{{ route('refund.verifyConfirmation') }}" method="POST" class="mt-4">
+    <form action="{{ route('exchange.verifyConfirmation') }}" method="POST" class="mt-4">
         @csrf
         <div class="form-group">
             <label for="confirmation_code">Mã xác nhận:</label>

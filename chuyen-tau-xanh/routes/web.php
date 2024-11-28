@@ -25,10 +25,11 @@ Route::get('/doi-ve/quen-ma', [ExchangeController::class, 'showBookingCodeForm']
 Route::post('/doi-ve/quen-ma', [ExchangeController::class, 'sendBookingCode'])->name('exchange.sendBookingCode');
 Route::match(['get', 'post'], '/doi-ve/chon-ve', [ExchangeController::class, 'findBooking'])->name('exchange.findBooking');
 Route::match(['get', 'post'], '/doi-ve/chon-ve-doi', [ExchangeController::class, 'findTicket'])->name('exchange.findTicket');
-Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/1', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
-Route::post('/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
+Route::get('/doi-ve/chon-ve-doi/{selectedTicketId}', [ExchangeController::class, 'search'])->name('exchange.search');
+Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
+Route::post('/doi-ve/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
 Route::get('/doi-ve/step-2', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
-Route::get('/doi-ve/thanh-cong/{refund_id}', [ExchangeController::class, 'success'])->name('refund.success');
+Route::get('/doi-ve/thanh-cong/{exchange_id}', [ExchangeController::class, 'success'])->name('exchange.success');
 Route::get('/quy-dinh', function () {
     return view('pages.regulations');
 });
