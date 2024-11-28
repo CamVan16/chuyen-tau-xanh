@@ -1,10 +1,12 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="container mt-4">
+        <!-- Bước tiến trình -->
         <div class="d-flex justify-content-between mb-4">
             <div class="step text-center">
                 <span class="badge badge-primary">1</span>
-                <p>Chọn vé cần trả</p>
+                <p>Chọn vé cần đổi</p>
             </div>
             <div class="step text-center">
                 <span class="badge badge-secondary">2</span>
@@ -16,16 +18,15 @@
             </div>
         </div>
 
-        <h2 class="text-primary">CHỌN VÉ CẦN TRẢ</h2>
+        <h2 class="text-primary mb-4">CHỌN VÉ CẦN ĐỔI</h2>
 
         <!-- Thông tin Booking -->
         <div class="mb-4">
-            <h4 class="mb-3">Thông tin đặt vé</h4>
+            <h4>Thông tin đặt vé</h4>
             <table class="table table-bordered">
                 <tr>
                     <th>Mã đặt vé</th>
-                    <td>{{ $booking->id }}</>
-                    </td>
+                    <td>{{ $booking->id }}</td>
                 </tr>
                 <tr>
                     <th>Họ tên</th>
@@ -43,13 +44,13 @@
         </div>
 
         <!-- Danh sách vé -->
-        <h4 class="mb-3">Các giao dịch thành công:</h4>
-        @if (!$tickets)
+        <h4 class="mb-3">Danh sách vé:</h4>
+        @if ($tickets->isEmpty())
             <div class="alert alert-warning">
-                Không có vé nào để trả cho mã đặt chỗ này.
+                Không có vé nào để đổi cho mã đặt chỗ này.
             </div>
         @else
-            <form action="{{ route('refund.createRefund') }}" method="POST">
+            <form action="{{ route('exchange.findTicket') }}" method="POST">
                 @csrf
                 <input type="hidden" name="booking_id" value="{{ $booking->id }}">
 
@@ -59,11 +60,11 @@
                             <th>#</th>
                             <th>Họ tên</th>
                             <th>Thông tin vé</th>
-                            <th>Thành tiền (VND)</th>
-                            <th>Lệ phí trả vé</th>
+                            <th>Thành tiền</th>
+                            <th>Lệ phí đổi vé</th>
                             <th>Tiền trả lại</th>
                             <th>Trạng thái</th>
-                            <th>Chọn vé trả</th>
+                            <th>Chọn vé đổi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,29 +84,11 @@
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
                                 <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * 0.2, 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.2), 0, ',', '.') }}
+                                <td>{{ number_format($ticket->price * 0.1, 0, ',', '.') }}</td>
+                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.1), 0, ',', '.') }}
                                 </td>
                                 <td>
-                                    @if ($ticket->exchange)
-                                        @switch($ticket->exchange->exchange_status)
-                                            @case('completed')
-                                                <span class="badge badge-success">Đã đổi vé</span>
-                                            @break
-
-                                            @case('confirmed')
-                                                <span class="badge badge-info">Đã xác nhận đổi vé</span>
-                                            @break
-
-                                            @case('pending')
-                                                <span class="badge badge-warning">Đang chờ xử lý</span>
-                                            @break
-
-                                            @case('rejected')
-                                                <span class="badge badge-danger">Đã hủy đổi vé</span>
-                                            @break
-                                        @endswitch
-                                    @elseif ($ticket->refund)
+                                    @if ($ticket->refund)
                                         @switch($ticket->refund->refund_status)
                                             @case('completed')
                                                 <span class="badge badge-success">Đã trả vé</span>
@@ -123,16 +106,34 @@
                                                 <span class="badge badge-danger">Đã hủy trả vé</span>
                                             @break
                                         @endswitch
+                                    @elseif ($ticket->exchange)
+                                        @switch($ticket->exchange->exchange_status)
+                                            @case('completed')
+                                                <span class="badge badge-success">Đã đổi vé</span>
+                                            @break
+
+                                            @case('confirmed')
+                                                <span class="badge badge-info">Đã xác nhận đổi vé</span>
+                                            @break
+
+                                            @case('pending')
+                                                <span class="badge badge-warning">Đang chờ xử lý</span>
+                                            @break
+
+                                            @case('rejected')
+                                                <span class="badge badge-danger">Đã hủy đổi vé</span>
+                                            @break
+                                        @endswitch
                                     @else
                                         <span class="badge badge-secondary">Chưa có vé đổi</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="ticket_array[]" value="{{ $ticket->id }}"
-                                        id="ticket_{{ $ticket->id }}" class="ticket-checkbox"
+                                    <input type="radio" name="ticket_array" value="{{ $ticket->id }}"
+                                        id="ticket_{{ $ticket->id }}" class="ticket-radio"
                                         @if ($ticket->exchange?->exchange_status === 'completed' || $ticket->exchange?->exchange_status === 'confirmed') disabled
-                                        @elseif ($ticket->refund?->refund_status === 'completed' || $ticket->refund?->refund_status === 'confirmed')
-                                            disabled @endif />
+                                    @elseif ($ticket->refund?->refund_status === 'completed' || $ticket->refund?->refund_status === 'confirmed')
+                                        disabled @endif />
                                 </td>
                             </tr>
                         @endforeach
@@ -140,7 +141,7 @@
                 </table>
 
                 <div class="mt-4 text-center">
-                    <button type="submit" class="btn btn-primary" id="submit-button" disabled>Gửi yêu cầu hoàn vé</button>
+                    <button type="submit" class="btn btn-primary" id="submit-button" disabled>Chọn vé để đổi</button>
                 </div>
             </form>
         @endif
@@ -176,12 +177,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('.ticket-checkbox');
+            const radios = document.querySelectorAll('.ticket-radio');
             const submitButton = document.getElementById('submit-button');
 
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const isAnyChecked = Array.from(radios).some(r => r.checked);
                     submitButton.disabled = !isAnyChecked;
                 });
             });
