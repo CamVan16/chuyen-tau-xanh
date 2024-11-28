@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StationAreaController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\RefundController;
+use App\Http\Controllers\CheckTicketController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers']);
@@ -25,3 +26,6 @@ Route::get('/huong-dan', function () {
     return view('pages.guides');
 });
 Route::get('/admin/get-list-refund', [RefundController::class, 'getListAll'])->name('refund.getListAll');
+
+Route::get('/kiem-tra-ve', [CheckTicketController::class, 'showForm'])->name('check-ticket.form');
+Route::post('/kiem-tra-ve', [CheckTicketController::class, 'checkTicket'])->name('check-ticket.process');

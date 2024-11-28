@@ -113,7 +113,7 @@
                 <li><a href="/tim-cho">Tìm vé</a></li>
                 <li><a href="/thong-tin-dat-cho">Thông tin đặt chỗ</a></li>
                 <li><a href="/tra-ve">Trả vé</a></li>
-                <li><a href="/kiem-tra/ve">Kiểm tra vé</a></li>
+                <li><a href="/kiem-tra-ve">Kiểm tra vé</a></li>
                 <li><a href="/giotau-giave">Giờ tàu - Giá vé</a></li>
                 <li><a href="/khuyen-mau">Khuyến mại</a></li>
                 <li><a href="/quy-dinh">Các quy định</a></li>
