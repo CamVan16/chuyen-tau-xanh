@@ -16,4 +16,14 @@ class Customer extends Model
         'citizen_id',
         'phone',
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'customer_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Booking::class, 'customer_id');
+    }
 }

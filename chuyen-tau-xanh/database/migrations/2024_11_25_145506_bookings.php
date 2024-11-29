@@ -9,17 +9,19 @@ class Bookings extends Migration
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->integer('customer_id');
+            $table->string('id', 6)->primary();
+            $table->unsignedBigInteger('customer_id');
             $table->double('total_price');
             $table->dateTime('booked_time');
             $table->integer('booking_status');
             $table->timestamps();
+
+            $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('vouchers');
+        Schema::dropIfExists('bookings');
     }
 };

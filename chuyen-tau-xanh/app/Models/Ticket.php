@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Booking;
+use App\Models\Refund;
+use App\Models\Customer;
+use App\Models\Schedule;
 
 class Ticket extends Model
 {
@@ -18,4 +23,25 @@ class Ticket extends Model
         'price',
         'discount_price',
     ];
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id');
+    }
+
+
+    public function refund()
+    {
+        return $this->belongsTo(Refund::class, 'refund_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class, 'schedule_id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Train;
 
 class Schedule extends Model
 {
@@ -21,4 +22,14 @@ class Schedule extends Model
         'seat_number',
         'car_name',
     ];
+
+    public function ticket()
+    {
+        return $this->hasMany(Booking::class, 'schedule_id');
+    }
+
+    public function train()
+    {
+        return $this->belongsTo(Train::class, 'train_id');
+    }
 }

@@ -13,4 +13,9 @@ class Train extends Model
         'num_of_seats',
         'num_of_available_seats',
     ];
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'train_id');
+    }
 }
