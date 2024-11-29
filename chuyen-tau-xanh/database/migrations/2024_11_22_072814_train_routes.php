@@ -13,6 +13,9 @@ class TrainRoutes extends Migration
             $table->integer('route_id');
             $table->integer('train_index');
             $table->timestamps();
+
+            $table->foreign('train_id')->references('id')->on('trains')->onDelete('cascade');
+            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
         });
     }
 

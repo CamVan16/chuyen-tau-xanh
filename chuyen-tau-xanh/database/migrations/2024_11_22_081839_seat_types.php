@@ -15,6 +15,8 @@ class SeatTypes extends Migration
             $table->integer('seat_type_name');
             $table->double('price');
             $table->timestamps();
+
+            $table->foreign('train_id')->references('id')->on('trains')->onDelete('cascade');
         });
     }
 

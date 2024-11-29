@@ -16,6 +16,9 @@ class Seats extends Migration
             $table->integer('seat_index');
             $table->integer('seat_status');
             $table->timestamps();
+
+            $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
         });
     }
 
