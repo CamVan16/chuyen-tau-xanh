@@ -21,8 +21,8 @@ class RouteStations extends Migration
             $table->timestamps();
 
             $table->primary(['route_id', 'station_id']);
-            // $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
-            // $table->foreign('station_id')->references('id')->on('station_areas')->onDelete('cascade');
+            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
+            $table->foreign('station_id')->references('id')->on('station_areas')->onDelete('cascade');
         });
     }
 
