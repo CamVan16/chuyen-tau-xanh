@@ -23,10 +23,10 @@ class Exchanges extends Migration
             $table->date('refund_date_processed')->nullable();
             $table->timestamps();
 
-            $table->foreign('old_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
-            $table->foreign('new_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
-            $table->foreign('booking_id') -> references('id')->on('bookings')->onDelete('cascade');
-            $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
+            // $table->foreign('old_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
+            // $table->foreign('new_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
+            // $table->foreign('booking_id') -> references('id')->on('bookings')->onDelete('cascade');
+            // $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
         });
     }
 

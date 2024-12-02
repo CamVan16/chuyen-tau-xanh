@@ -9,10 +9,23 @@ class SeatType extends Model
 {
     use HasFactory;
 
+    protected $table = 'seat_types';
+
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'train_id',
         'seat_type_code',
         'seat_type_name',
-        'price',
+        'price'
     ];
+
+    public function train()
+    {
+        return $this->belongsTo(Train::class, 'train_id');
+    }
 }
