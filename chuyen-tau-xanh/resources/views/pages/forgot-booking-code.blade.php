@@ -18,11 +18,8 @@
         @if($errors->has('error'))
             <div class="alert alert-danger mt-2">{{ $errors->first('error') }}</div>
         @endif
-{{-- 
-        <div class="d-flex justify-content-between mt-3"> --}}
-            <button type="submit" class="btn btn-primary mt-3">Gửi mã</button>
-            <a href="{{ route('booking.lookup.form') }}" class="btn btn-secondary mt-3">Quay lại</a>
-        {{-- </div> --}}
+        <button type="submit" class="btn btn-primary mt-3">Gửi mã</button>
+        <a href="{{ route('booking.lookup.form') }}" class="btn btn-secondary mt-3">Quay lại</a>
     </form>
 </div>
 @endsection

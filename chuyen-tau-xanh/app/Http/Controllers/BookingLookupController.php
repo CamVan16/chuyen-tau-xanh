@@ -63,18 +63,15 @@ class BookingLookupController extends Controller
             return back()->withErrors(['error' => 'Không tìm thấy khách hàng với email này.']);
         }
 
-        // Tìm mã đặt chỗ mới nhất của khách hàng
-        $latestBooking = Booking::where('customer_id', $customer->id)
-            ->orderBy('booked_time', 'desc')
-            ->first();
+        $booking = Booking::where('customer_id', $customer->id)->first();;
 
-        if (!$latestBooking) {
-            return back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ nào liên quan đến email này.']);
+        if (!$booking) {
+            return redirect()->back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ liên quan đến email này.']);
         }
 
         // Gửi email với đối tượng booking
-        Mail::to($customer->email)->send(new BookingCodeEmail($latestBooking));
+        Mail::to($customer->email)->send(new BookingCodeEmail($booking));
 
-        return back()->with('success', 'Mã đặt chỗ mới nhất đã được gửi đến email của bạn.');
+        return redirect()->back()->with('success', 'Mã đặt chỗ đã được gửi đến email của bạn.');
     }
 }
