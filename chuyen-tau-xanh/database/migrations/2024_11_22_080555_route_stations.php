@@ -17,7 +17,7 @@ class RouteStations extends Migration
             $table->integer('date_index');
             $table->time('departure_time');
             $table->time('arrival_time');
-            $table->date('departure_date');
+            $table->date('departure_date')->nullable();
             $table->timestamps();
 
             $table->primary(['route_id', 'station_id']);
