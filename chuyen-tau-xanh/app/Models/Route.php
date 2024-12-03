@@ -13,4 +13,11 @@ class Route extends Model
         'route_name',
         'train_mark',
     ];
+
+    public function stations()
+    {
+        return $this->belongsToMany(StationArea::class, 'route_stations', 'route_id', 'station_id')
+                    ->withPivot('station_code', 'station_name', 'km', 'date_index', 'departure_time', 'arrival_time', 'departure_date')
+                    ->withTimestamps();
+    }
 }
