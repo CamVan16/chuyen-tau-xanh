@@ -7,6 +7,9 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\CheckTicketController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BookingLookupController;
+use App\Http\Controllers\TrainController;
+use App\Http\Controllers\RouteStationController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers']);
@@ -45,3 +48,13 @@ Route::get('/admin/get-list-refund', [RefundController::class, 'getListAll'])->n
 
 Route::get('/kiem-tra-ve', [CheckTicketController::class, 'showForm'])->name('check-ticket.form');
 Route::post('/kiem-tra-ve', [CheckTicketController::class, 'checkTicket'])->name('check-ticket.process');
+
+Route::get('/thong-tin-dat-cho', [BookingLookupController::class, 'showForm'])->name('booking.lookup.form');
+Route::post('/thong-tin-dat-cho', [BookingLookupController::class, 'processLookup'])->name('booking.lookup.process');
+Route::get('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'showForgotCodeForm'])->name('booking.forgot');
+Route::post('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'sendBookingCode'])->name('booking.forgot.process');
+Route::controller(RouteStationController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('routes.index');
+        Route::post('/timkiem', 'search')->name('routes.search');
+    });

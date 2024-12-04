@@ -9,6 +9,10 @@ class Car extends Model
 {
     use HasFactory;
 
+    protected $table = 'cars';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'train_id',
         'car_index',
@@ -17,6 +21,11 @@ class Car extends Model
         'car_layout',
         'car_description',
         'num_of_seats',
-        'num_of_available_seats',
+        'num_of_available_seats'
     ];
+
+    public function train()
+    {
+        return $this->belongsTo(Train::class, 'train_id');
+    }
 }

@@ -21,6 +21,8 @@ class Schedules extends Migration
             $table->integer('seat_number');
             $table->string('car_name');
             $table->timestamps();
+
+            $table->foreign('train_id')->references('id')->on('trains')->onDelete('cascade');
         });
     }
 

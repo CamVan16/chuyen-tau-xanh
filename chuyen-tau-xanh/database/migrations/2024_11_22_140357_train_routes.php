@@ -13,11 +13,15 @@ class TrainRoutes extends Migration
             $table->integer('route_id');
             $table->integer('train_index');
             $table->timestamps();
+
+            $table->primary(['train_id', 'route_id']);
+            $table->foreign('train_id')->references('id')->on('trains')->onDelete('cascade');
+            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('vouchers');
+        Schema::dropIfExists('train_routes');
     }
 };
