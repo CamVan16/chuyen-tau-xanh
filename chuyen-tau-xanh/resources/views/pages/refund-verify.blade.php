@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <h2 class="text-primary">Xác nhận mã trả vé</h2>
+    <h2 class="text-primary">XÁC NHẬN MÃ TRẢ VÉ</h2>
     <p>Vui lòng nhập mã xác nhận để tiếp tục quá trình trả vé.</p>
 
     <form action="{{ route('refund.verifyConfirmation') }}" method="POST" class="mt-4">

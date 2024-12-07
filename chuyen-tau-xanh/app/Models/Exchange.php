@@ -24,8 +24,8 @@ class Exchange extends Model
         'new_price',
         'additional_price',
         'exchange_status',
-        'exchange_date',
-        'exchange_date_processed',
+        'exchange_time',
+        'exchange_time_processed',
     ];
 
 
@@ -38,5 +38,24 @@ class Exchange extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($exchange) {
+            if ($exchange->isDirty('exchange_status') && $exchange->exchange_status === 'completed') {
+                $exchange->restoreTicket();
+            }
+        });
+    }
+
+    public function restoreTicket()
+    {
+        $ticket = Ticket::find($this->old_ticket_id);
+        Ticket::create([
+            'schedule_id' => $ticket->schedule_id,
+            'price'       => $ticket->price,
+        ]);
     }
 }

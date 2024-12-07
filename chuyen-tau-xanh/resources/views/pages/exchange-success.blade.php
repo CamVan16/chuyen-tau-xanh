@@ -30,7 +30,7 @@
             <h5 class="card-title">Thông tin giao dịch đổi vé</h5>
             <p><strong>Mã đặt chỗ cũ:</strong> {{ $exchange->old_ticket->booking_id }}</p>
             <p><strong>Mã đặt chỗ mới:</strong> {{ $exchange->new_ticket->booking_id }}</p>
-            <p><strong>Ngày đổi vé:</strong> {{ $exchange->exchange_date }}</p>
+            <p><strong>Ngày đổi vé:</strong> {{ $exchange->exchange_time }}</p>
             <p><strong>Phương thức thanh toán:</strong> {{ $exchange->payment_method }}</p>
             <p><strong>Chênh lệch giá:</strong> {{ number_format($exchange->price_difference) }} VNĐ</p>
         </div>
