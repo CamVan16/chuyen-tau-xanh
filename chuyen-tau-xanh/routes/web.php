@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingControllerTest;
 use App\Http\Controllers\ExchangeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StationAreaController;
@@ -10,9 +11,10 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BookingLookupController;
 use App\Http\Controllers\TrainController;
 use App\Http\Controllers\RouteStationController;
+use App\Http\Controllers\VNPayController;
+use App\Http\Controllers\ZaloPayController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
-Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers']);
 
 Route::get('/tra-ve', [RefundController::class, 'getPageRefund'])->name('refund.getPageRefund');
 Route::get('/tra-ve/quen-ma', [RefundController::class, 'showBookingCodeForm'])->name('refund.showBookingCodeForm');
@@ -57,3 +59,20 @@ Route::controller(RouteStationController::class)
         Route::get('/', 'index')->name('routes.index');
         Route::post('/timkiem', 'search')->name('routes.search');
     });
+
+Route::get('/trains/search', [StationAreaController::class, 'searchTrains'])->name('trains.search');
+
+// Booking Routes
+Route::get('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
+Route::post('/booking/payment', [BookingControllerTest::class, 'processPayment'])->name('booking.processPayment');
+
+// VNPay Routes
+Route::post('/payment/vnpay', [VNPayController::class, 'processPayment'])->name('vnpay.process');
+Route::get('/payment/vnpay/callback', [VNPayController::class, 'handleVNPayResponse'])->name('vnpay.response'); // điều chỉnh lại route cho phù hợp
+
+// ZaloPay Routes
+Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->name('zalopay.process');
+Route::get('/tim-cho', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
+
+Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers'])->name('vouchers.index');
+Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouchers.show');
