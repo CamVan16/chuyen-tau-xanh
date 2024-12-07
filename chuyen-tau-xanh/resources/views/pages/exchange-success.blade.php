@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between mb-4">
         <div class="step text-center">
             <span class="badge badge-primary">1</span>
-            <p>Chọn vé trả</p>
+            <p>Chọn vé đổi</p>
         </div>
         <div class="step text-center">
             <span class="badge badge-primary">2</span>
@@ -17,26 +17,28 @@
         </div>
     </div>
 
-    <h2 class="text-primary">XÁC NHẬN TRẢ VÉ THÀNH CÔNG</h2>
+    <h2 class="text-primary">XÁC NHẬN ĐỔI VÉ THÀNH CÔNG</h2>
 
     <div class="alert alert-success mt-4">
-        <i class="fas fa-check-circle"></i> <strong>Giao dịch trả vé đã hoàn tất!</strong><br>
-        <p>Chúng tôi đã nhận yêu cầu trả vé của bạn. Hệ thống sẽ xử lý hoàn tiền theo quy định. Quý khách sẽ nhận được thông báo qua email.</p>
-        <p><strong>Lưu ý:</strong> Số tiền hoàn lại sẽ được chuyển vào tài khoản của quý khách trong vòng 3 ngày làm việc.</p>
+        <i class="fas fa-check-circle"></i> <strong>Giao dịch đổi vé đã hoàn tất!</strong><br>
+        <p>Chúng tôi đã nhận yêu cầu đổi vé của bạn. Hệ thống đã xử lý và cập nhật thông tin vé mới. Quý khách có thể kiểm tra email hoặc thông tin tài khoản.</p>
+        <p><strong>Lưu ý:</strong> Nếu có thắc mắc, vui lòng liên hệ bộ phận hỗ trợ khách hàng.</p>
     </div>
 
     <div class="card mt-4">
         <div class="card-body">
-            <h5 class="card-title">Thông tin giao dịch</h5>
-            <p><strong>Mã đặt chỗ:</strong> {{ $refund->booking_id }} </p>
-            <p><strong>Ngày trả vé:</strong> {{ $refund->refund_time }}</p>
-            <p><strong>Số tiền hoàn:</strong> {{ number_format($refund->refund_amount) }} VNĐ </p>
+            <h5 class="card-title">Thông tin giao dịch đổi vé</h5>
+            <p><strong>Mã đặt chỗ cũ:</strong> {{ $exchange->old_ticket->booking_id }}</p>
+            <p><strong>Mã đặt chỗ mới:</strong> {{ $exchange->new_ticket->booking_id }}</p>
+            <p><strong>Ngày đổi vé:</strong> {{ $exchange->exchange_time }}</p>
+            <p><strong>Phương thức thanh toán:</strong> {{ $exchange->payment_method }}</p>
+            <p><strong>Chênh lệch giá:</strong> {{ number_format($exchange->price_difference) }} VNĐ</p>
         </div>
     </div>
 
     <div class="mt-4">
         <a href="/" class="btn btn-primary">Quay về trang chủ</a>
-        <a href="{{ route('refund.showTransactionDetails', ['refund_id' => $refund->id]) }}" class="btn btn-link">Xem chi tiết giao dịch</a>
+        <a href="{{ route('exchange.showTransactionDetails', ['exchange_id' => $exchange->id]) }}" class="btn btn-link">Xem chi tiết giao dịch</a>
     </div>
 </div>
 

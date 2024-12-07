@@ -13,7 +13,7 @@
                 </tr>
                 <tr>
                     <th>Ngày trả vé</th>
-                    <td>{{ $refund->refund_date }}</td>
+                    <td>{{ $refund->refund_time }}</td>
                 </tr>
                 <tr>
                     <th>Số tiền hoàn</th>
@@ -50,8 +50,8 @@
                             <p>{{ $ticket?->schedule?->car_name }} số {{ $ticket?->schedule?->seat_number }}</p>
                         </td>
                         <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
-                        <td>{{ number_format($ticket->price * 0.2, 0, ',', '.') }}</td>
-                        <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.2), 0, ',', '.') }}</td>
+                        <td>{{ number_format($ticket->refund_fee * $ticket->price, 0, ',', '.') }}</td>
+                        <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - $ticket->refund_fee), 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>

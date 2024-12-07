@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Nhập Email Để Lấy Mã Đặt Chỗ</h2>
-
+    <h2>LẤY LẠI MÃ ĐẶT CHỖ</h2>
+    <p>Nhập email của bạn để nhận mã đặt chỗ mới nhất qua email.</p>
     <form action="{{ route('refund.sendBookingCode') }}" method="POST">
         @csrf
         <div class="form-group">

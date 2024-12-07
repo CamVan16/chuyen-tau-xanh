@@ -14,7 +14,9 @@ use App\Models\Refund;
 use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Exchange;
+use App\Models\ExchangePolicy;
 use App\Models\Ticket;
+use Exchanges;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
@@ -64,6 +66,19 @@ class ExchangeController extends Controller
         }
 
         $tickets = $booking->tickets;
+        foreach ($tickets as $ticket) {
+            $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
+            $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+            $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+            ->where('max_hours', '>=', $hoursToDeparture)
+            ->first();
+            if ($exchangePolicy) {
+                $exchangeFee = $exchangePolicy->exchange_fee;
+            } else {
+                $exchangeFee = 1;
+            }
+            $ticket->exchange_fee = $exchangeFee;
+        }
 
         return view('pages.exchange-selection', ['booking' => $booking, 'tickets' => $tickets]);
     }
@@ -117,13 +132,41 @@ class ExchangeController extends Controller
             ->get();
 
         if ($tickets->isEmpty()) {
-            return redirect()->route('exchange.selection', ['booking_id' => $booking->id])
+            return redirect()->back()
                 ->with('warning', 'Không có vé nào có thể đổi cho mã đặt vé này.');
         }
 
-        return view('exchange-selection', [
-            'booking' => $booking,
-            'tickets' => $tickets
+        if ($request->has('ticket_array')) {
+            $selectedTicket = Ticket::find($request->input('ticket_array'));
+
+            if (!$selectedTicket || $selectedTicket->booking_id !== $booking->id) {
+                return redirect()->route('exchange.selection', ['booking_id' => $booking->id])
+                    ->with('warning', 'Vé chọn không hợp lệ hoặc không thuộc mã đặt vé này.');
+            }
+
+            return redirect()->route('exchange.search', ['selectedTicketId' => $selectedTicket->id])
+                ->with('success', 'Vé đã được chọn. Tiến hành tìm vé để đổi.');
+        }
+
+        return redirect()->back()
+            ->withErrors(['error' => 'Vui lòng chỉ chọn một vé để đổi']);
+    }
+
+    public function search($selectedTicketId)
+    {
+        $tickets = Ticket::whereNull('booking_id')->whereNull('exchange_id')
+            ->whereNull('refund_id')
+            ->get();
+
+        if ($tickets->isEmpty()) {
+            return redirect()->back()->with('warning', 'Không có vé nào có thể đổi tại thời điểm này.');
+        }
+
+        $selectedTicket = Ticket::find($selectedTicketId);
+
+        return view('pages.exchange-search', [
+            'tickets' => $tickets,
+            'old_ticket' => $selectedTicket
         ]);
     }
 
@@ -142,6 +185,8 @@ class ExchangeController extends Controller
             return redirect()->back()->withErrors(['error' => 'Thông tin mã đặt chỗ không chính xác.']);
         }
 
+        $customer = Customer::where('id', $booking->customer_id)->first();
+
         $oldTicket = Ticket::where('id', $request->old_ticket_id)
             ->whereNull('exchange_id')
             ->where('booking_id', $booking->id)
@@ -157,8 +202,21 @@ class ExchangeController extends Controller
             return redirect()->back()->withErrors(['error' => 'Vé mới không tồn tại.']);
         }
 
-        $newPrice = $newTicket->price*(1-$newTicket->discount_price - 0.1);
-        $oldPrice = $newTicket->price*(1-$oldTicket->discount_price);
+        $newPrice = $newTicket->price * (1 - $newTicket->discount_price);
+        $scheduleStart = $oldTicket->schedule->day_start . ' ' . $oldTicket->schedule->time_start;
+        $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+        $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+                        ->where('max_hours', '>=', $hoursToDeparture)
+                        ->first();
+        if ($exchangePolicy) {
+            $exchangeFee = $exchangePolicy->exchange_fee;
+        } else {
+            $exchangeFee = 1;
+        }
+        if ($exchangeFee===1) {
+            return redirect()->back()->withErrors(['error' => 'Không thể thực hiện đổi vé.']);
+        }
+        $oldPrice = $newTicket->price * (1 - $oldTicket->discount_price - $exchangeFee);
         $additional_price = max(0, $newPrice - $oldPrice);
         $exchangeDate = Carbon::now();
 
@@ -167,7 +225,7 @@ class ExchangeController extends Controller
             'new_ticket_id' => $newTicket->id,
             'booking_id' => $booking->id,
             'exchange_status' => 'pending',
-            'exchange_date' => $exchangeDate,
+            'exchange_time' => $exchangeDate,
             'customer_id' => $booking->customer_id,
             'payment_method' => $request->payment_method,
             'additional_price' => $additional_price,
@@ -178,6 +236,7 @@ class ExchangeController extends Controller
         $oldTicket->update(['exchange_id' => $exchange->id]);
 
         $confirmation_code = Str::random(6);
+        dd($customer);
 
         session(['exchange_id' => $exchange->id, 'confirmation_code' => $confirmation_code]);
 
@@ -213,8 +272,14 @@ class ExchangeController extends Controller
             $exchange = Exchange::find($exchange_id);
 
             if ($exchange) {
-                $$exchange->$exchange_status = 'confirmed';
-                $$exchange->save();
+                $exchange->exchange_status = 'confirmed';
+                $exchange->save();
+            }
+
+            $newTicket = Ticket::find($exchange->new_ticket_id);
+            if ($newTicket) {
+                $newTicket->booking_id = $exchange->booking_id;
+                $newTicket->save();
             }
 
             return redirect()->route('exchange.success', ['exchange_id' => $exchange_id])->with('message', 'Xác nhận thành công!');
@@ -251,36 +316,28 @@ class ExchangeController extends Controller
     //     $refunds = Refund::whereIn('refund_status', ['pending', 'confirmed'])->get();
 
     //     foreach ($refunds as $refund) {
-    //         if ($refund->refund_status === 'pending' && Carbon::parse($refund->refund_date)->diffInDays(Carbon::now()) > 3) {
+    //         if ($refund->refund_status === 'pending' && Carbon::parse($refund->refund_time)->diffInDays(Carbon::now()) > 3) {
     //             $refund->refund_status = 'rejected';
     //             $refund->save();
     //         }
 
-    //         if ($refund->refund_status === 'confirmed' && Carbon::parse($refund->refund_date)->diffInDays(Carbon::now()) > 3) {
-    //             $refund->refund_status = 'completed';
-    //             $refund->refund_date_processed = Carbon::now();
-    //             $refund->save();
-    //         }
-    //     }
-    //     return response()->json(['message' => 'Refund statuses updated successfully.']);
-    // }
     public function updateExchangeStatus()
     {
         $exchanges = exchange::whereIn('exchange_status', ['pending', 'confirmed'])->get();
 
         foreach ($exchanges as $exchange) {
-            if ($exchange->exchange_status === 'pending' && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) > 3) {
+            if ($exchange->exchange_status === 'pending' && Carbon::parse($exchange->exchange_time)->diffInDays(Carbon::now()) > 3) {
                 $exchange->exchange_status = 'rejected';
                 $exchange->save();
             }
 
-            if ($exchange->exchange_status === 'confirmed' && !$exchange->payment_method && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) > 3) {
+            if ($exchange->exchange_status === 'confirmed' && !$exchange->payment_method && Carbon::parse($exchange->exchange_time)->diffInDays(Carbon::now()) > 3) {
                 $exchange->exchange_status = 'rejected';
                 $exchange->save();
             }
-            if ($exchange->exchange_status === 'confirmed' && $exchange->payment_method && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) < 3) {
+            if ($exchange->exchange_status === 'confirmed' && $exchange->payment_method && Carbon::parse($exchange->exchange_time)->diffInDays(Carbon::now()) < 3) {
                 $exchange->exchange_status = 'completed';
-                $exchange->exchange_date_processed = 'completed';
+                $exchange->exchange_time_processed = 'completed';
                 $exchange->save();
             }
         }
@@ -327,20 +384,20 @@ class ExchangeController extends Controller
             $request->validate([
                 'booking_id' => 'required|string|max:20',
                 'refund_status' => 'required|string|max:20',
-                'refund_date' => 'required|date',
+                'refund_time' => 'required|date',
                 'customer_id' => 'required|exists:customers,id',
                 'payment_method' => 'nullable|string|max:20',
                 'refund_amount' => 'required|numeric',
-                'refund_date_processed' => 'nullable|date',
+                'refund_time_processed' => 'nullable|date',
             ]);
 
             $refund->booking_id = $request->input('booking_id');
             $refund->refund_status = $request->input('refund_status');
-            $refund->refund_date = $request->input('refund_date');
+            $refund->refund_time = $request->input('refund_time');
             $refund->customer_id = $request->input('customer_id');
             $refund->payment_method = $request->input('payment_method');
             $refund->refund_amount = $request->input('refund_amount');
-            $refund->refund_date_processed = $request->input('refund_date_processed');
+            $refund->refund_time_processed = $request->input('refund_time_processed');
 
             $refund->save();
 
@@ -389,8 +446,18 @@ class ExchangeController extends Controller
 
         $newTicket = Ticket::where('id', $request->new_ticket_id)->first();
 
-        $newPrice = $newTicket->price*(1-$newTicket->discount_price - 0.1);
-        $oldPrice = $newTicket->price*(1-$oldTicket->discount_price);
+        $newPrice = $newTicket->price * (1 - $newTicket->discount_price);
+        $scheduleStart = $oldTicket->schedule->day_start . ' ' . $oldTicket->schedule->time_start;
+        $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+        $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+                        ->where('max_hours', '>=', $hoursToDeparture)
+                        ->first();
+        if ($exchangePolicy) {
+            $exchangeFee = $exchangePolicy->exchange_fee;
+        } else {
+            $exchangeFee = 1;
+        }
+        $oldPrice = $newTicket->price * (1 - $oldTicket->discount_price - $exchangeFee);
         $additional_price = max(0, $newPrice - $oldPrice);
         $exchangeDate = Carbon::now();
 
@@ -399,8 +466,8 @@ class ExchangeController extends Controller
             'new_ticket_id' => $newTicket->id,
             'booking_id' => $booking->id,
             'exchange_status' => 'completed',
-            'exchange_date' => $exchangeDate,
-            'exchange_date_processed' => $exchangeDate,
+            'exchange_time' => $exchangeDate,
+            'exchange_time_processed' => $exchangeDate,
             'customer_id' => $booking->customer_id,
             'payment_method' => $request->payment_method,
             'additional_price' => $additional_price,

@@ -83,9 +83,14 @@
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
                                 <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * 0.2, 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.2), 0, ',', '.') }}
-                                </td>
+                                @if ($ticket->refund_fee !== 1)
+                                    <td>{{ number_format($ticket->refund_fee * $ticket->price, 0, ',', '.') }}</td>
+                                    <td class="refund-return">{{ number_format($ticket->price * (1 - $ticket->discount_price - $ticket->refund_fee), 0, ',', '.') }}
+                                    </td>
+                                @else
+                                    <td>X</td>
+                                    <td class="refund-return">X</td>
+                                @endif
                                 <td>
                                     @if ($ticket->exchange)
                                         @switch($ticket->exchange->exchange_status)
@@ -180,6 +185,15 @@
             const submitButton = document.getElementById('submit-button');
 
             checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+
+                const refundCell = row.querySelector('.refund-return');
+                const refundValue = refundCell?.textContent.trim();
+
+                if (refundValue === 'X') {
+                    checkbox.disabled = true;
+                }
+
                 checkbox.addEventListener('change', function() {
                     const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
                     submitButton.disabled = !isAnyChecked;

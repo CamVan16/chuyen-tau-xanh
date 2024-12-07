@@ -10,10 +10,14 @@
             </div>
             <div class="step text-center">
                 <span class="badge badge-secondary">2</span>
-                <p>Xác nhận</p>
+                <p>Tìm vé đổi</p>
             </div>
             <div class="step text-center">
                 <span class="badge badge-secondary">3</span>
+                <p>Xác nhận</p>
+            </div>
+            <div class="step text-center">
+                <span class="badge badge-secondary">4</span>
                 <p>Hoàn tất</p>
             </div>
         </div>
@@ -72,9 +76,9 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td class="text-start">
-                                    <p>{{ $ticket->customer->customer_name }}</p>
-                                    <p>Đối tượng: {{ $ticket->customer->customer_type }}</p>
-                                    <p>Số giấy tờ: {{ $ticket->customer->citizen_id }}</p>
+                                    <p>{{ $ticket?->customer?->customer_name }}</p>
+                                    <p>Đối tượng: {{ $ticket?->customer?->customer_type }}</p>
+                                    <p>Số giấy tờ: {{ $ticket?->customer?->citizen_id }}</p>
                                 </td>
                                 <td class="text-start">
                                     <p><strong>Mã vé:</strong> {{ $ticket?->id }}</p>
@@ -84,8 +88,13 @@
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
                                 <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * 0.1, 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.1), 0, ',', '.') }}
+                                @if ($ticket->exchange_fee === 1)
+                                    <td>X</td>
+                                    <td class="exchange-return">X</td>
+                                @else
+                                    <td>{{ number_format($ticket->exchange_fee * $ticket->price, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - $ticket->exchange_fee), 0, ',', '.') }}
+                                @endif
                                 </td>
                                 <td>
                                     @if ($ticket->refund)
@@ -181,6 +190,14 @@
             const submitButton = document.getElementById('submit-button');
 
             radios.forEach(radio => {
+                const row = radio.closest('tr');
+
+                const exchangeCell = row.querySelector('.exchange-return');
+                const exchangeValue = exchangeCell?.textContent.trim();
+
+                if (exchangeValue === 'X') {
+                    radio.disabled = true;
+                }
                 radio.addEventListener('change', function() {
                     const isAnyChecked = Array.from(radios).some(r => r.checked);
                     submitButton.disabled = !isAnyChecked;

@@ -19,8 +19,8 @@ class Exchanges extends Migration
             $table->double('additional_price');
             $table->string('payment_method')->nullable();
             $table->string('exchange_status')->default('pending');
-            $table->date('exchange_date');
-            $table->date('refund_date_processed')->nullable();
+            $table->dateTime('exchange_time');
+            $table->dateTime('exchange_time_processed')->nullable();
             $table->timestamps();
 
             // $table->foreign('old_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
@@ -35,6 +35,6 @@ class Exchanges extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('exchanges');
     }
 };
