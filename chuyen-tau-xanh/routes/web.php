@@ -13,6 +13,8 @@ use App\Http\Controllers\TrainController;
 use App\Http\Controllers\RouteStationController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\ZaloPayController;
+use App\Http\Controllers\RouteController;
+use App\Http\Controllers\SeatController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 
@@ -54,7 +56,16 @@ Route::get('/thong-tin-dat-cho', [BookingLookupController::class, 'showForm'])->
 Route::post('/thong-tin-dat-cho', [BookingLookupController::class, 'processLookup'])->name('booking.lookup.process');
 Route::get('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'showForgotCodeForm'])->name('booking.forgot');
 Route::post('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'sendBookingCode'])->name('booking.forgot.process');
-Route::controller(RouteStationController::class)
+Route::controller(RouteStationController::class);
+Route::controller(TrainController::class)
+    ->group(function () {
+        //
+    });
+Route::controller(SeatController::class)
+    ->group(function () {
+        Route::post('timkiem/ketqua', 'getSeatsByCarId')->name('seat.getSeatsByCarId');
+    });
+Route::controller(RouteController::class)
     ->group(function () {
         Route::get('/', 'index')->name('routes.index');
         Route::post('/timkiem', 'search')->name('routes.search');

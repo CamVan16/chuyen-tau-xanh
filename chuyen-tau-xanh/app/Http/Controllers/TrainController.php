@@ -9,7 +9,8 @@ class TrainController extends Controller
 {
     public function index()
     {
-        $trains = Train::all();
-        return view('pages.find-ticket', compact('trains'));
+        // $train = Train::find(12001);
+        // $cars = $train->cars;
+        // dd($cars->toArray());
     }
 }

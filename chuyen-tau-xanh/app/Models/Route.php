@@ -20,4 +20,11 @@ class Route extends Model
                     ->withPivot('station_code', 'station_name', 'km', 'date_index', 'departure_time', 'arrival_time', 'departure_date')
                     ->withTimestamps();
     }
+
+    public function trains()
+    {
+        return $this->belongsToMany(Train::class, 'train_routes', 'route_id', 'train_id')
+                    ->withPivot('train_index')
+                    ->withTimestamps();
+    }
 }
