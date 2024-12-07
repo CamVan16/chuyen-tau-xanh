@@ -8,7 +8,8 @@ use App\Http\Controllers\RefundController;
 use App\Http\Controllers\CheckTicketController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TrainController;
-use App\Http\Controllers\RouteStationController;
+use App\Http\Controllers\RouteController;
+use App\Http\Controllers\SeatController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers']);
@@ -47,7 +48,15 @@ Route::get('/admin/get-list-refund', [RefundController::class, 'getListAll'])->n
 Route::get('/kiem-tra-ve', [CheckTicketController::class, 'showForm'])->name('check-ticket.form');
 Route::post('/kiem-tra-ve', [CheckTicketController::class, 'checkTicket'])->name('check-ticket.process');
 
-Route::controller(RouteStationController::class)
+Route::controller(TrainController::class)
+    ->group(function () {
+        //
+    });
+Route::controller(SeatController::class)
+    ->group(function () {
+        Route::post('timkiem/ketqua', 'getSeatsByCarId')->name('seat.getSeatsByCarId');
+    });
+Route::controller(RouteController::class)
     ->group(function () {
         Route::get('/', 'index')->name('routes.index');
         Route::post('/timkiem', 'search')->name('routes.search');

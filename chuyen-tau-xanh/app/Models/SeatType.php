@@ -28,4 +28,9 @@ class SeatType extends Model
     {
         return $this->belongsTo(Train::class, 'train_id');
     }
+
+    public function seats()
+    {
+        return $this->hasMany(Seat::class);
+    }
 }

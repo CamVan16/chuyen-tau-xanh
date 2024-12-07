@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tìm Vé</title>
-    <style>
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-    </style>
-</head>
+@section('title', 'Tìm vé')
 
-<body>
-    <h1>Tìm Vé</h1>
+@section('content')
+<div>
     <form action="{{ route('routes.search') }}" method="POST">
         @csrf
         <label for="stationA">Ga Đi:</label>
@@ -39,6 +28,7 @@
         <br>
         <button type="submit">Tìm Kiếm</button>
     </form>
+</div>
 
     <script>
         function toggleReturnDate() {
@@ -48,6 +38,11 @@
             returnDateInput.required = isRoundTrip;
         }
     </script>
-</body>
+    <style>
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+@endsection
 
-</html>
