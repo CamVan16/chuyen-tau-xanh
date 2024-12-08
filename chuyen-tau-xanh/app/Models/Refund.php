@@ -3,7 +3,7 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Refund extends Model
 {
     use HasFactory;
+    use CrudTrait;
 
 
     protected $fillable = [
@@ -40,18 +41,17 @@ class Refund extends Model
 
         static::updated(function ($refund) {
             if ($refund->isDirty('refund_status') && $refund->refund_status === 'completed') {
-                $refund->createNewTicket();
+                $refund->restoreTicket();
             }
         });
     }
 
-    public function createNewTicket()
+    public function restoreTicket()
     {
-        $ticket = Ticket::find($this->ticket_id);
+        $ticket = Ticket::where('refund_id', $this->id)->first();
         Ticket::create([
             'schedule_id' => $ticket->schedule_id,
             'price'       => $ticket->price,
         ]);
     }
-
 }

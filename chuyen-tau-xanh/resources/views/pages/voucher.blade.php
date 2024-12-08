@@ -64,11 +64,11 @@
 @section('scripts')
 <script>
     $('#voucherModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var voucherId = button.data('id'); 
-
+    var button = $(event.relatedTarget);
+    var voucherId = button.data('id');
+    console.log("voucherId: ", voucherId);
     $.ajax({
-    url: '/api/vouchers/' + voucherId, 
+    url: `/api/vouchers/${voucherId}`,
     method: 'GET',
     success: function(data) {
         $('#voucherCode').text(data.code);
@@ -80,7 +80,7 @@
         $('#voucherDescription').text(data.description);
     },
     error: function(xhr, status, error) {
-        console.log("Lỗi API: " + error);  
+        console.log("Lỗi API: " + error);
         alert('Có lỗi xảy ra khi lấy thông tin voucher.');
     }
 });

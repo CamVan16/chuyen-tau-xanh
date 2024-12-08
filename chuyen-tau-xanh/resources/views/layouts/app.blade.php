@@ -11,17 +11,23 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 
     <style>
         /* Cấu trúc Flexbox cho body để footer luôn ở dưới cùng */
         body {
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Đảm bảo chiều cao của body là 100% chiều cao màn hình */
+            min-height: 100vh;
+            /* Đảm bảo chiều cao của body là 100% chiều cao màn hình */
         }
 
         .container {
-            flex: 1; /* Chiếm phần còn lại của trang */
+            flex: 1;
+            /* Chiếm phần còn lại của trang */
         }
 
         .header {
@@ -135,7 +141,7 @@
             gap: 10px;
         }
 
-        .footer .social-icons{
+        .footer .social-icons {
             width: 50px;
             transition: color 0.3s;
         }
@@ -197,7 +203,8 @@
             <div class="footer-column">
                 <h4>QUY ĐỊNH VÀ ĐIỀU KHOẢN</h4>
                 <ul>
-                    <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách vận chuyển hành khách</a></li>
+                    <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách vận chuyển hành khách</a>
+                    </li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách đổi trả, hoàn vé</a></li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách bảo mật</a></li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách & Quy định chung</a></li>
@@ -229,7 +236,9 @@
     <script>
         const currentDate = new Date();
         const daysOfWeek = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
-        const monthsOfYear = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        const monthsOfYear = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
+            'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ];
         const dayOfWeek = daysOfWeek[currentDate.getDay()];
         const day = currentDate.getDate();
         const month = monthsOfYear[currentDate.getMonth()];
@@ -237,6 +246,7 @@
         const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;
         document.querySelector('.date').textContent = formattedDate;
     </script>
+@yield('scripts')
 </body>
 
 </html>

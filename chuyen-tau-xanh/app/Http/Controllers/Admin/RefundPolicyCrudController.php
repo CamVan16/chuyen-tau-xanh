@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\RefundPolicyRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class CustomerCrudController
+ * Class RefundPolicyCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class CustomerCrudController extends CrudController
+class RefundPolicyCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class CustomerCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Customer::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/customer');
-        CRUD::setEntityNameStrings('customer', 'customers');
+        CRUD::setModel(\App\Models\RefundPolicy::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/refund-policy');
+        CRUD::setEntityNameStrings('refund policy', 'refund policies');
     }
 
     /**
@@ -51,29 +51,20 @@ class CustomerCrudController extends CrudController
             'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
-            'type' => 'Text',
+            'name' => 'min_hours',
+            'label' => "Giờ tối thiểu",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'max_hours',
+            'label' => "Giờ tối đa",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
-        ]);
-        $this->crud->addColumn([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
-        ]);
-        $this->crud->addColumn([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'refund_fee',
+            'label' => "Phí trả vé",
+            'type' => 'Number',
+            'decimals' => 2,
         ]);
     }
 
@@ -85,7 +76,7 @@ class CustomerCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(CustomerRequest::class);
+        CRUD::setValidation(RefundPolicyRequest::class);
         // CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -93,29 +84,24 @@ class CustomerCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
         $this->crud->addField([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
-            'type' => 'Text',
+            'name' => 'min_hours',
+            'label' => "Giờ tối thiểu",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'max_hours',
+            'label' => "Giờ tối đa",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
-        ]);
-        $this->crud->addField([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
-        ]);
-        $this->crud->addField([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'refund_fee',
+            'label' => "Phí trả vé",
+            'type' => 'Number',
+            'decimals' => 2,
+            'attributes' => [
+                'step' => '0.01',
+                'min' => '0',
+            ],
         ]);
     }
 

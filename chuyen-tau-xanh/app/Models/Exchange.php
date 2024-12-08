@@ -3,13 +3,14 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
 class Exchange extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
 
@@ -52,7 +53,7 @@ class Exchange extends Model
 
     public function restoreTicket()
     {
-        $ticket = Ticket::find($this->old_ticket_id);
+        $ticket = Ticket::where('exchange_id', $this->id)->first();
         Ticket::create([
             'schedule_id' => $ticket->schedule_id,
             'price'       => $ticket->price,
