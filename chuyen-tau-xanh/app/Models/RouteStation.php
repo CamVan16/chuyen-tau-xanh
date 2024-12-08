@@ -11,7 +11,7 @@ class RouteStation extends Model
 
     public $incrementing = false;
     protected $primaryKey = ['route_id', 'station_id'];
-    
+
     protected $fillable = [
         'route_id',
         'station_id',

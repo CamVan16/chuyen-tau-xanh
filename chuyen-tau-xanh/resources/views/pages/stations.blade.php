@@ -134,39 +134,8 @@
             const gaDen = $('#gaDen').val();
             const ngay = $('#ngay').val();
             
-            // Gửi yêu cầu tìm kiếm tàu
-            $.ajax({
-                url: '/api/trains/search', // API tìm kiếm tàu
-                method: 'GET',
-                data: { gaDi, gaDen, ngay },
-                success: function(data) {
-                    renderTrainList(data); // Hiển thị danh sách tàu khi có dữ liệu
-                }
-            });
+            window.location.href = `/trains/results?gaDi=${gaDi}&gaDen=${gaDen}&ngay=${ngay}`;
         });
-
-        // Hiển thị danh sách tàu
-        function renderTrainList(trains) {
-            let trainList = '';
-            if (trains.length > 0) {
-                trains.forEach(train => {
-                    trainList += `
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">${train.train_name}</h5>
-                                    <p class="card-text">Giờ khởi hành: ${train.departure_time}</p>
-                                    <p class="card-text">Giờ đến: ${train.arrival_time}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                trainList = '<p>Không có tàu nào phù hợp với tìm kiếm của bạn.</p>';
-            }
-            $('#trainList').html(trainList);
-        }
     });
 </script>
 @endsection

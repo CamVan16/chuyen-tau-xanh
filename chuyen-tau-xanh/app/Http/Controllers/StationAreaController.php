@@ -67,10 +67,12 @@ class StationAreaController extends Controller
         $goRoutes = $this->findRoutes($gaDi, $gaDen);
         $this->findTrains($goRoutes, $ngay);
 
-        return view('pages.stations', [
+        return view('pages.station_results', [
             'routes' => $goRoutes,
             'stations' => StationArea::all(),
             'ngay' => $ngay,
+            'gaDi' => $gaDi,
+            'gaDen' => $gaDen,
         ]);
     }
 

@@ -17,8 +17,8 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\SeatController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
-Route::get('/giotau-giave/search', [StationAreaController::class, 'search'])->name('stations.search.results');
-Route::get('/api/trains/search', [StationAreaController::class, 'search'])->name('api.trains.search');
+Route::get('/trains/results', [StationAreaController::class, 'search']);
+Route::get('/train/{id}/details/{gaDi}/{gaDen}/{ngay}', [TrainController::class, 'showDetails'])->name('train.details');
 
 
 Route::get('/tra-ve', [RefundController::class, 'getPageRefund'])->name('refund.getPageRefund');
@@ -74,8 +74,6 @@ Route::controller(RouteController::class)
         Route::get('/', 'index')->name('routes.index');
         Route::post('/timkiem', 'search')->name('routes.search');
     });
-
-Route::get('/trains/search', [StationAreaController::class, 'searchTrains'])->name('trains.search');
 
 // Booking Routes
 Route::get('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
