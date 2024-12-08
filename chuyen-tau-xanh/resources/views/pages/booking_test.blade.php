@@ -15,11 +15,11 @@
             @csrf
             <div class="mb-3">
                 <label for="order_id" class="form-label">Booking ID (Order ID):</label>
-                <input type="text" name="order_id" id="order_id" class="form-control" value="BK202412132" required>
+                <input type="text" name="order_id" id="order_id" class="form-control" value="BK202412137" required>
             </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Tổng tiền (Total Price):</label>
-                <input type="number" name="amount" id="amount" class="form-control" value="2000000" required>
+                <input type="number" name="amount" id="amount" class="form-control" value="1000000" required>
             </div>
             <div class="mb-3">
                 <label for="order_desc" class="form-label">Mô tả (Order Description):</label>
@@ -49,6 +49,7 @@
                 <select name="payment_method" id="payment_method" class="form-select" required>
                     <option value="vnpay">VNPay</option>
                     <option value="zalopay">ZaloPay</option>
+                    <option value="momo">Momo</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Thanh Toán</button>

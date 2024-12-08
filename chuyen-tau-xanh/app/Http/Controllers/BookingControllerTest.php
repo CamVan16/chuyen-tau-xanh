@@ -2,10 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\MomoController;
+use App\Http\Controllers\VNPayController;
+use App\Http\Controllers\ZaloPayController;
 use Illuminate\Http\Request;
 
 class BookingControllerTest extends Controller
 {
+    private $vnpayController;
+    private $zalopayController;
+    private $momoController;
+
+    public function __construct(
+        VNPayController $vnpayController,
+        ZaloPayController $zalopayController,
+        MomoController $momoController
+    ) {
+        $this->vnpayController = $vnpayController;
+        $this->zalopayController = $zalopayController;
+        $this->momoController = $momoController;
+    }
+
     public function showBooking()
     {
         return view('pages.booking_test');
@@ -15,12 +32,18 @@ class BookingControllerTest extends Controller
     {
         $method = $request->input('payment_method');
 
-        if ($method === 'vnpay') {
-            return app(VNPayController::class)->processPayment($request);
-        } elseif ($method === 'zalopay') {
-            return app(ZaloPayController::class)->processPayment($request);
-        } else {
-            return redirect()->back()->with('error', 'Phương thức thanh toán không hợp lệ!');
+        try {
+            if ($method === 'vnpay') {
+                return $this->vnpayController->processPayment($request);
+            } elseif ($method === 'zalopay') {
+                return $this->zalopayController->processPayment($request);
+            } elseif ($method === 'momo') {
+                return $this->momoController->processPayment($request);
+            } else {
+                return redirect()->back()->with('error', 'Phương thức thanh toán không hợp lệ!');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
 }
