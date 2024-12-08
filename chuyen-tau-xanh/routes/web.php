@@ -17,6 +17,9 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\SeatController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
+Route::get('/giotau-giave/search', [StationAreaController::class, 'search'])->name('stations.search.results');
+Route::get('/api/trains/search', [StationAreaController::class, 'search'])->name('api.trains.search');
+
 
 Route::get('/tra-ve', [RefundController::class, 'getPageRefund'])->name('refund.getPageRefund');
 Route::get('/tra-ve/quen-ma', [RefundController::class, 'showBookingCodeForm'])->name('refund.showBookingCodeForm');
