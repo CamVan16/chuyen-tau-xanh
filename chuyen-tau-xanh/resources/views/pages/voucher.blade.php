@@ -251,7 +251,7 @@
     console.log('Voucher ID:', voucherId); // Kiểm tra voucherId
 
     $.ajax({
-        url: '/api/vouchers/' + voucherId, 
+        url: '/api/vouchers/' + voucherId,
         method: 'GET',
         success: function(data) {
             console.log("Dữ liệu trả về từ API:", data); // Kiểm tra dữ liệu trả về

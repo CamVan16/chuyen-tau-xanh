@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\TicketRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class CustomerCrudController
+ * Class TicketCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class CustomerCrudController extends CrudController
+class TicketCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class CustomerCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Customer::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/customer');
-        CRUD::setEntityNameStrings('customer', 'customers');
+        CRUD::setModel(\App\Models\Ticket::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/ticket');
+        CRUD::setEntityNameStrings('ticket', 'tickets');
     }
 
     /**
@@ -39,7 +39,7 @@ class CustomerCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set Fields from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -47,33 +47,44 @@ class CustomerCrudController extends CrudController
          */
         $this->crud->addColumn([
             'name' => 'id',
-            'label' => "ID",
+            'label' => "Mã vé",
             'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
+            'name' => 'booking_id',
+            'label' => "Mã đặt vé",
             'type' => 'Text',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
+            'name' => 'refund_id',
+            'label' => "Mã trả vé",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
+            'name' => 'exchange_id',
+            'label' => "Mã đổi vé",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'schedule_id',
+            'label' => "Mã lịch trình",
+            'type' => 'Number',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'price',
+            'label' => "Giá vé",
+            'type' => 'Number',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'discount_price',
+            'label' => "Giảm giá",
+            'type' => 'Number',
+            'decimal' => 2,
         ]);
     }
 
@@ -85,7 +96,7 @@ class CustomerCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(CustomerRequest::class);
+        CRUD::setValidation(TicketRequest::class);
         // CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -93,29 +104,44 @@ class CustomerCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
         $this->crud->addField([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
+            'name' => 'booking_id',
+            'label' => "Mã đặt vé",
             'type' => 'Text',
         ]);
         $this->crud->addField([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
+            'name' => 'refund_id',
+            'label' => "Mã trả vé",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
+            'name' => 'exchange_id',
+            'label' => "Mã đổi vé",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'schedule_id',
+            'label' => "Mã lịch trình",
+            'type' => 'Number',
+        ]);
+        $this->crud->addField([
+            'name' => 'price',
+            'label' => "Giá vé",
+            'type' => 'Number',
+        ]);
+        $this->crud->addField([
+            'name' => 'discount_price',
+            'label' => "Giảm giá",
+            'type' => 'Number',
+            'decimal' => 2,
+            'attributes' => [
+                'step' => '0.01',
+                'min' => '0',
+            ],
         ]);
     }
 

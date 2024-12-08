@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\BookingRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class CustomerCrudController
+ * Class BookingCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class CustomerCrudController extends CrudController
+class BookingCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class CustomerCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Customer::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/customer');
-        CRUD::setEntityNameStrings('customer', 'customers');
+        CRUD::setModel(\App\Models\Booking::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/booking');
+        CRUD::setEntityNameStrings('booking', 'bookings');
     }
 
     /**
@@ -47,33 +47,34 @@ class CustomerCrudController extends CrudController
          */
         $this->crud->addColumn([
             'name' => 'id',
-            'label' => "ID",
+            'label' => "Mã đặt vé",
+            'type' => 'Text',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
             'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
-            'type' => 'Text',
+            'name' => 'discount_price',
+            'label' => "Giảm giá",
+            'type' => 'Number',
+            'decimal' => 2,
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'booked_time',
+            'label' => "Thời gian đặt vé",
+            'type' => 'Date',
         ]);
         $this->crud->addColumn([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
+            'name' => 'booking_status',
+            'label' => "Trạng thái",
+            'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
-        ]);
-        $this->crud->addColumn([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'total_price',
+            'label' => "Tổng giá",
+            'type' => 'Number',
         ]);
     }
 
@@ -85,7 +86,7 @@ class CustomerCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(CustomerRequest::class);
+        CRUD::setValidation(BookingRequest::class);
         // CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -93,29 +94,30 @@ class CustomerCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
         $this->crud->addField([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
-            'type' => 'Text',
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'name' => 'discount_price',
+            'label' => "Giảm giá",
+            'type' => 'Number',
+            'decimal' => 2,
         ]);
         $this->crud->addField([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
+            'name' => 'booked_time',
+            'label' => "Thời gian đặt vé",
+            'type' => 'Date',
         ]);
         $this->crud->addField([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
+            'name' => 'booking_status',
+            'label' => "Trạng thái",
+            'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'total_price',
+            'label' => "Tổng giá",
+            'type' => 'Number',
         ]);
     }
 

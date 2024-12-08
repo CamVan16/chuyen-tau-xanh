@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\RefundRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class CustomerCrudController
+ * Class RefundCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class CustomerCrudController extends CrudController
+class RefundCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class CustomerCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Customer::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/customer');
-        CRUD::setEntityNameStrings('customer', 'customers');
+        CRUD::setModel(\App\Models\Refund::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/refund');
+        CRUD::setEntityNameStrings('refund', 'refunds');
     }
 
     /**
@@ -47,33 +47,43 @@ class CustomerCrudController extends CrudController
          */
         $this->crud->addColumn([
             'name' => 'id',
-            'label' => "ID",
+            'label' => "Mã trả vé",
             'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
+            'name' => 'booking_id',
+            'label' => "Mã đặt vé",
             'type' => 'Text',
         ]);
         $this->crud->addColumn([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
+            'type' => 'Number',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'refund_amount',
+            'label' => "Tiền phải trả",
+            'type' => 'Number',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'payment_method',
+            'label' => "Phương thức thanh toán",
             'type' => 'Text',
         ]);
         $this->crud->addColumn([
-            'name' => 'email',
-            'label' => "Email",
+            'name' => 'refund_status',
+            'label' => "Trạng thái trả vé",
             'type' => 'Text',
         ]);
         $this->crud->addColumn([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
+            'name' => 'refund_time',
+            'label' => "Thời gian trả vé",
+            'type' => 'Datetime',
         ]);
         $this->crud->addColumn([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'refund_time_processed',
+            'label' => "Thời gian trả vé thành công",
+            'type' => 'Datetime',
         ]);
     }
 
@@ -85,7 +95,7 @@ class CustomerCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(CustomerRequest::class);
+        CRUD::setValidation(RefundRequest::class);
         // CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -93,29 +103,46 @@ class CustomerCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
         $this->crud->addField([
-            'name' => 'customer_name',
-            'label' => "Tên khách hàng",
+            'name' => 'booking_id',
+            'label' => "Mã đặt vé",
             'type' => 'Text',
         ]);
         $this->crud->addField([
-            'name' => 'customer_type',
-            'label' => "Loại khách hàng",
+            'name' => 'customer_id',
+            'label' => "Mã khách hàng",
+            'type' => 'Number',
+        ]);
+        $this->crud->addField([
+            'name' => 'refund_amount',
+            'label' => "Tiền phải trả",
+            'type' => 'Number',
+        ]);
+        $this->crud->addField([
+            'name' => 'payment_method',
+            'label' => "Phương thức thanh toán",
             'type' => 'Text',
         ]);
         $this->crud->addField([
-            'name' => 'email',
-            'label' => "Email",
-            'type' => 'Text',
+            'name' => 'refund_status',
+            'label' => 'Trạng thái trả vé',
+            'type' => 'select_from_array',
+            'options' => [
+                'pending' => 'Chờ xử lý',
+                'confirmed' => 'Đã xác nhận',
+                'completed' => 'Hoàn thành',
+                'rejected' => 'Thất bại',
+            ],
+            'default' => 'pending',
         ]);
         $this->crud->addField([
-            'name' => 'citizen_id',
-            'label' => "CMND/CCCD",
-            'type' => 'Text',
+            'name' => 'refund_time',
+            'label' => "Thời gian trả vé",
+            'type' => 'Datetime',
         ]);
         $this->crud->addField([
-            'name' => 'phone',
-            'label' => "Số điện thoại",
-            'type' => 'Text',
+            'name' => 'refund_time_processed',
+            'label' => "Thời gian trả vé thành công",
+            'type' => 'Datetime',
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Booking;
@@ -12,6 +12,7 @@ use App\Models\Schedule;
 
 class Ticket extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
     protected $fillable = [

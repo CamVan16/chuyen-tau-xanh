@@ -11,6 +11,7 @@ class Bookings extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->string('id', 6)->primary();
             $table->unsignedBigInteger('customer_id');
+            $table->double('discount_price');
             $table->double('total_price');
             $table->dateTime('booked_time');
             $table->integer('booking_status');

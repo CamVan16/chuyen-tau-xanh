@@ -16,7 +16,7 @@ class Tickets extends Migration
             $table->unsignedBigInteger('exchange_id')->nullable();
             $table->unsignedBigInteger('schedule_id');
             $table->double('price');
-            $table->double('discount_price');
+            $table->double('discount_price')->nullable();
             $table->timestamps();
 
             // $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
