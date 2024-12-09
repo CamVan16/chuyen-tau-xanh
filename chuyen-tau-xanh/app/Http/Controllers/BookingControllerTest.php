@@ -23,9 +23,11 @@ class BookingControllerTest extends Controller
         $this->momoController = $momoController;
     }
 
-    public function showBooking()
+    public function showBooking(Request $request)
     {
-        return view('pages.booking_test');
+        // dd($request);
+        // return view('pages.booking_test');
+        return view('pages.booking');
     }
 
     public function processPayment(Request $request)

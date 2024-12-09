@@ -23,7 +23,7 @@ class RouteController extends Controller
 
         $goRoutes = $this->findRoutes($stationA, $stationB);
         $this->findTrains($goRoutes, $departureDate);
-        // dd($goRoutes->toArray());
+        // dd($goRoutes);
 
         $returnRoutes = [];
         if ($ticketType === 'round-trip') {
@@ -64,20 +64,20 @@ class RouteController extends Controller
         };
 
         foreach ($routes as $route) {
+            $departureDateObj = Carbon::parse($date);
+            $daysToAdd = $route->arrival_date_index - $route->departure_date_index;
+            $arrivalDateObj = $departureDateObj->copy()->addDays($daysToAdd);
+                            // echo $departureDateObj;
             $trainCount = $route->trains->count();
             $trainIndex = $findTrainIndex($trainCount, $date);
             $train = $route->trains->firstWhere('pivot.train_index', $trainIndex);
             if ($train) {
                 $route->train_id = $train->id;
+                $route->departure_date = $date;
+                $route->arrival_date = $arrivalDateObj->format('Y-m-d');
                 $route->cars = $train->cars;
+                $route->seat_types = $train->seat_types()->select('seat_type_code', 'price')->get();
             }
-
         }
     }
-
-    // public function getSeatsByCarId(Request $request) {
-    //     dd("A");
-    //     $carId = $request->input('car_id');
-    //     dd($carId);
-    // }
 }

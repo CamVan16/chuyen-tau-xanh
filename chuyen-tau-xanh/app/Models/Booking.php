@@ -21,6 +21,7 @@ class Booking extends Model
         'booked_time',
         'booking_status',
         'total_price',
+        'payment_method',
     ];
 
     protected static function boot()

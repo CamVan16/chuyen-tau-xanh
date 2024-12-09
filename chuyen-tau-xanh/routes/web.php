@@ -60,7 +60,7 @@ Route::get('/thong-tin-dat-cho', [BookingLookupController::class, 'showForm'])->
 Route::post('/thong-tin-dat-cho', [BookingLookupController::class, 'processLookup'])->name('booking.lookup.process');
 Route::get('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'showForgotCodeForm'])->name('booking.forgot');
 Route::post('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'sendBookingCode'])->name('booking.forgot.process');
-Route::controller(RouteStationController::class);
+// Route::controller(RouteStationController::class);
 Route::controller(TrainController::class)
     ->group(function () {
         //
@@ -78,7 +78,7 @@ Route::controller(RouteController::class)
 Route::get('/trains/search', [StationAreaController::class, 'searchTrains'])->name('trains.search');
 
 // Booking Routes
-Route::get('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
+Route::post('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
 Route::post('/booking/payment', [BookingControllerTest::class, 'processPayment'])->name('booking.processPayment');
 
 // VNPay Routes
