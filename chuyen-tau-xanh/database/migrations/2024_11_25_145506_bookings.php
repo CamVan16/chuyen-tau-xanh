@@ -15,6 +15,7 @@ class Bookings extends Migration
             $table->double('total_price');
             $table->dateTime('booked_time');
             $table->integer('booking_status');
+            $table->string('payment_method');
             $table->timestamps();
 
             $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
