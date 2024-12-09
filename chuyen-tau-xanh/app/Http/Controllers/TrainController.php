@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Route;
 use App\Models\RouteStation;
-use App\Models\Train;
+use App\Models\TrainRoute;
+use App\Models\SeatType;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -17,22 +18,21 @@ class TrainController extends Controller
         // dd($cars->toArray());
     }
 
-    public function showDetails($id, $gaDi, $gaDen, $ngay)
+    public function showDetails($id, Request $request)
     {
-        dd($id, $gaDi, $gaDen, $ngay);
         $route = Route::with(['routeStations'])->findOrFail($id);
+        $routeStations = $route->routeStations->sortBy('km');
+        $trainIds = TrainRoute::where('route_id', $id)->pluck('train_id');
 
-        foreach ($route->routeStations as $station) {
-            $departureTime = Carbon::parse($station->departure_time);
-            $arrivalTime = Carbon::parse($station->arrival_time);
-
-            if ($arrivalTime < $departureTime) {
-                $arrivalTime->addDay();
-            }
-
-            $station->adjusted_arrival_time = $arrivalTime;
-        }
-
-        return view('pages.station_train_detail', compact('route', 'gaDi', 'gaDen', 'ngay'));
+        // Lấy các loại ghế cho tất cả các chuyến tàu trong train_ids
+        $seatTypes = SeatType::whereIn('train_id', $trainIds)->with('seats')->get();
+        return view('pages.station_train_detail', [
+            'route' => $route,
+            'routeStations' => $routeStations,
+            'seatTypes' => $seatTypes,
+            'gaDi' => $request->gaDi,
+            'gaDen' => $request->gaDen,
+            'ngay' => $request->ngay,
+        ]);
     }
 }

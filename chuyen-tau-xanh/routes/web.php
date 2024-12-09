@@ -13,12 +13,13 @@ use App\Http\Controllers\TrainController;
 use App\Http\Controllers\RouteStationController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\ZaloPayController;
+use App\Http\Controllers\MomoController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\SeatController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/trains/results', [StationAreaController::class, 'search']);
-Route::get('/train/{id}/details/{gaDi}/{gaDen}/{ngay}', [TrainController::class, 'showDetails'])->name('train.details');
+Route::get('/train/{id}/details', [TrainController::class, 'showDetails'])->name('train.details');
 
 
 Route::get('/tra-ve', [RefundController::class, 'getPageRefund'])->name('refund.getPageRefund');
@@ -88,8 +89,6 @@ Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->n
 Route::get('/tim-cho', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
 
 // Momo Routes 
-use App\Http\Controllers\MomoController;
-
 Route::post('/payment/momo', [MomoController::class, 'processPayment'])->name('payment.momo');
 Route::get('/payment/momo/complete', [MomoController::class, 'completePayment'])->name('payment.momoComplete');
 Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('payment.momoIPN');
