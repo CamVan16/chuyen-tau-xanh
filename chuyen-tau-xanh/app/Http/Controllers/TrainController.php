@@ -22,10 +22,23 @@ class TrainController extends Controller
     {
         $route = Route::with(['routeStations'])->findOrFail($id);
         $routeStations = $route->routeStations->sortBy('km');
-        $trainIds = TrainRoute::where('route_id', $id)->pluck('train_id');
 
-        // Lấy các loại ghế cho tất cả các chuyến tàu trong train_ids
-        $seatTypes = SeatType::whereIn('train_id', $trainIds)->with('seats')->get();
+        // Lấy train_id đầu tiên
+        $trainRoute = TrainRoute::where('route_id', $id)->first();
+        $trainId = $trainRoute ? $trainRoute->train_id : null;
+
+        if (!$trainId) {
+            return back()->withErrors('Không tìm thấy train_id nào cho route_id này.');
+        }
+
+        // Lấy các loại ghế dựa trên train_id
+        $seatTypes = SeatType::where('train_id', $trainId)->with('seats')->get();
+
+        // Kiểm tra $seatTypes có phải là một Collection
+        if (!is_countable($seatTypes)) {
+            return back()->withErrors('Lỗi khi lấy danh sách loại ghế.');
+        }
+
         return view('pages.station_train_detail', [
             'route' => $route,
             'routeStations' => $routeStations,

@@ -24,6 +24,7 @@ Route::group([
     Route::crud('schedule', 'ScheduleCrudController');
     Route::crud('refund', 'RefundCrudController');
     Route::crud('exchange', 'ExchangeCrudController');
+    Route::crud('voucher', 'VoucherCrudController');
 }); // this should be the absolute last line of this file
 
 /**
