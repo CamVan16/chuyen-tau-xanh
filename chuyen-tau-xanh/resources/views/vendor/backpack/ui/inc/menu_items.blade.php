@@ -12,8 +12,3 @@
 <x-backpack::menu-item title="Đổi vé" icon="la la-sync-alt" :link="backpack_url('exchange')" />
 
 <x-backpack::menu-item title="Vouchers" icon="la la-question" :link="backpack_url('voucher')" />
-
-<x-backpack::menu-item title="Trains" icon="la la-question" :link="backpack_url('train')" />
-<x-backpack::menu-item title="Cars" icon="la la-question" :link="backpack_url('car')" />
-<x-backpack::menu-item title="Seats" icon="la la-question" :link="backpack_url('seat')" />
-<x-backpack::menu-item title="Seat types" icon="la la-question" :link="backpack_url('seat-type')" />

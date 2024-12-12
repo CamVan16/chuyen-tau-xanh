@@ -9,8 +9,7 @@ class Trains extends Migration
     public function up()
     {
         Schema::create('trains', function (Blueprint $table) {
-            // $table->integer('id')->primary();
-            $table->id();
+            $table->integer('id')->primary();
             $table->integer('num_of_seats');
             $table->integer('num_of_available_seats');
             $table->timestamps();
