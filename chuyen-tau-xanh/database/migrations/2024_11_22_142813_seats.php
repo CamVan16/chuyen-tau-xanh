@@ -9,7 +9,8 @@ class Seats extends Migration
     public function up()
     {
         Schema::create('seats', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            // $table->integer('id')->primary();
+            $table->id();
             $table->integer('car_id');
             $table->integer('seat_type_id');
             $table->string('seat_type');

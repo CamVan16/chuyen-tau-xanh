@@ -9,7 +9,8 @@ class Voucher extends Migration
     public function up(): void
     {
         Schema::create('vouchers', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            // $table->integer('id')->primary();
+            $table->id();
             $table->string('code');
             $table->string('name');
             $table->double('min_price_order');
