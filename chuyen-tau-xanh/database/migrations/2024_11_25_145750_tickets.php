@@ -9,7 +9,7 @@ class Tickets extends Migration
     public function up()
     {
         Schema::create('tickets', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 8)->primary();
             $table->string('booking_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('refund_id')->nullable();
@@ -17,6 +17,8 @@ class Tickets extends Migration
             $table->unsignedBigInteger('schedule_id');
             $table->double('price');
             $table->double('discount_price')->nullable();
+            $table->int('ticket_status');
+            // 1: có hiệu lực, -1: ko 
             $table->timestamps();
 
             // $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');

@@ -10,5 +10,5 @@ Route::apiResource('station-areas', StationAreaController::class);
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('refunds', RefundController::class);
 Route::apiResource('exchanges', ExchangeController::class);
-Route::apiResource('vouchers', VoucherController::class);
+// Route::apiResource('vouchers', VoucherController::class);
 // Route::get('/all', [RefundController::class, 'getListAll'])->name('refund.getListAll');

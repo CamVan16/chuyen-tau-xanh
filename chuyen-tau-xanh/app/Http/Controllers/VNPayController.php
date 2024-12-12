@@ -18,7 +18,7 @@ class VNPayController extends Controller
 
         $vnp_TmnCode = "5037O4BA";
         $vnp_HashSecret = "LQLTG6DHBF6Z0ZAVE5XXA9ZNE8WV7PL7";
-        $vnp_Returnurl = "http://127.0.0.1:8000/tim-cho";
+        $vnp_Returnurl = "http://localhost:8000";
 
         $inputData = array(
             "vnp_Version" => "2.1.0",
