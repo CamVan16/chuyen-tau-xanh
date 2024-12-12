@@ -6,6 +6,7 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Train;
+use App\Models\Ticket;
 
 class Schedule extends Model
 {
@@ -27,7 +28,7 @@ class Schedule extends Model
 
     public function ticket()
     {
-        return $this->hasMany(Booking::class, 'schedule_id');
+        return $this->hasOne(Ticket::class, 'schedule_id');
     }
 
     public function train()

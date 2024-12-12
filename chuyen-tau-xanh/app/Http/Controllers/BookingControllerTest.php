@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\MomoController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\ZaloPayController;
+use App\Http\Controllers\VoucherController;
 use Illuminate\Http\Request;
 
 class BookingControllerTest extends Controller
@@ -12,22 +13,25 @@ class BookingControllerTest extends Controller
     private $vnpayController;
     private $zalopayController;
     private $momoController;
-
+    private $voucherController;
+    
     public function __construct(
         VNPayController $vnpayController,
         ZaloPayController $zalopayController,
-        MomoController $momoController
+        MomoController $momoController,
+        VoucherController $voucherController
     ) {
         $this->vnpayController = $vnpayController;
         $this->zalopayController = $zalopayController;
         $this->momoController = $momoController;
+        $this->voucherController = $voucherController;
     }
 
     public function showBooking(Request $request)
     {
-        // dd($request);
-        // return view('pages.booking_test');
-        return view('pages.booking');
+        $vouchers = $this->voucherController->showVouchersForBooking();
+        
+        return view('pages.booking', compact('vouchers'));
     }
 
     public function processPayment(Request $request)
