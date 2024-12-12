@@ -418,6 +418,7 @@
                 // const departureDate = $this.data('date');
                 // const departureTime = $this.data('time');
                 $('#go-seats-container').empty();
+                $('.go-car-description').empty();
                 renderCars(cars, '#go-cars-container', trainMark);
             });
 
@@ -430,6 +431,7 @@
                 // const departureDate = $this.data('date');
                 // const departureTime = $this.data('time');
                 $('#return-seats-container').empty();
+                $('.return-car-description').empty();
                 renderCars(cars, '#return-cars-container', trainMark);
             });
 

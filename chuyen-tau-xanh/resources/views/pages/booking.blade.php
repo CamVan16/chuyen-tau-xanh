@@ -37,7 +37,7 @@
                     $container.append(`
                         <tr data-seat="${departure.seat_id}" data-train="${departure.train_mark}">
                             <td rowspan="2">
-                                Họ tên: <input type="text" required/><br />
+                                Họ tên<span style="color: red">*</span>: <input type="text" required/><br />
                                 Đối tượng: 
                                 <select name="customer-type" class="customer-type">
                                     <option value="0">Người lớn</option>
@@ -46,7 +46,7 @@
                                     <option value="15">Người cao tuổi</option>
                                     <option value="5">Đoàn viên Công Đoàn</option>
                                 </select><br />
-                                Số giấy tờ: <input class="passenger-number" type="text" required/>
+                                Số giấy tờ<span style="color: red">*</span>: <input class="passenger-number" type="text" required/>
                             </td>
                             <td><p>${departure.train_mark} ${departure.from_station} - ${departure.to_station} </p>
                                 <p>${departure.departure_date} ${departure.departure_time} </p>
@@ -76,7 +76,7 @@
                     $container.append(`
                         <tr data-seat="${ticket.seat_id}" data-train="${ticket.train_mark}">
                             <td>
-                                Họ tên: <input type="text" required/><br />
+                                Họ tên<span style="color: red">*</span>: <input type="text" required/><br />
                                 Đối tượng: 
                                 <select name="customer-type" class="customer-type">
                                     <option value="0">Người lớn</option>
@@ -85,7 +85,7 @@
                                     <option value="15">Người cao tuổi</option>
                                     <option value="5">Đoàn viên Công Đoàn</option>
                                 </select><br />
-                                Số giấy tờ: <input class="passenger-number" type="text" required/>
+                                Số giấy tờ<span style="color: red">*</span>: <input class="passenger-number" type="text" required/>
                             </td>
                             <td><p>${ticket.train_mark} ${ticket.from_station} - ${ticket.to_station} </p>
                                 <p>${ticket.departure_date} ${ticket.departure_time} </p>
@@ -248,6 +248,7 @@
             const voucherName = $(this).data('name');
             const percent = $(this).data('percent');
             const max = $(this).data('max');
+            currentRow.find('.discount-voucher').empty();
             currentRow.find('.vouchers').prepend(`
                 <p class="discount-voucher" data-percent="${percent}" data-max="${max}">${voucherName}</p>
             `);
@@ -407,27 +408,27 @@
             <div class="booker-info">
                 <h5>Thông tin người đặt vé</h5>
                 <div class="row">
-                    <label class="col-xs-4 col-md-2">Họ và tên<span style="color: red">*</span></label>
+                    <label class="col-xs-4 col-md-2">Họ và tên<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
                         <input type="text" name="fullName" required>
                     </div>
-                    <label class="col-xs-4 col-md-2">Số CCCD/Hộ chiếu<span style="color: red">*</span></label>
+                    <label class="col-xs-4 col-md-2">Số CCCD/Hộ chiếu<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
                         <input type="text" name="indentity" required>
                     </div>
                 </div>
                 <div class="row">
-                    <label class="col-xs-4 col-md-2">Email</label>
+                    <label class="col-xs-4 col-md-2">Email:</label>
                     <div class="col-xs-8 col-md-4">
                         <input type="text" name="email">
                     </div>
-                    <label class="col-xs-4 col-md-2">Xác nhận email</label>
+                    <label class="col-xs-4 col-md-2">Xác nhận email:</label>
                     <div class="col-xs-8 col-md-4">
                         <input type="text" name="emailConfirm">
                     </div>
                 </div>
                 <div class="row">
-                    <label class="col-xs-4 col-md-2">Số di động<span style="color: red">*</span></label>
+                    <label class="col-xs-4 col-md-2">Số di động<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
                         <input type="text" name="phoneNumber" required>
                     </div>
