@@ -478,7 +478,7 @@
             loadCart();
             function loadCart() {
                 var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
-                console.log(tickets);
+                // console.log(tickets);
                 const now = Date.now();
                 tickets = tickets.filter(ticket => {
                     const elapsed = now - ticket.start_time;
@@ -497,8 +497,8 @@
                         return false;
                     }
                 });
-                updateCart();
                 localStorage.setItem('ticket-pocket', JSON.stringify(tickets));
+                updateCart();
             }
 
             function addTicket(ticket) {

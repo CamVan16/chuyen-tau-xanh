@@ -133,8 +133,8 @@
                     return false;
                 }
             });
-            renderTickets();
             localStorage.setItem('ticket-pocket', JSON.stringify(tickets));
+            renderTickets();
         }
         loadCart();
         
