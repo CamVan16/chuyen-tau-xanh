@@ -11,8 +11,8 @@ class Seats extends Migration
         Schema::create('seats', function (Blueprint $table) {
             // $table->integer('id')->primary();
             $table->id();
-            $table->integer('car_id');
-            $table->integer('seat_type_id');
+            $table->unsignedBigInteger('car_id');
+            $table->unsignedBigInteger('seat_type_id');
             $table->string('seat_type');
             $table->integer('seat_index');
             $table->integer('seat_status');

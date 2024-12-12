@@ -222,7 +222,7 @@
                 <div class="payment-icons">
                     <img src="/visa.png" alt="Visa">
                     <img src="/mastercard.png" alt="Mastercard">
-                    <img src="/JCB.png" alt="JCB">
+                    <img src="/vnpay.png" alt="VNPay">
                     <img src="/zalopay.png" alt="Zalopay">
                     <img src="/momo.png" alt="Momo">
                 </div>
@@ -246,7 +246,7 @@
         const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;
         document.querySelector('.date').textContent = formattedDate;
     </script>
-@yield('scripts')
+    @yield('scripts')
 </body>
 
 </html>

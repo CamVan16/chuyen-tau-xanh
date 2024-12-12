@@ -11,7 +11,7 @@ class Cars extends Migration
         Schema::create('cars', function (Blueprint $table) {
             // $table->integer('id')->primary();
             $table->id();
-            $table->integer('train_id');
+            $table->unsignedBigInteger('train_id');
             $table->integer('car_index');
             $table->string('car_name');
             $table->string('car_code');

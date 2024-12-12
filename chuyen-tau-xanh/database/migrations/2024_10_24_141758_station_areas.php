@@ -9,7 +9,8 @@ class StationAreas extends Migration
     public function up()
     {
         Schema::create('station_areas', function (Blueprint $table) {
-            $table->integer('id');
+            // $table->integer('id');
+            $table->id();
             $table->string('station_code');
             $table->string('station_name');
             $table->integer('km');

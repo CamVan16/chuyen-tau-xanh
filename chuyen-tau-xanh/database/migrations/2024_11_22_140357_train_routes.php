@@ -9,8 +9,8 @@ class TrainRoutes extends Migration
     public function up(): void
     {
         Schema::create('train_routes', function (Blueprint $table) {
-            $table->integer('train_id');
-            $table->integer('route_id');
+            $table->unsignedBigInteger('train_id');
+            $table->unsignedBigInteger('route_id');
             $table->integer('train_index');
             $table->timestamps();
 
