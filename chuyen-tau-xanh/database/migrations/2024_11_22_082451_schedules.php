@@ -10,7 +10,7 @@ class Schedules extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->integer('train_id');
+            $table->unsignedBigInteger('train_id');
             $table->string('train_mark');
             $table->date('day_start');
             $table->time('time_start');

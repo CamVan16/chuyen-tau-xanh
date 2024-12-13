@@ -23,6 +23,7 @@ class Ticket extends Model
         'schedule_id',
         'price',
         'discount_price',
+        'ticket_status'
     ];
 
     public function booking()

@@ -9,8 +9,8 @@ class RouteStations extends Migration
     public function up()
     {
         Schema::create('route_stations', function (Blueprint $table) {
-            $table->integer('route_id');
-            $table->integer('station_id');
+            $table->unsignedBigInteger('route_id');
+            $table->unsignedBigInteger('station_id');
             $table->string('station_code');
             $table->string('station_name');
             $table->integer('km');

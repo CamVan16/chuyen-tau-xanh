@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\VoucherRequest;
+use App\Http\Requests\CarRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class VoucherCrudController
+ * Class CarCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class VoucherCrudController extends CrudController
+class CarCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class VoucherCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Voucher::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/voucher');
-        CRUD::setEntityNameStrings('voucher', 'vouchers');
+        CRUD::setModel(\App\Models\Car::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/car');
+        CRUD::setEntityNameStrings('car', 'cars');
     }
 
     /**
@@ -48,79 +48,59 @@ class VoucherCrudController extends CrudController
 
         $this->crud->addColumn([
             'name' => 'id',
-            'label' => "Mã Voucher",
+            'label' => "Mã Xe",
             'type' => 'Number',
             'display' => function ($value) {
-                return (string) $value;  // Chuyển ID voucher thành chuỗi
+                return (string) $value;  // Chuyển ID xe thành chuỗi
             }
         ]);
 
         $this->crud->addColumn([
-            'name' => 'code',
-            'label' => "Mã code",
-            'type' => 'Text',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'name',
-            'label' => "Tên Voucher",
-            'type' => 'Text',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'min_price_order',
-            'label' => "Giá trị đơn hàng tối thiểu",
-            'type' => 'Number',
-            'decimals' => 2,  // Định dạng số thập phân
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'percent',
-            'label' => "Phần trăm giảm giá",
+            'name' => 'train_id',
+            'label' => "Mã Tàu",
             'type' => 'Number',
         ]);
 
         $this->crud->addColumn([
-            'name' => 'max_price_discount',
-            'label' => "Giảm giá tối đa",
-            'type' => 'Number',
-            'decimals' => 2,  // Định dạng số thập phân
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'type',
-            'label' => "Loại voucher",
-            'type' => 'Text',
-            'display' => function ($value) {
-                // Thực hiện chuyển đổi nếu bạn muốn hiển thị tên loại thay vì số
-                return $value == 1 ? 'Giảm theo phần trăm' : 'Giảm theo giá trị';
-            }
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'from_date',
-            'label' => "Ngày bắt đầu",
-            'type' => 'Date',
-            'format' => 'd/m/Y',  // Định dạng ngày theo yêu cầu
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'to_date',
-            'label' => "Ngày kết thúc",
-            'type' => 'Date',
-            'format' => 'd/m/Y',  // Định dạng ngày theo yêu cầu
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'quantity',
-            'label' => "Số lượng voucher",
+            'name' => 'car_index',
+            'label' => "Số hiệu toa",
             'type' => 'Number',
         ]);
 
         $this->crud->addColumn([
-            'name' => 'description',
-            'label' => "Mô tả",
+            'name' => 'car_name',
+            'label' => "Tên toa xe",
             'type' => 'Text',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'car_code',
+            'label' => "Mã toa xe",
+            'type' => 'Text',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'car_layout',
+            'label' => "Bố trí toa",
+            'type' => 'Number',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'car_description',
+            'label' => "Mô tả toa",
+            'type' => 'Text',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'num_of_seats',
+            'label' => "Số ghế",
+            'type' => 'Number',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'num_of_available_seats',
+            'label' => "Số ghế còn trống",
+            'type' => 'Number',
         ]);
     }
 
@@ -132,7 +112,7 @@ class VoucherCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(VoucherRequest::class);
+        CRUD::setValidation(CarRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

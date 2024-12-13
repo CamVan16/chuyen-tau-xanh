@@ -9,7 +9,7 @@ class Bookings extends Migration
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->string('id', 6)->primary();
+            $table->string('id', 8)->primary();
             $table->unsignedBigInteger('customer_id');
             $table->double('discount_price')->nullable();
             $table->double('total_price')->nullable();

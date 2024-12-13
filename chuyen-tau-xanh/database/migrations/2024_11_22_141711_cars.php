@@ -9,8 +9,9 @@ class Cars extends Migration
     public function up()
     {
         Schema::create('cars', function (Blueprint $table) {
-            $table->integer('id')->primary();
-            $table->integer('train_id');
+            // $table->integer('id')->primary();
+            $table->id();
+            $table->unsignedBigInteger('train_id');
             $table->integer('car_index');
             $table->string('car_name');
             $table->string('car_code');

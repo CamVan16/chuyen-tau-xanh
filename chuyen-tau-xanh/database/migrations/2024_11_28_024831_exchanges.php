@@ -10,8 +10,8 @@ class Exchanges extends Migration
     {
         Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('old_ticket_id');
-            $table->unsignedBigInteger('new_ticket_id');
+            $table->string('old_ticket_id');
+            $table->string('new_ticket_id');
             $table->string('booking_id');
             $table->unsignedBigInteger('customer_id');
             $table->double('old_price');
