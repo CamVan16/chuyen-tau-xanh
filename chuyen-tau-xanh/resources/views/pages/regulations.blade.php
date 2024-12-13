@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="text-primary">Quy định sử dụng dịch vụ</h2>
+        <h2 class="text-primary">QUY ĐỊNH SỬ DỤNG DỊCH VỤ</h2>
         <div class="alert alert-info mt-4">
             <strong>Chú ý:</strong> Bạn cần đọc kỹ các quy định dưới đây trước khi sử dụng dịch vụ.
         </div>
@@ -24,7 +24,8 @@
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
                             - Vé mua qua hệ thống của chúng tôi chỉ có hiệu lực khi được thanh toán đầy đủ. <br />
-                            - Vé chỉ có giá trị khi được xuất trình tại thời điểm lên tàu, vé không thể chuyển nhượng cho người
+                            - Vé chỉ có giá trị khi được xuất trình tại thời điểm lên tàu, vé không thể chuyển nhượng cho
+                            người
                             khác. Hành khách phải có mặt tại ga tàu ít nhất 30 phút trước giờ khởi hành.
                         </div>
                     </div>
@@ -42,13 +43,15 @@
                     </div>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="card-body">
-                            - Quý khách có thể đặt chỗ cho tối đa 10 khách (không bao gồm trẻ sơ sinh) trong mỗi lần thực hiện. <br />
+                            - Quý khách có thể đặt chỗ cho tối đa 10 khách (không bao gồm trẻ sơ sinh) trong mỗi lần thực
+                            hiện. <br />
                             - Trẻ em dưới 10 tuổi tại thời điểm khởi hành phải được đặt chỗ đi cùng người lớn.<br />
                             - Trẻ em dưới 6 tuổi: Miễn vé và sử dụng chung chỗ của người lớn đi kèm.<br />
                             - Trẻ em từ 6 đến dưới 10 tuổi: Giảm 25% giá vé<br />
                             - Người cao tuổi từ 60 tuổi trở lên: Giảm 15% giá vé.<br />
                             - Sinh viên: Giảm 10% giá vé.<br />
-                            - Giá vé trên Website chỉ áp dụng cho các giao dịch mua vé trên Website tại thời điểm mua vé.<br />
+                            - Giá vé trên Website chỉ áp dụng cho các giao dịch mua vé trên Website tại thời điểm mua
+                            vé.<br />
                             - Đặt chỗ của Quý khách sẽ không được đảm bảo đến khi thanh toán thành công.
                         </div>
                     </div>
@@ -66,9 +69,12 @@
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         <div class="card-body">
-                            - Hành khách có quyền trả lại vé, đổi vé trước giờ tàu chạy. Doanh nghiệp quy định cụ thể mức khấu trừ tương ứng
-                            với việc trả lại vé, đổi vé và các nội dung khác có liên quan đến việc trả lại vé, đổi vé của hành khách. <br />
-                            - Quý khách cần thực hiện yêu cầu hoàn vé qua hệ thống trong vòng 48 giờ trước giờ khởi hành. Mọi yêu cầu hoàn
+                            - Hành khách có quyền trả lại vé, đổi vé trước giờ tàu chạy. Doanh nghiệp quy định cụ thể mức
+                            khấu trừ tương ứng
+                            với việc trả lại vé, đổi vé và các nội dung khác có liên quan đến việc trả lại vé, đổi vé của
+                            hành khách. <br />
+                            - Quý khách cần thực hiện yêu cầu hoàn vé qua hệ thống trong vòng 48 giờ trước giờ khởi hành.
+                            Mọi yêu cầu hoàn
                             vé sẽ được xử lý trong vòng 3-5 ngày làm việc.
                         </div>
                     </div>
@@ -86,7 +92,8 @@
                     </div>
                     <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
                         <div class="card-body">
-                            Chúng tôi cam kết bảo mật thông tin cá nhân của khách hàng và không chia sẻ với bất kỳ bên thứ ba nào ngoài phạm
+                            Chúng tôi cam kết bảo mật thông tin cá nhân của khách hàng và không chia sẻ với bất kỳ bên thứ
+                            ba nào ngoài phạm
                             vi của dịch vụ. Mọi thông tin thu thập chỉ được sử dụng để cung cấp dịch vụ cho khách hàng.
                         </div>
                     </div>
@@ -104,8 +111,10 @@
                     </div>
                     <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
                         <div class="card-body">
-                            Khách hàng có thể mang theo hành lý cá nhân khi sử dụng dịch vụ. Tuy nhiên, không được phép mang các vật phẩm
-                            nguy hiểm, dễ cháy nổ, hoặc các vật dụng vi phạm pháp luật. Đối với hành lý quá cỡ, vui lòng tham khảo thêm quy
+                            Khách hàng có thể mang theo hành lý cá nhân khi sử dụng dịch vụ. Tuy nhiên, không được phép mang
+                            các vật phẩm
+                            nguy hiểm, dễ cháy nổ, hoặc các vật dụng vi phạm pháp luật. Đối với hành lý quá cỡ, vui lòng
+                            tham khảo thêm quy
                             định tại quầy hỗ trợ.
                         </div>
                     </div>
@@ -123,8 +132,10 @@
                     </div>
                     <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordion">
                         <div class="card-body">
-                            Trong trường hợp có sự cố hoặc bất khả kháng, công ty có quyền hủy lịch trình hoặc thay đổi giờ khởi hành. Chúng
-                            tôi sẽ thông báo đến khách hàng càng sớm càng tốt và hỗ trợ đổi lịch trình hoặc hoàn vé tùy vào tình hình.
+                            Trong trường hợp có sự cố hoặc bất khả kháng, công ty có quyền hủy lịch trình hoặc thay đổi giờ
+                            khởi hành. Chúng
+                            tôi sẽ thông báo đến khách hàng càng sớm càng tốt và hỗ trợ đổi lịch trình hoặc hoàn vé tùy vào
+                            tình hình.
                         </div>
                     </div>
                 </div>
@@ -141,7 +152,8 @@
                     </div>
                     <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordion">
                         <div class="card-body">
-                            Chúng tôi có quyền thay đổi các quy định và điều khoản sử dụng dịch vụ mà không thông báo trước. Mọi thay đổi sẽ
+                            Chúng tôi có quyền thay đổi các quy định và điều khoản sử dụng dịch vụ mà không thông báo trước.
+                            Mọi thay đổi sẽ
                             được công khai trên website chính thức của chúng tôi.
                         </div>
                     </div>

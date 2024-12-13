@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h3 class="text-center font-weight-bold mb-4">Thông tin hành trình</h3>
+    <div class="container mt-4">
+        <!-- Tiêu đề trang -->
+        <h3 class="text-center mb-4 text-primary font-weight-bold">Thông tin hành trình</h3>
 
         <!-- Thông tin tàu, ga đi, ga đến -->
         <div class="row mb-4">
@@ -33,9 +34,9 @@
         <hr>
 
         <!-- Danh sách các ga trong hành trình -->
-        <h4 class="mb-4">Các ga trong hành trình</h4>
-        <table class="table table-bordered table-striped">
-            <thead class="table-primary">
+        <h4 class="mb-4 text-secondary">Các ga trong hành trình</h4>
+        <table class="table table-striped table-bordered">
+            <thead class="bg-primary text-white">
                 <tr>
                     <th>STT</th>
                     <th>Ga</th>
@@ -85,9 +86,9 @@
         <hr>
 
         <!-- Bảng giá vé -->
-        <h4 class="mb-4">Bảng giá vé</h4>
-        <table class="table table-bordered table-striped">
-            <thead class="table-secondary">
+        <h4 class="mb-4 text-secondary">Bảng giá vé</h4>
+        <table class="table table-striped table-bordered">
+            <thead class="bg-primary text-white">
                 <tr>
                     <th>STT</th>
                     <th>Mã loại chỗ</th>
