@@ -48,7 +48,7 @@ class TicketCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'id',
             'label' => "Mã vé",
-            'type' => 'Number',
+            'type' => 'Text',
         ]);
         $this->crud->addColumn([
             'name' => 'booking_id',
@@ -85,6 +85,11 @@ class TicketCrudController extends CrudController
             'label' => "Giảm giá",
             'type' => 'Number',
             'decimal' => 2,
+        ]);
+        $this->crud->addColumn([
+            'name' => 'ticket_status',
+            'label' => "Trạng thái vé",
+            'type' => 'Number',
         ]);
     }
 
@@ -146,12 +151,12 @@ class TicketCrudController extends CrudController
         $this->crud->addField([
             'name' => 'ticket_status',
             'label' => "Trạng thái vé",
-            'type' => 'Number',
+            'type' => 'select_from_array',
             'options' => [
                 -1 => 'Không hiệu lực',
                 1 => 'Hiệu lực',
             ],
-            'default' => 0,
+            'default' => 1,
         ]);
     }
 
