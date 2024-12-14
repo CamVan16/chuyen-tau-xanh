@@ -14,6 +14,7 @@ use App\Http\Controllers\RouteStationController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\ZaloPayController;
 use App\Http\Controllers\MomoController;
+use App\Http\Controllers\RegulationController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\SeatController;
 
@@ -39,11 +40,9 @@ Route::match(['get', 'post'], '/doi-ve/chon-ve-doi', [ExchangeController::class,
 Route::get('/doi-ve/chon-ve-doi/{selectedTicketId}', [ExchangeController::class, 'search'])->name('exchange.search');
 Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
 Route::post('/doi-ve/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
-Route::get('/doi-ve/step-2', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
+Route::get('/doi-ve/step-2/{selectedTicketId}', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
 Route::get('/doi-ve/thanh-cong/{exchange_id}', [ExchangeController::class, 'success'])->name('exchange.success');
-Route::get('/quy-dinh', function () {
-    return view('pages.regulations');
-});
+Route::get('/quy-dinh', [RegulationController::class, 'index'])->name('regulations.index');
 Route::get('/huong-dan', function () {
     return view('pages.guides');
 });
@@ -88,7 +87,7 @@ Route::get('/payment/vnpay/callback', [VNPayController::class, 'handleVNPayRespo
 Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->name('zalopay.process');
 Route::get('/tim-cho', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
 
-// Momo Routes 
+// Momo Routes
 Route::post('/payment/momo', [MomoController::class, 'processPayment'])->name('payment.momo');
 Route::get('/payment/momo/complete', [MomoController::class, 'completePayment'])->name('payment.momoComplete');
 Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('payment.momoIPN');

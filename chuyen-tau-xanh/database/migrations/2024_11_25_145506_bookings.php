@@ -11,11 +11,11 @@ class Bookings extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->string('id', 8)->primary();
             $table->unsignedBigInteger('customer_id');
-            $table->double('discount_price');
-            $table->double('total_price');
+            $table->double('discount_price')->nullable();
+            $table->double('total_price')->nullable();
             $table->dateTime('booked_time');
             $table->integer('booking_status');
-            $table->string('payment_method');
+            $table->string('payment_method')->nullable();
             $table->timestamps();
 
             $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');

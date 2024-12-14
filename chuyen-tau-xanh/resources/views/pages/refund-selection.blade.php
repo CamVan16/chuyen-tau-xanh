@@ -98,10 +98,6 @@
                                                 <span class="badge badge-success">Đã đổi vé</span>
                                             @break
 
-                                            @case('confirmed')
-                                                <span class="badge badge-info">Đã xác nhận đổi vé</span>
-                                            @break
-
                                             @case('pending')
                                                 <span class="badge badge-warning">Đang chờ xử lý</span>
                                             @break
@@ -114,10 +110,6 @@
                                         @switch($ticket->refund->refund_status)
                                             @case('completed')
                                                 <span class="badge badge-success">Đã trả vé</span>
-                                            @break
-
-                                            @case('confirmed')
-                                                <span class="badge badge-info">Đã xác nhận trả vé</span>
                                             @break
 
                                             @case('pending')
@@ -135,8 +127,8 @@
                                 <td>
                                     <input type="checkbox" name="ticket_array[]" value="{{ $ticket->id }}"
                                         id="ticket_{{ $ticket->id }}" class="ticket-checkbox"
-                                        @if ($ticket->exchange?->exchange_status === 'completed' || $ticket->exchange?->exchange_status === 'confirmed') disabled
-                                        @elseif ($ticket->refund?->refund_status === 'completed' || $ticket->refund?->refund_status === 'confirmed')
+                                        @if ($ticket->exchange?->exchange_status === 'completed') disabled
+                                        @elseif ($ticket->refund?->refund_status === 'completed')
                                             disabled @endif />
                                 </td>
                             </tr>

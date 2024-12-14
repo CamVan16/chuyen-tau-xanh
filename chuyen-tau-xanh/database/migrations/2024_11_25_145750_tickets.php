@@ -18,7 +18,7 @@ class Tickets extends Migration
             $table->double('price');
             $table->double('discount_price')->nullable();
             $table->integer('ticket_status');
-            // 1: có hiệu lực, -1: ko 
+            // 1: có hiệu lực, -1: ko
             $table->timestamps();
 
             // $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');

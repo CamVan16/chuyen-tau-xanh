@@ -15,6 +15,10 @@ class Ticket extends Model
     use CrudTrait;
     use HasFactory;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'booking_id',
         'customer_id',
@@ -25,6 +29,18 @@ class Ticket extends Model
         'discount_price',
         'ticket_status'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = strtoupper(bin2hex(random_bytes(4)));
+            }
+        });
+    }
+
 
     public function booking()
     {

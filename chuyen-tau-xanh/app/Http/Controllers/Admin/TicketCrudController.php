@@ -143,6 +143,16 @@ class TicketCrudController extends CrudController
                 'min' => '0',
             ],
         ]);
+        $this->crud->addField([
+            'name' => 'ticket_status',
+            'label' => "Trạng thái vé",
+            'type' => 'Number',
+            'options' => [
+                -1 => 'Không hiệu lực',
+                1 => 'Hiệu lực',
+            ],
+            'default' => 0,
+        ]);
     }
 
     /**
