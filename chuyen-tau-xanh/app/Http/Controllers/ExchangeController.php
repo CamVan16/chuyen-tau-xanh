@@ -432,7 +432,7 @@ class ExchangeController extends Controller
 
         $newTicket = Ticket::where('id', $request->new_ticket_id)->first();
 
-        $newPrice = $newTicket->price * (1 - $newTicket->discount_price);
+        $newPrice = $newTicket->price - $newTicket->discount_price;
         $scheduleStart = $oldTicket->schedule->day_start . ' ' . $oldTicket->schedule->time_start;
         $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
         $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
@@ -443,7 +443,7 @@ class ExchangeController extends Controller
         } else {
             $exchangeFee = 1;
         }
-        $oldPrice = $newTicket->price * (1 - $oldTicket->discount_price - $exchangeFee);
+        $oldPrice = $newTicket->price * (1 - $exchangeFee) - $oldTicket->discount_price;
         $additional_price = max(0, $newPrice - $oldPrice);
         $exchangeDate = Carbon::now();
 

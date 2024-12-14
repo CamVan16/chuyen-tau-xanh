@@ -87,13 +87,13 @@
                                     <p><strong>Toa:</strong> {{ $ticket?->schedule?->car_name }} - Ghế:
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
+                                <td>{{ number_format($ticket->price - $ticket->discount_price, 0, ',', '.') }}</td>
                                 @if ($ticket->exchange_fee === 1)
                                     <td>X</td>
                                     <td class="exchange-return">X</td>
                                 @else
                                     <td>{{ number_format($ticket->exchange_fee * $ticket->price, 0, ',', '.') }}</td>
-                                    <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - $ticket->exchange_fee), 0, ',', '.') }}
+                                    <td>{{ number_format($ticket->price * (1 - $ticket->exchange_fee) - $ticket->discount_price, 0, ',', '.') }}
                                 @endif
                                 </td>
                                 <td>

@@ -47,6 +47,26 @@
             max-height: 80px;
         }
 
+        .banner-container {
+            display: flex;
+            justify-content: space-between;
+            /* Căn giữa hai banner */
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .banner-left,
+        .banner-right {
+            width: 15%;
+        }
+
+        .banner-left img,
+        .banner-right img {
+            width: 80%;
+            height: auto;
+            margin: 20px 20px;
+        }
+
         .header-top .date {
             font-size: 16px;
         }
@@ -185,8 +205,16 @@
         </nav>
     </header>
 
-    <div class="container mt-3">
-        @yield('content')
+    <div class="banner-container">
+        <div class="banner-left">
+            <img src="/banner1.png" alt="Banner Left">
+        </div>
+        <div class="container mt-3">
+            @yield('content')
+        </div>
+        <div class="banner-right">
+            <img src="/banner2.png" alt="Banner Right">
+        </div>
     </div>
 
     <!-- Footer -->
