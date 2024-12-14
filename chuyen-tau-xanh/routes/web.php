@@ -17,6 +17,7 @@ use App\Http\Controllers\MomoController;
 use App\Http\Controllers\RegulationController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/trains/results', [StationAreaController::class, 'search']);
@@ -85,12 +86,14 @@ Route::get('/payment/vnpay/callback', [VNPayController::class, 'handleVNPayRespo
 
 // ZaloPay Routes
 Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->name('zalopay.process');
-Route::get('/tim-cho', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
+Route::get('/payment/zalopay/callback', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
 
-// Momo Routes
+// Momo Routes 
 Route::post('/payment/momo', [MomoController::class, 'processPayment'])->name('payment.momo');
 Route::get('/payment/momo/complete', [MomoController::class, 'completePayment'])->name('payment.momoComplete');
 Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('payment.momoIPN');
 
 Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers'])->name('vouchers.index');
 Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouchers.show');
+
+Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo'); 

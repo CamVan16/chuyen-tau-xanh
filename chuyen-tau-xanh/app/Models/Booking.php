@@ -31,7 +31,7 @@ class Booking extends Model
 
         static::creating(function ($model) {
             if (empty($model->id)) {
-                $model->id = strtoupper(bin2hex(random_bytes(3)));
+                $model->id = strtoupper(bin2hex(random_bytes(4)));
             }
         });
     }

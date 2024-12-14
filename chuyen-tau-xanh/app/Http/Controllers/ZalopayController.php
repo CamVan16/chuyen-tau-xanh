@@ -13,16 +13,17 @@ class ZaloPayController extends Controller
         "endpoint" => "https://sb-openapi.zalopay.vn/v2/create"
     ];
 
-    // Xử lý thanh toán ZaloPay
     public function processPayment(Request $request)
     {
+        $booking = $request->input('booking-info');
         $amount = $request->input('amount');
         $transID = $request->input('order_id');
-        $callbackUrl = route('zalopay.response');
+        $callbackUrl = route('zalopay.response', [
+            'booking_info' => base64_encode(json_encode($booking)), 
+        ]);
 
         $embeddata = json_encode(['redirecturl' => $callbackUrl]);
         $items = '[]';
-
         $order = [
             "app_id" => $this->config["app_id"],
             "app_time" => round(microtime(true) * 1000),
@@ -34,11 +35,9 @@ class ZaloPayController extends Controller
             "description" => "Payment for the order #$transID",
             "callback_url" => $callbackUrl
         ];
-
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
             . "|" . $order["app_time"] . "|" . $order["embed_data"] . "|" . $order["item"];
         $order["mac"] = hash_hmac("sha256", $data, $this->config["key1"]);
-
         $context = stream_context_create([
             "http" => [
                 "header" => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -53,23 +52,27 @@ class ZaloPayController extends Controller
         return redirect($result['order_url']);
     }
 
-    // Xử lý phản hồi từ ZaloPay
     public function handleResponse(Request $request)
     {
-        $dataStr = $request->input('data');
-        $reqMac = $request->input('mac');
+        
+        $bookingEncoded = $request->query('booking_info');
+        $amount = $request->query('amount');
+        $appTransId = $request->query('apptransid');
+        $status = $request->query('status');
 
-        $mac = hash_hmac("sha256", $dataStr, $this->config["key2"]);
-
-        if ($reqMac !== $mac) {
-            return redirect('/')->with('error', 'Có lỗi xảy ra. Vui lòng thử lại!');
-        }
-
-        $dataJson = json_decode($dataStr, true);
-        if ($dataJson['return_code'] == 1) {
-            return redirect('/tim-cho')->with('success', 'Thanh toán thành công!');
-        } else {
-            return redirect('/tim-cho')->with('error', 'Thanh toán thất bại!');
+        if ($status == "1") {
+            return redirect()->route('transaction.showInfo',[
+                'status' => 'success',
+                'payment_method' => 'zalopay',
+                'booking' => $bookingEncoded,
+            ]);
+        } else { 
+            return redirect()->route('transaction.showInfo',[
+                'status' => 'error',
+                'payment_method' => 'zalopay',
+                'booking' => $bookingEncoded,
+            ]);
         }
     }
+
 }

@@ -8,6 +8,8 @@ class VNPayController extends Controller
 {
     public function processPayment(Request $request)
     {
+        $booking = $request->input('booking-info');
+        session()->flash('booking', $booking);
         $vnp_TxnRef = $request->input('order_id');
         $vnp_OrderInfo = $request->input('order_desc');
         $vnp_OrderType = $request->input('order_type');
@@ -18,7 +20,10 @@ class VNPayController extends Controller
 
         $vnp_TmnCode = "5037O4BA";
         $vnp_HashSecret = "LQLTG6DHBF6Z0ZAVE5XXA9ZNE8WV7PL7";
-        $vnp_Returnurl = "http://localhost:8000";
+        // $encodedData = urlencode($booking);
+        // $vnp_Returnurl = "http://localhost:8000/payment/vnpay/callback?booking_info=" . $encodedData;
+        $vnp_Returnurl = "http://localhost:8000/payment/vnpay/callback";
+
 
         $inputData = array(
             "vnp_Version" => "2.1.0",
@@ -64,12 +69,21 @@ class VNPayController extends Controller
 
     public function handleVNPayResponse(Request $request)
     {
+        // $bookingEncoded = base64_encode(json_encode($request->query('booking_info')));
+        $booking = session('booking');
+        // dd($booking);
         if ($request->get('vnp_ResponseCode') === "00") {
-            $response['message'] = 'Thanh toán thành công!';
+            return redirect()->route('transaction.showInfo',[
+                'status' => 'success',
+                'payment_method' => 'vnpay',
+                'booking' => base64_encode(json_encode($booking)),
+            ]);
         } else {
-            $response['error'] = 'Thanh toán thất bại!';
+            return redirect()->route('transaction.showInfo',[
+                'status' => 'error',
+                'payment_method' => 'vnpay',
+                'booking' => base64_encode(json_encode($booking)),
+            ]);
         }
-
-        return view('pages.vnpay_return', compact('response'));
     }
 }

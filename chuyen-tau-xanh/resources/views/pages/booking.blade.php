@@ -36,8 +36,8 @@
                     const { departure, return: returnTicket } = ticket;
                     $container.append(`
                         <tr data-seat="${departure.seat_id}" data-train="${departure.train_mark}">
-                            <td rowspan="2">
-                                Họ tên<span style="color: red">*</span>: <input type="text" required/><br />
+                            <td class="passenger-info" rowspan="2">
+                                Họ tên<span style="color: red">*</span>: <input type="text" class="passenger-name" required/><br />
                                 Đối tượng: 
                                 <select name="customer-type" class="customer-type">
                                     <option value="0">Người lớn</option>
@@ -75,8 +75,8 @@
                 } else {
                     $container.append(`
                         <tr data-seat="${ticket.seat_id}" data-train="${ticket.train_mark}">
-                            <td>
-                                Họ tên<span style="color: red">*</span>: <input type="text" required/><br />
+                            <td class="passenger-info">
+                                Họ tên<span style="color: red">*</span>: <input type="text" class="passenger-name" required/><br />
                                 Đối tượng: 
                                 <select name="customer-type" class="customer-type">
                                     <option value="0">Người lớn</option>
@@ -143,9 +143,19 @@
                         cart = cart.filter(item => !(item.seat_id === ticket.seat_id && item.train_mark === ticket.train_mark));
                         localStorage.setItem('ticket-pocket', JSON.stringify(cart));
                         timers.delete({id: ticket.seat_id, train: ticket.train_mark}); 
-                        $('table tbody tr').filter(function () {
+                        const $row = $('table tbody tr').filter(function () {
                             return $(this).data('seat') === ticket.seat_id && $(this).data('train') === ticket.train_mark;
-                        }).remove();
+                        }).first();
+                        const $passengerCell = $row.find('.passenger-info');
+                        if ($passengerCell.length === 0) {
+                            $row.prev('tr').find('.passenger-info').attr('rowspan', '1');
+                        } else {
+                            if ($passengerCell.attr('rowspan') === '2') {
+                                $passengerCell.attr('rowspan','1');
+                                $row.next('tr').prepend($passengerCell);
+                            }
+                        }
+                        $row.remove();
                         updateTotalPrice();
                     }, remaining); 
                     timers.set({id: ticket.seat_id, train: ticket.train_mark}, timer); 
@@ -339,29 +349,63 @@
                 $step1Booker.find('input').each(function () {
                     $(this).attr('readonly', true); 
                 });
-                // const step1Payment = $('#step-1').find('#payment_method').val();
-                // const $payment = $('<p></p>')
-                // if (step1Payment === 'vnpay') {
-                //     $payment.text('Thanh toán trực tuyến qua cổng thanh toán VNPAY');
-                // } else if (step1Payment === 'zalopay') {
-                //     $payment.text('Thanh toán trực tuyến qua ví điện tử ZALOPAY');
-                // } else if (step1Payment ==='momo') {
-                //     $payment.text('Thanh toán trực tuyến qua ví điện tử MOMO');
-                // }
 
                 const $infoContainer = $('#confirmation-info');
                 $infoContainer.empty(); 
                 $infoContainer.append($step1Booker, $step1Content);
             }
-            $('.step').hide();
-            $('#' + nextStep).show();
+            
             if (nextStep === 'step-3') {
                 const amount = parseInt($('#step-1 .total-price').text().replace(/,/g, '')) || 0;
                 const orderId = generateOrderId();
-
+                const booker = {
+                    name: $('#step-1 .booker-info .booker-name').val(),
+                    email: $('#step-1 .booker-info .booker-email').val(),
+                    citizen: $('#step-1 .booker-info .booker-citizen').val(),
+                    phone: $('#step-1 .booker-info .booker-phone').val(),
+                };
+                var tickets = [];
+                $('#step-1 table tbody tr').each(function() {
+                    var $passengerCell = $(this).find('.passenger-info');
+                    if ($passengerCell.length === 0) {
+                        $passengerCell = $(this).prev('tr').find('.passenger-info');
+                    }
+                    var cart = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
+                    console.log('cart', cart);
+                    const ticket = cart.find(item => (item.seat_id === $(this).data('seat') && item.train_mark === $(this).data('train')));
+                    console.log('ticket', ticket.train_mark);
+                    const ticketPrice = parseInt($(this).find('.money').text().replace(/,/g, '')) || 0;
+                    const ticketDiscount = (parseInt($(this).find('.ticket-price').text().replace(/,/g, '')) || 0) - ticketPrice;
+                    tickets.push({
+                        passenger_name: $passengerCell.find('.passenger-name').val(),
+                        customer_type: $passengerCell.find('.customer-type option:selected').text(),
+                        passenger_citizen: $passengerCell.find('.passenger-number').val(),
+                        ticket_price: ticketPrice,
+                        discount: ticketDiscount,
+                        train_id: ticket.train_id,
+                        train_mark: ticket.train_mark,
+                        day_start: ticket.departure_date,
+                        time_start: ticket.departure_time,
+                        day_end: ticket.arrival_date,
+                        time_end: ticket.arrival_time,
+                        station_start: ticket.from_station,
+                        station_end: ticket.to_station,
+                        seat_number: ticket.seat_index,
+                        car_name: ticket.car
+                    })
+                })
+                const booking = {
+                    booker,
+                    tickets,
+                    amount
+                }
                 $('#step-3 #order_id').val(orderId);
                 $('#step-3 #amount').val(amount);
+                $('#step-3 #booking-info').val(JSON.stringify(booking));
             }
+
+            $('.step').hide();
+            $('#' + nextStep).show();
         });
 
         $('.back-btn').on('click', function () {
@@ -410,45 +454,30 @@
                 <div class="row">
                     <label class="col-xs-4 col-md-2">Họ và tên<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
-                        <input type="text" name="fullName" required>
+                        <input type="text" name="fullName" class="booker-name" required>
                     </div>
                     <label class="col-xs-4 col-md-2">Số CCCD/Hộ chiếu<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
-                        <input type="text" name="indentity" required>
+                        <input type="text" name="indentity" class="booker-citizen" required>
                     </div>
                 </div>
                 <div class="row">
                     <label class="col-xs-4 col-md-2">Email:</label>
                     <div class="col-xs-8 col-md-4">
-                        <input type="text" name="email">
+                        <input type="text" name="email" class="booker-email">
                     </div>
-                    <label class="col-xs-4 col-md-2">Xác nhận email:</label>
-                    <div class="col-xs-8 col-md-4">
-                        <input type="text" name="emailConfirm">
-                    </div>
-                </div>
-                <div class="row">
                     <label class="col-xs-4 col-md-2">Số di động<span style="color: red">*</span>:</label>
                     <div class="col-xs-8 col-md-4">
-                        <input type="text" name="phoneNumber" required>
+                        <input type="text" name="phoneNumber" class="booker-phone" required>
                     </div>
                 </div>
             </div>
-            <!-- <div>
-                <h5>Phương thức thanh toán</h5>
-                <select name="payment_method" id="payment_method" class="form-select" required>
-                    <option value="vnpay">VNPay</option>
-                    <option value="zalopay">ZaloPay</option>
-                    <option value="momo">Momo</option>
-                </select>
-            </div> -->
             <button type="button" class="btn btn-primary next-btn" data-next="step-2">Tiếp tục</button>
         </div>
 
         <div class="step" id="step-2" style="display:none;">
             <h3>Xác nhận thông tin</h3>
             <div id="confirmation-info">
-                <!-- Thông tin sẽ được hiển thị từ dữ liệu nhập -->
             </div>
             <button type="button" class="btn btn-secondary back-btn" data-prev="step-1">Quay lại</button>
             <button type="button" class="btn btn-primary next-btn" data-next="step-3">Xác nhận</button>
@@ -497,6 +526,7 @@
                         <option value="momo">Momo</option>
                     </select>
                 </div>
+                <input type="hidden" name="booking-info" id="booking-info">
                 <button type="button" class="btn btn-secondary back-btn" data-prev="step-2">Quay lại</button>
                 <button type="submit" class="btn btn-primary">Thanh Toán</button>
             </form>

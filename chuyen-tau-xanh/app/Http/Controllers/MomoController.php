@@ -35,8 +35,8 @@ class MomoController extends Controller
             'amount' => (string) $amount,
             'orderId' => $orderId,
             'orderInfo' => $orderInfo,
-            'redirectUrl' => "http://127.0.0.1:8000/", //URL trả về sau khi thanh toán thành công
-            'ipnUrl' => "http://127.0.0.1:8000/",
+            'redirectUrl' => "http://127.0.0.1:8000/thongtingiaodich", //URL trả về sau khi thanh toán thành công
+            'ipnUrl' => "http://127.0.0.1:8000/thongtingiaodich",
             // 'redirectUrl' => $redirectUrl,
             // 'ipnUrl' => $ipnUrl,
             'lang' => 'vi',
@@ -68,9 +68,9 @@ class MomoController extends Controller
         $message = $request->input('message');
 
         if ($resultCode == 0) {
-            return redirect('http://127.0.0.1:8000/')->with('success', 'Thanh toán thành công!');
+            return redirect('http://127.0.0.1:8000/thongtingiaodich')->with('success', 'Thanh toán thành công!');
         }
-        return redirect('http://127.0.0.1:8000/')->with('error', 'Thanh toán thất bại: ' . $message);
+        return redirect('http://127.0.0.1:8000/thongtingiaodich')->with('error', 'Thanh toán thất bại: ' . $message);
     }
 
     /**
