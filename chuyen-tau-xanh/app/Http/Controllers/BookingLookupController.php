@@ -26,23 +26,37 @@ class BookingLookupController extends Controller
             'phone' => 'required|string|regex:/^[0-9]{10,11}$/',
         ]);
 
-        // Tìm thông tin booking
-        $booking = Booking::select('bookings.*')
-            ->join('customers', 'customers.id', '=', 'bookings.customer_id')
-            ->where('bookings.id', $request->booking_id)
-            ->where('customers.email', $request->email)
-            ->where('customers.phone', $request->phone)
+        // Tìm thông tin booking kèm theo thông tin khách hàng và vé liên quan
+        $booking = Booking::with(['customer', 'tickets'])
+            ->where('id', $request->booking_id)
+            ->whereHas('customer', function ($query) use ($request) {
+                $query->where('email', $request->email)
+                    ->where('phone', $request->phone);
+            })
             ->first();
 
-
-        // Nếu không tìm thấy
+        // Nếu không tìm thấy booking
         if (!$booking) {
             return back()->withErrors(['not_found' => 'Không tìm thấy thông tin đặt chỗ với dữ liệu đã cung cấp.']);
         }
 
-        // Trả về thông tin đặt chỗ
-        return view('pages.lookup-booking-result', compact('booking'));
+        // Trả về view với dữ liệu
+        return view('pages.lookup-booking-result', [
+            'booking' => $booking, // Thông tin booking
+        ]);
     }
+
+    public function showBookingDetails($bookingId)
+    {
+        // Nạp dữ liệu Booking cùng các quan hệ tickets và customer của từng ticket
+        $booking = Booking::with(['tickets.customer'])->findOrFail($bookingId);
+
+        // Trả về view với dữ liệu
+        return view('bookings.details', [
+            'booking' => $booking,
+        ]);
+    }
+
 
     public function showForgotCodeForm()
     {

@@ -38,12 +38,12 @@ class Booking extends Model
 
     public function refunds()
     {
-        return $this->hasMany(Refund::class,'booking_id');
+        return $this->hasMany(Refund::class, 'booking_id');
     }
 
     public function exchanges()
     {
-        return $this->hasMany(Exchange::class,'booking_id');
+        return $this->hasMany(Exchange::class, 'booking_id');
     }
 
     public function tickets()
