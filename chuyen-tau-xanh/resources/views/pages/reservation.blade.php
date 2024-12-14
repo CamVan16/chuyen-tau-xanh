@@ -465,6 +465,7 @@
                 var numOfSeats = parseInt($this.data('count'));
                 var trainMark = $this.data('mark');
                 var departureDate = groutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.go-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
@@ -472,7 +473,8 @@
                         car_id: carId,
                         car_name: carName,
                         train_mark: trainMark,
-                        departure_date: departureDate
+                        departure_date: departureDate,
+                        train_id: trainID,
                     }, function (data, status) {
                         console.log('data', data);
                         renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMark);
@@ -495,6 +497,7 @@
                 var numOfSeats = parseInt($this.data('count'));
                 var trainMark = $this.data('mark');
                 var departureDate = rroutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = rroutes.find(route => route.train_mark === trainMark).train_id;
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.return-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
@@ -502,7 +505,8 @@
                         car_id: carId,
                         car_name: carName,
                         train_mark: trainMark,
-                        departure_date: departureDate
+                        departure_date: departureDate,
+                        train_id: trainID,
                     }, function (data, status) {
                         console.log('data', data);
                         renderSeats(data, '#return-seats-container', carName, carLayout, numOfSeats, trainMark);

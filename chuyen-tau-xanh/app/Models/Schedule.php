@@ -26,9 +26,9 @@ class Schedule extends Model
         'car_name',
     ];
 
-    public function tickets()
+    public function ticket()
     {
-        return $this->hasMany(Ticket::class, 'schedule_id');
+        return $this->hasOne(Ticket::class, 'schedule_id');
     }
 
     public function train()
