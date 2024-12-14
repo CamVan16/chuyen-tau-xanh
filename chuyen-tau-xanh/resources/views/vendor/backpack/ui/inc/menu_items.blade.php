@@ -11,10 +11,10 @@
                     class="la la-users nav-icon"></i> Khách hàng</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('booking') }}"><i
                     class="la la-calendar-check nav-icon"></i> Đặt vé</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('ticket') }}"><i
-                    class="la la-ticket-alt nav-icon"></i> Vé</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('schedule') }}"><i
                     class="la la-clock nav-icon"></i> Lịch trình</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('ticket') }}"><i
+                    class="la la-ticket-alt nav-icon"></i> Vé</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('refund') }}"><i class="la la-undo nav-icon"></i>
                 Trả vé</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('exchange') }}"><i

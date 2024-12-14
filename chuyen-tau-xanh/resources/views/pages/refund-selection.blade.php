@@ -82,10 +82,10 @@
                                     <p><strong>Toa:</strong> {{ $ticket?->schedule?->car_name }} - Ghế:
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
+                                <td>{{ number_format($ticket->price - $ticket->discount_price, 0, ',', '.') }}</td>
                                 @if ($ticket->refund_fee !== 1)
                                     <td>{{ number_format($ticket->refund_fee * $ticket->price, 0, ',', '.') }}</td>
-                                    <td class="refund-return">{{ number_format($ticket->price * (1 - $ticket->discount_price - $ticket->refund_fee), 0, ',', '.') }}
+                                    <td class="refund-return">{{ number_format($ticket->price * (1- $ticket->refund_fee) - $ticket->discount_price , 0, ',', '.') }}
                                     </td>
                                 @else
                                     <td>X</td>

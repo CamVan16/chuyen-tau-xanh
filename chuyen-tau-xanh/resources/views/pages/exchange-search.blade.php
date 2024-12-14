@@ -686,7 +686,7 @@
             $('#ticketSummary tr').slice(1).remove();
 
             if (currentTicket) {
-                const totalPrice = currentTicket.price - (currentTicket.price * ticket_discount || 0);
+                const totalPrice = currentTicket.price - ticket_discount;
                 const exchangeFee = parseFloat(exchange_fee);
                 const totalAmount = totalPrice - oldTotal + exchangeFee;
 
@@ -701,7 +701,7 @@
                 <td>${currentTicket.car}</td>
                 <td>${currentTicket.seat_index}</td>
                 <td>${currentTicket.price.toLocaleString()}</td>
-                <td>${(currentTicket.price*ticket_discount).toLocaleString()}</td>
+                <td>${ticket_discount.toLocaleString()}</td>
                 <td>${totalPrice.toLocaleString()}</td>
             </tr>
         `;
@@ -749,8 +749,8 @@
                         <td>{{ $ticket->schedule->car_name }}</td>
                         <td>{{ $ticket->schedule->seat_number }}</td>
                         <td>{{ number_format($ticket->price, 0, ',', '.') }}</td>
-                        <td>{{ number_format($ticket->price * $ticket->discount_price, 0, ',', '.') }}</td>
-                        <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
+                        <td>{{ number_format($ticket->discount_price, 0, ',', '.') }}</td>
+                        <td>{{ number_format($ticket->price - $ticket->discount_price, 0, ',', '.') }}</td>
                     </tr>
                 </tbody>
             </table>

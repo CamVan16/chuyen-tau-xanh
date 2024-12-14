@@ -56,12 +56,6 @@ class BookingCrudController extends CrudController
             'type' => 'Number',
         ]);
         $this->crud->addColumn([
-            'name' => 'discount_price',
-            'label' => "Giảm giá",
-            'type' => 'Number',
-            'decimal' => 2,
-        ]);
-        $this->crud->addColumn([
             'name' => 'booked_time',
             'label' => "Thời gian đặt vé",
             'type' => 'Date',
@@ -75,6 +69,11 @@ class BookingCrudController extends CrudController
             'name' => 'total_price',
             'label' => "Tổng giá",
             'type' => 'Number',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'payment_method',
+            'label' => "Phương thức thanh toán",
+            'type' => 'Text',
         ]);
     }
 
@@ -99,12 +98,6 @@ class BookingCrudController extends CrudController
             'type' => 'Number',
         ]);
         $this->crud->addField([
-            'name' => 'discount_price',
-            'label' => "Giảm giá",
-            'type' => 'Number',
-            'decimal' => 2,
-        ]);
-        $this->crud->addField([
             'name' => 'booked_time',
             'label' => "Thời gian đặt vé",
             'type' => 'Date',
@@ -113,11 +106,23 @@ class BookingCrudController extends CrudController
             'name' => 'booking_status',
             'label' => "Trạng thái",
             'type' => 'Number',
+            'default' => 1,
         ]);
         $this->crud->addField([
             'name' => 'total_price',
             'label' => "Tổng giá",
             'type' => 'Number',
+            'default' => 0,
+        ]);
+        $this->crud->addField([
+            'name' => 'payment_method',
+            'label' => "Phương thức thanh toán",
+            'type' => 'select_from_array',
+            'options' => [
+                'momo' => 'Momo',
+                'zalopay' => 'Zalopay',
+                'vnpay' => 'Vnpay',
+            ],
         ]);
     }
 

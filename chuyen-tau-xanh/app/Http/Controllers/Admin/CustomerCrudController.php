@@ -100,7 +100,14 @@ class CustomerCrudController extends CrudController
         $this->crud->addField([
             'name' => 'customer_type',
             'label' => "Loại khách hàng",
-            'type' => 'Text',
+            'type' => 'select_from_array',
+            'options' => [
+                'Người lớn' => 'Người lớn',
+                'Sinh viên' => 'Sinh viên',
+                'Trẻ em' => 'Trẻ em',
+                'Người cao tuổi' => 'Người cao tuổi',
+                'Đoàn viên Công đoàn' => 'Đoàn viên Công đoàn',
+            ],
         ]);
         $this->crud->addField([
             'name' => 'email',
