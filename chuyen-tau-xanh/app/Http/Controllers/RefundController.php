@@ -140,7 +140,7 @@ class RefundController extends Controller
                 } else {
                     $refundFee = 1;
                 }
-                $totalRefund += $ticket->price * (1 - $ticket->discount_price-$refundFee);
+                $totalRefund += $ticket->price * (1 - $refundFee) -  $ticket->discount_price;
             }
         }
 
@@ -397,7 +397,7 @@ class RefundController extends Controller
 
             $refundFee = $policy ? $policy->refund_fee : 1;
 
-            return $ticket->price * (1 - $ticket->discount_price - $refundFee);
+            return $ticket->price * (1 - $refundFee)- $ticket->discount_price;
         });
 
         $refund = Refund::create([
