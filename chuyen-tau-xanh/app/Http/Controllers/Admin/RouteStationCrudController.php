@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\TrainRequest;
+use App\Http\Requests\RouteStationRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class TrainCrudController
+ * Class RouteStationCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class TrainCrudController extends CrudController
+class RouteStationCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class TrainCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Train::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/train');
-        CRUD::setEntityNameStrings('train', 'trains');
+        CRUD::setModel(\App\Models\RouteStation::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/route-station');
+        CRUD::setEntityNameStrings('route station', 'route stations');
     }
 
     /**
@@ -39,22 +39,35 @@ class TrainCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // Hiển thị cột ID
+        // CRUD::setFromDb(); // set columns from db columns.
+
+        /**
+         * Columns can be defined using the fluent syntax:
+         * - CRUD::column('price')->type('number');
+         */
         $this->crud->addColumn([
-            'name' => 'id',
-            'label' => "ID Tàu",
+            'name' => 'route_id',
+            'label' => "Tuyến",
             'type' => 'number',
         ]);
-
         $this->crud->addColumn([
-            'name' => 'num_of_seats',
-            'label' => "Số ghế",
+            'name' => 'station_id',
+            'label' => "ID ga",
             'type' => 'number',
         ]);
-
         $this->crud->addColumn([
-            'name' => 'num_of_available_seats',
-            'label' => "Số ghế khả dụng",
+            'name' => 'station_code',
+            'label' => "Mã ga",
+            'type' => 'text',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'station_name',
+            'label' => "Tên ga",
+            'type' => 'text',
+        ]);
+        $this->crud->addColumn([
+            'name' => 'km',
+            'label' => "Định tuyến",
             'type' => 'number',
         ]);
     }
@@ -67,7 +80,7 @@ class TrainCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(TrainRequest::class);
+        CRUD::setValidation(RouteStationRequest::class);
         // CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -75,14 +88,28 @@ class TrainCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
         $this->crud->addField([
-            'name' => 'num_of_seats',
-            'label' => "Tổng số ghế",
+            'name' => 'route_id',
+            'label' => "Tuyến",
             'type' => 'number',
         ]);
-
         $this->crud->addField([
-            'name' => 'num_of_available_seats',
-            'label' => "Số ghế khả dụng",
+            'name' => 'station_id',
+            'label' => "ID ga",
+            'type' => 'number',
+        ]);
+        $this->crud->addField([
+            'name' => 'station_code',
+            'label' => "Mã ga",
+            'type' => 'text',
+        ]);
+        $this->crud->addField([
+            'name' => 'station_name',
+            'label' => "Tên ga",
+            'type' => 'text',
+        ]);
+        $this->crud->addField([
+            'name' => 'km',
+            'label' => "Định tuyến",
             'type' => 'number',
         ]);
     }

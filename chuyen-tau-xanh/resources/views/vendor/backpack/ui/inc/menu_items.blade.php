@@ -26,11 +26,16 @@
     <a class="nav-link" href="#" onclick="toggleMenu('train-menu')"><i class="la la-train nav-icon"></i> Quản lý
         tàu</a>
     <ul class="nav nav-treeview" id="train-menu" style="display: none;">
-        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('train') }}"><i class="la la-train nav-icon"></i>
-                Tàu</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('route') }}"><i class="la la-route nav-icon"></i>
+                Tuyến</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('route-station') }}"><i
+                    class="la la-map-signs nav-icon"></i> Tuyến-Ga</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('train') }}"><i
+                    class="la la-train nav-icon"></i> Tàu</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('train-route') }}"><i
+                    class="la la-project-diagram nav-icon"></i> Tàu-Tuyến</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('car') }}"><i class="la la-bus nav-icon"></i>
-                Toa
-                tàu</a></li>
+                Toa tàu</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('seat') }}"><i class="la la-chair nav-icon"></i>
                 Ghế</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('seat-type') }}"><i
