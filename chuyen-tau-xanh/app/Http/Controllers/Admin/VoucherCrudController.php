@@ -90,11 +90,13 @@ class VoucherCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'type',
             'label' => "Loại voucher",
-            'type' => 'Text',
-            'display' => function ($value) {
-                // Thực hiện chuyển đổi nếu bạn muốn hiển thị tên loại thay vì số
-                return $value == 1 ? 'Giảm theo phần trăm' : 'Giảm theo giá trị';
-            }
+            'type' => 'select_from_array',
+            'options' => [
+                0 => 'Tất cả',
+                1 => 'Sinh viên',
+                2 => 'Trẻ em',
+            ],
+            'default' => '0', // Giá trị mặc định nếu không có
         ]);
 
         $this->crud->addColumn([
@@ -133,12 +135,77 @@ class VoucherCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(VoucherRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        $this->crud->addField([
+            'name' => 'code',
+            'label' => "Mã code",
+            'type' => 'text',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'name',
+            'label' => "Tên Voucher",
+            'type' => 'text',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'min_price_order',
+            'label' => "Giá trị đơn hàng tối thiểu",
+            'type' => 'number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'percent',
+            'label' => "Phần trăm giảm giá",
+            'type' => 'number',
+            'attributes' => ["min" => 0, "max" => 100],
+        ]);
+
+        $this->crud->addField([
+            'name' => 'max_price_discount',
+            'label' => "Giảm giá tối đa",
+            'type' => 'number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'type',
+            'label' => "Loại voucher",
+            'type' => 'select_from_array',
+            'options' => [
+                0 => 'Tất cả',
+                1 => 'Sinh viên',
+                2 => 'Trẻ em',
+            ],
+        ]);
+
+        $this->crud->addField([
+            'name' => 'from_date',
+            'label' => "Ngày bắt đầu",
+            'type' => 'date',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'to_date',
+            'label' => "Ngày kết thúc",
+            'type' => 'date',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'quantity',
+            'label' => "Số lượng voucher",
+            'type' => 'number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'description',
+            'label' => "Mô tả",
+            'type' => 'textarea',
+        ]);
     }
 
     /**

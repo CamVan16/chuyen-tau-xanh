@@ -50,21 +50,20 @@ class SeatCrudController extends CrudController
             'name' => 'id',
             'label' => "Mã ghế",
             'type' => 'Number',
-            'display' => function ($value) {
-                return (string) $value;  // Chuyển ID ghế thành chuỗi
-            }
         ]);
 
         $this->crud->addColumn([
             'name' => 'car_id',
-            'label' => "Mã toa",
-            'type' => 'Number',
+            'label' => "Tên Toa",
+            'type' => 'relationship',
+            'attribute' => 'car_name',
         ]);
 
         $this->crud->addColumn([
             'name' => 'seat_type_id',
-            'label' => "Loại ghế",
-            'type' => 'Number',
+            'label' => "Tên loại ghế",
+            'type' => 'relationship',
+            'attribute' => 'seat_type_name',
         ]);
 
         $this->crud->addColumn([
@@ -83,11 +82,6 @@ class SeatCrudController extends CrudController
             'name' => 'seat_status',
             'label' => "Trạng thái ghế",
             'type' => 'Number',
-            'enum' => [
-                0 => 'Không có sẵn',
-                1 => 'Có sẵn',
-                2 => 'Đang đặt'
-            ],
         ]);
     }
 
@@ -100,12 +94,38 @@ class SeatCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(SeatRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+        $this->crud->addField([
+            'name' => 'car_id',
+            'label' => 'Toa',
+            'type' => 'relationship',
+            'attribute' => 'car_name',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'seat_type_id',
+            'label' => 'Loại ghế',
+            'type' => 'relationship',
+            'attribute' => 'seat_type_name',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'seat_index',
+            'label' => 'Số hiệu ghế',
+            'type' => 'number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'seat_status',
+            'label' => 'Trạng thái ghế',
+            'type' => 'Number',
+        ]);
     }
 
     /**

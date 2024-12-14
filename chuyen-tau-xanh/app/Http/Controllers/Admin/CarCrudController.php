@@ -50,9 +50,6 @@ class CarCrudController extends CrudController
             'name' => 'id',
             'label' => "Mã Xe",
             'type' => 'Number',
-            'display' => function ($value) {
-                return (string) $value;  // Chuyển ID xe thành chuỗi
-            }
         ]);
 
         $this->crud->addColumn([
@@ -113,12 +110,63 @@ class CarCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(CarRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::addField([
+            'name' => 'train_id',
+            'label' => 'Mã Tàu',
+            'type' => 'select2',
+            'entity' => 'train',
+            'attribute' => 'train_name',
+            'model' => "App\Models\Train",
+            'default' => null, // Có thể thiết lập mặc định
+        ]);
+
+        CRUD::addField([
+            'name' => 'car_index',
+            'label' => 'Số hiệu toa',
+            'type' => 'number',
+        ]);
+
+        CRUD::addField([
+            'name' => 'car_name',
+            'label' => 'Tên toa xe',
+            'type' => 'text',
+        ]);
+
+        CRUD::addField([
+            'name' => 'car_code',
+            'label' => 'Mã toa xe',
+            'type' => 'text',
+        ]);
+
+        CRUD::addField([
+            'name' => 'car_layout',
+            'label' => 'Bố trí toa',
+            'type' => 'number',
+        ]);
+
+        CRUD::addField([
+            'name' => 'car_description',
+            'label' => 'Mô tả toa',
+            'type' => 'textarea',
+        ]);
+
+        CRUD::addField([
+            'name' => 'num_of_seats',
+            'label' => 'Số ghế',
+            'type' => 'number',
+        ]);
+
+        CRUD::addField([
+            'name' => 'num_of_available_seats',
+            'label' => 'Số ghế còn trống',
+            'type' => 'number',
+        ]);
     }
 
     /**

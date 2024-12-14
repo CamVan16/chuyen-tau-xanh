@@ -87,12 +87,38 @@ class SeatTypeCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(SeatTypeRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        $this->crud->addField([
+            'name' => 'train_id',
+            'label' => "Tàu",
+            'type' => 'Number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'seat_type_code',
+            'label' => "Mã loại ghế",
+            'type' => 'text',
+            'attributes' => [
+                'placeholder' => 'Nhập mã loại ghế, ví dụ: A1',
+            ],
+        ]);
+
+        $this->crud->addField([
+            'name' => 'seat_type_name',
+            'label' => "Tên loại ghế",
+            'type' => 'text',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'price',
+            'label' => "Giá ghế",
+            'type' => 'number',
+        ]);
     }
 
     /**

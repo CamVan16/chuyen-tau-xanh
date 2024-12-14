@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Seat extends Model
 {
-    use CrudTrait;
     use HasFactory;
 
     protected $table = 'seats';
@@ -25,7 +23,7 @@ class Seat extends Model
 
     public function car()
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Car::class, 'car_id');
     }
 
     public function seatType()

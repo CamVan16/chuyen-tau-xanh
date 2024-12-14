@@ -54,7 +54,7 @@ class TrainCrudController extends CrudController
 
         $this->crud->addColumn([
             'name' => 'num_of_available_seats',
-            'label' => "Số ghế còn lại",
+            'label' => "Số ghế khả dụng",
             'type' => 'Number',
         ]);
     }
@@ -68,12 +68,23 @@ class TrainCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(TrainRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        $this->crud->addField([
+            'name' => 'num_of_seats',
+            'label' => "Tổng số ghế",
+            'type' => 'number',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'num_of_available_seats',
+            'label' => "Số ghế còn lại",
+            'type' => 'number',
+        ]);
     }
 
     /**

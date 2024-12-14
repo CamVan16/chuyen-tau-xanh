@@ -25,7 +25,14 @@ class CarRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'train_id' => 'required|exists:trains,id', // Kiểm tra ID tàu hợp lệ
+            'car_index' => 'required|integer',
+            'car_name' => 'required|string|max:255',
+            'car_code' => 'required|string|max:50',
+            'car_layout' => 'required|integer',
+            'car_description' => 'nullable|string|max:255',
+            'num_of_seats' => 'required|integer',
+            'num_of_available_seats' => 'required|integer',
         ];
     }
 

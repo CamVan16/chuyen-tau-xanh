@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SeatType extends Model
 {
-    use CrudTrait;
     use HasFactory;
 
     protected $table = 'seat_types';
@@ -28,11 +26,11 @@ class SeatType extends Model
 
     public function train()
     {
-        return $this->belongsTo(Train::class);
+        return $this->belongsTo(Train::class, 'train_id');
     }
 
     public function seats()
     {
-        return $this->hasMany(Seat::class);
+        return $this->hasMany(Seat::class, 'seat_type_id');
     }
 }

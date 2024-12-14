@@ -25,7 +25,16 @@ class VoucherRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'code' => 'required|string|max:50|unique:vouchers,code',
+            'name' => 'required|string|max:255',
+            'min_price_order' => 'required|numeric|min:0',
+            'percent' => 'required|integer|min:0|max:100',
+            'max_price_discount' => 'required|numeric|min:0',
+            'type' => 'required|integer|in:0,1,2',
+            'from_date' => 'required|date',
+            'to_date' => 'required|date|after_or_equal:from_date',
+            'quantity' => 'required|integer|min:1',
+            'description' => 'nullable|string|max:500',
         ];
     }
 
