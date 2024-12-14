@@ -202,8 +202,13 @@ class RefundController extends Controller
             $refund = Refund::find($refund_id);
 
             if ($refund) {
-                $refund->refund_status = 'confirmed';
+                $refund->refund_status = 'completed';
                 $refund->save();
+            }
+            $ticket = Ticket::where('refund_id',$refund_id);
+            if ($ticket) {
+                $ticket->ticket_status = -1;
+                $ticket->save();
             }
 
             return redirect()->route('refund.success', ['refund_id' => $refund_id])->with('message', 'Xác nhận thành công!');
@@ -254,17 +259,11 @@ class RefundController extends Controller
 
     public function updateRefundStatus()
     {
-        $refunds = Refund::whereIn('refund_status', ['pending', 'confirmed'])->get();
+        $refunds = Refund::whereIn('refund_status', ['pending'])->get();
 
         foreach ($refunds as $refund) {
             if ($refund->refund_status === 'pending' && Carbon::parse($refund->refund_time)->diffInDays(Carbon::now()) > 3) {
                 $refund->refund_status = 'rejected';
-                $refund->save();
-            }
-
-            if ($refund->refund_status === 'confirmed' && Carbon::parse($refund->refund_time)->diffInDays(Carbon::now()) > 3) {
-                $refund->refund_status = 'completed';
-                $refund->refund_time_processed = Carbon::now();
                 $refund->save();
             }
         }
@@ -403,7 +402,7 @@ class RefundController extends Controller
 
         $refund = Refund::create([
             'booking_id' => $booking->id,
-            'refund_status' => 'confirmed',
+            'refund_status' => 'completed',
             'refund_amount' => $totalRefund,
             'refund_time' => Carbon::now(),
             'customer_id' => $booking->customer_id,
@@ -415,43 +414,5 @@ class RefundController extends Controller
 
         // return redirect()->route('admin.refund.index')->with('success', 'Hoàn vé đã được tạo thành công.');
         return redirect()->back()->with('success', 'Hoàn vé đã được tạo thành công.');
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::updated(function ($refund) {
-            if ($refund->isDirty('refund_status') && $refund->refund_status === 'completed') {
-                self::createNewTicket($refund);
-            }
-        });
-    }
-
-    public function createNewTicket($refundId)
-    {
-        try {
-            $refund = Refund::findOrFail($refundId);
-
-            if ($refund->refund_status !== 'completed') {
-                return response()->json(['message' => 'Hoàn vé chưa ở trạng thái completed.'], 400);
-            }
-
-            $ticket = Ticket::findOrFail($refund->ticket_id);
-
-            $newTicket = Ticket::create([
-                'schedule_id' => $ticket->schedule_id,
-                'price'       => $ticket->price,
-            ]);
-
-            return response()->json([
-                'message'   => 'Vé mới đã được tạo.',
-                'newTicket' => $newTicket,
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage(),
-            ], 500);
-        }
     }
 }

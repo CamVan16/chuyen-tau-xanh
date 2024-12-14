@@ -17,8 +17,8 @@ class Tickets extends Migration
             $table->unsignedBigInteger('schedule_id');
             $table->double('price');
             $table->double('discount_price')->nullable();
-            $table->int('ticket_status');
-            // 1: có hiệu lực, -1: ko 
+            $table->integer('ticket_status');
+            // 1: có hiệu lực, -1: ko
             $table->timestamps();
 
             // $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');

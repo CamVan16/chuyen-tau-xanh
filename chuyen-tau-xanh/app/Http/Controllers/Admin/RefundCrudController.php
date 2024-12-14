@@ -128,7 +128,6 @@ class RefundCrudController extends CrudController
             'type' => 'select_from_array',
             'options' => [
                 'pending' => 'Chờ xử lý',
-                'confirmed' => 'Đã xác nhận',
                 'completed' => 'Hoàn thành',
                 'rejected' => 'Thất bại',
             ],

@@ -35,7 +35,7 @@ class RouteController extends Controller
         return view('pages.reservation', compact('goRoutes', 'returnRoutes'));
     }
 
-    private function findRoutes($stationA, $stationB)
+    public function findRoutes($stationA, $stationB)
     {
         return Route::select(
             'rs1.route_id as id',
@@ -58,7 +58,7 @@ class RouteController extends Controller
         ->get();
     }
 
-    private function findTrains(&$routes, $date)
+    public function findTrains(&$routes, $date)
     {
         $findTrainIndex = function ($x, $date, $daysToReduce) {
             $startDate = Carbon::create(2024, 1, 1);

@@ -69,14 +69,34 @@
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         <div class="card-body">
-                            - Hành khách có quyền đổi vé trước giờ tàu. Doanh nghiệp quy định cụ thể mức khấu trừ tương ứng
-                            với việc đổi vé và các nội dung khác có liên quan đến việc đổi vé của hành khách. <br />
-                            - Quý khách cần thực hiện yêu cầu đổi vé qua hệ thống trong vòng 4 giờ trước giờ khởi hành. Mọi
-                            yêu cầu hoàn vé sẽ được xử lý trong vòng 3-5 ngày làm việc. <br />
-                            - Trong trường hợp đổi vé, nếu số tiền chênh lệch là dư thừa, khoản tiền sẽ được hoàn trả vào
-                            tài khoản theo phương thức mà quý khách đã sử dụng để thanh toán. Nếu số tiền cần thanh toán
-                            vượt quá giá trị ban đầu, quý khách cần thực hiện thanh toán phần chênh lệch để hoàn tất quy
-                            trình đổi vé.
+                            - Hành khách có thể yêu cầu đổi vé trước thời điểm tàu khởi hành, với mức phí khấu trừ và các
+                            điều kiện cụ thể được quy định bởi doanh nghiệp. <br />
+                            @if ($exchangePolicies->isNotEmpty())
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Thời Gian Tối Thiểu (Giờ)</th>
+                                            <th>Thời Gian Tối Đa (Giờ)</th>
+                                            <th>Phí Đổi Vé</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($exchangePolicies as $policy)
+                                            <tr>
+                                                <td>{{ $policy->min_hours }}</td>
+                                                <td>{{ $policy->max_hours }}</td>
+                                                <td>{{ $policy->exchange_fee * 100 }}%</td>
+                                                <!-- Hiển thị phí dưới dạng phần trăm -->
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                            - Yêu cầu đổi vé cần được thực hiện qua hệ thống ít nhất 4 giờ trước giờ khởi hành. Mọi yêu cầu
+                            hoàn vé sẽ được xử lý trong khoảng 3-5 ngày làm việc. <br />
+                            - Trong trường hợp đổi vé, nếu có khoản tiền chênh lệch thừa, số tiền sẽ được hoàn trả vào tài
+                            khoản theo phương thức thanh toán ban đầu. Ngược lại, nếu số tiền chênh lệch cần thanh toán vượt
+                            quá giá trị ban đầu, quý khách cần thanh toán khoản tiền này để hoàn tất quá trình đổi vé.
                         </div>
                     </div>
                 </div>
@@ -93,13 +113,28 @@
                     </div>
                     <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
                         <div class="card-body">
-                            - Hành khách có quyền trả lại vé trước giờ tàu chạy. Doanh nghiệp quy định cụ thể mức
-                            khấu trừ tương ứng
-                            với việc trả lại vé và các nội dung khác có liên quan đến việc trả lại vé của
-                            hành khách. <br />
-                            - Quý khách cần thực hiện yêu cầu hoàn vé qua hệ thống trong vòng 4 giờ trước giờ khởi hành.
-                            Mọi yêu cầu hoàn
-                            vé sẽ được xử lý trong vòng 3-5 ngày làm việc.
+                            - Hành khách có thể yêu cầu hoàn trả vé trước giờ tàu khởi hành, với mức phí khấu trừ và các điều kiện cụ thể được doanh nghiệp quy định. <br />
+                            @if ($refundPolicies->isNotEmpty())
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Thời Gian Tối Thiểu (Giờ)</th>
+                                            <th>Thời Gian Tối Đa (Giờ)</th>
+                                            <th>Phí Trả Vé</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($refundPolicies as $policy)
+                                            <tr>
+                                                <td>{{ $policy->min_hours }}</td>
+                                                <td>{{ $policy->max_hours }}</td>
+                                                <td>{{ $policy->refund_fee * 100 }}%</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                            - Yêu cầu hoàn vé cần được thực hiện qua hệ thống ít nhất 4 giờ trước giờ khởi hành. Mọi yêu cầu hoàn vé sẽ được xử lý trong khoảng 3-5 ngày làm việc. <br />
                         </div>
                     </div>
                 </div>
