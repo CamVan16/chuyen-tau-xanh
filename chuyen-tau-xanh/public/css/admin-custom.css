@@ -1,14 +1,20 @@
-/* Thụt lề các mục con trong menu */
 .nav-treeview {
-    margin-left: 15px; /* Thụt vào bên phải */
+    margin-left: 15px;
 }
 
-/* Điều chỉnh các mục con khi di chuột vào */
 .nav-treeview .nav-item {
-    margin-left: 10px; /* Thụt vào thêm chút nữa cho các mục con */
+    margin-left: 10px;
+}
+.nav-treeview .nav-item a {
+    padding-left: 10px;
 }
 
-/* Nếu bạn muốn có thêm khoảng cách giữa các mục con */
-.nav-treeview .nav-item a {
-    padding-left: 10px; /* Thêm khoảng cách padding cho các mục con */
+.nav-link.active {
+    color: #fff;
+    background-color: #007bff;
+    font-weight: bold;
+}
+
+.nav-treeview {
+    padding-left: 20px;
 }
