@@ -136,9 +136,10 @@
         var ticket_discount = "{{ $ticket->discount_price }}";
         var departure_date = "{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('d/m/Y') }}";
         var exchange_fee = "{{ $ticket->exchange_fee * $ticket->price }}";
-        $(document).ready(function() {
+        $(document).ready(function () {
             const timers = new Map();
             var groutes = $('.go-routes').data('groutes');
+            var rroutes = $('.return-routes').data('rroutes');
             console.log(groutes);
             $.ajaxSetup({
                 headers: {
@@ -147,7 +148,6 @@
             });
 
             function renderCars(cars, container, trainMark) {
-                console.log('Danh sách cars:', cars);
                 const $container = $(container);
                 $container.empty();
                 if (cars.length > 0) {
@@ -167,7 +167,6 @@
                     $container.text('Không có toa nào cho tàu này');
                 }
             }
-
             function renderSeats(seats, container, carName, carLayout, numOfSeats, trainMark) {
                 const $container = $(container);
                 $container.empty();
@@ -175,12 +174,14 @@
                     if (carLayout % 2 === 0) {
                         const rows = 4;
                         const cols = numOfSeats / rows;
+                        const seatGPs = seats.filter(seat => seat.seat_type === 'GP');
+                        const seatNMs = seats.filter(seat => seat.seat_type !== 'GP');
                         for (let i = 0; i < rows; i++) {
                             const $rowDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
 
                             for (let j = 0; j < cols; j++) {
                                 let seatNumber;
-                                if (j * rows + i < seats.length) {
+                                if (j * rows + i < seatNMs.length) {
                                     if (j % 2 === 0) {
                                         seatNumber = i + 1 + j * rows;
                                     } else {
@@ -188,9 +189,9 @@
                                     }
                                     const $seatDiv = $(`<button class="btn seat m-2"
                                                             data-index="${seatNumber}"
-                                                            data-status="${seats[seatNumber-1]?.seat_status}"
-                                                            data-id="${seats[seatNumber-1]?.id}"
-                                                            data-type="${seats[seatNumber-1]?.seat_type}"
+                                                            data-status="${seatNMs[seatNumber-1]?.seat_status}"
+                                                            data-id="${seatNMs[seatNumber-1]?.id}"
+                                                            data-type="${seatNMs[seatNumber-1]?.seat_type}"
                                                             data-car="${carName}"
                                                             data-mark="${trainMark}"
                                                         >
@@ -200,6 +201,24 @@
                                 }
                             }
                             $container.append($rowDiv);
+                        }
+                        if (seatGPs.length > 0) {
+                            const $rowGPDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
+                            seatGPs.forEach(seat => {
+                                const $seatDiv = $(`<button class="btn seat m-2"
+                                                            data-index="${seat.seat_index}"
+                                                            data-status="${seat.seat_status}"
+                                                            data-id="${seat.id}"
+                                                            data-type="${seat.seat_type}"
+                                                            data-car="${carName}"
+                                                            data-mark="${trainMark}"
+                                                        >
+                                                        GP
+                                                        </button>`);
+                                $rowGPDiv.append($seatDiv);
+                            })
+                            $container.append(`<h5 class="text-center">Ghế phụ</h5>`);
+                            $container.append($rowGPDiv);
                         }
                     } else {
                         if (carLayout === 7) {
@@ -268,7 +287,7 @@
                                     const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -276,7 +295,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t1[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2 + 1]}"
                                                                 data-status="${seats[(t1[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2 + 1])-1]?.id}"
@@ -287,7 +306,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -295,7 +314,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t2[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2 + 1]}"
                                                                 data-status="${seats[(t2[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2 + 1])-1]?.id}"
@@ -321,7 +340,7 @@
                                     const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -329,7 +348,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t1[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2 + 1]}"
                                                                 data-status="${seats[(t1[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2 + 1])-1]?.id}"
@@ -340,7 +359,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -348,7 +367,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t2[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2 + 1]}"
                                                                 data-status="${seats[(t2[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2 + 1])-1]?.id}"
@@ -374,7 +393,7 @@
                                     const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -382,7 +401,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t1[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t1[i * 2 + 1]}"
                                                                 data-status="${seats[(t1[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2 + 1])-1]?.id}"
@@ -393,7 +412,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -401,7 +420,7 @@
                                                                 data-car="${carName}"
                                                                 data-mark="${trainMark}"
                                                             >${t2[i * 2]}</button>`);
-                                        $layer.append(`<button class="btn seat"
+                                            $layer.append(`<button class="btn seat"
                                                                 data-index="${t2[i * 2 + 1]}"
                                                                 data-status="${seats[(t2[i * 2 + 1])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2 + 1])-1]?.id}"
@@ -423,7 +442,6 @@
                     $container.text('Không có ghế nào cho toa này');
                 }
             }
-
             function applyPrice(seatDOMs, direction) {
                 const $seats = $(seatDOMs);
                 $.map($seats, function(seat) {
@@ -444,6 +462,7 @@
                     $seat.attr('data-tdeparture', route.departure_time);
                     $seat.attr('data-darrival', route.arrival_date);
                     $seat.attr('data-tarrival', route.arrival_time);
+                    $seat.attr('data-trainid', route.train_id);
                     const ratio = route.ratio;
                     const type = route.seat_types.find(function(type) {
                         return type.seat_type_code === seat_type;
@@ -460,7 +479,6 @@
                 })
             }
             const $firstGoTrain = $('.go-trains .train').first();
-            console.log('$firstGoTrain', $firstGoTrain)
             if ($firstGoTrain.length) {
                 $firstGoTrain.addClass('active');
                 const defaultGoCars = $firstGoTrain.data('cars');
@@ -468,7 +486,17 @@
                 renderCars(defaultGoCars, '#go-cars-container', trainMarkGo);
             }
 
-            $('.go-trains .train').on('click', function() {
+            const $firstReturnTrain = $('.return-trains .train').first();
+            if ($firstReturnTrain.length) {
+                $firstReturnTrain.addClass('active');
+                const defaultReturnCars = $firstReturnTrain.data('cars');
+                const trainMarkReturn = $firstReturnTrain.data('mark');
+                // const departureDateReturn = $firstReturnTrain.data('date');
+                // const departureTimeReturn = $firstReturnTrain.data('time');
+                renderCars(defaultReturnCars, '#return-cars-container', trainMarkReturn);
+            }
+
+            $('.go-trains .train').on('click', function () {
                 const $this = $(this);
                 $('.go-trains .train').removeClass('active');
                 $this.addClass('active');
@@ -557,6 +585,7 @@
 
             function loadCart() {
                 var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
+                // console.log(tickets);
                 const now = Date.now();
                 tickets = tickets.filter(ticket => {
                     const elapsed = now - ticket.start_time;
@@ -564,19 +593,12 @@
                     if (remaining > 0) {
                         const timer = setTimeout(() => {
                             let cart = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
-                            cart = cart.filter(item => !(item.seat_id === ticket.seat_id && item
-                                .train_mark === ticket.train_mark));
+                            cart = cart.filter(item => !(item.seat_id === ticket.seat_id && item.train_mark === ticket.train_mark));
                             localStorage.setItem('ticket-pocket', JSON.stringify(cart));
-                            timers.delete({
-                                id: ticket.seat_id,
-                                train: ticket.train_mark
-                            });
+                            timers.delete({id: ticket.seat_id, train: ticket.train_mark});
                             updateCart();
                         }, remaining);
-                        timers.set({
-                            id: ticket.seat_id,
-                            train: ticket.train_mark
-                        }, timer);
+                        timers.set({id: ticket.seat_id, train: ticket.train_mark}, timer);
                         return true;
                     } else {
                         return false;

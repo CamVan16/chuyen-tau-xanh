@@ -14,15 +14,17 @@ class ScheduleController extends Controller
         $carName = $request->input('car_name');
         $trainMark = $request->input('train_mark');
         $departureDate = Carbon::parse($request->input('departure_date'));
+        $trainID = $request->input('train_id');
 
         $soldSeats = Schedule::where('day_start', $departureDate)
             ->where('train_mark', $trainMark)
             ->where('car_name', $carName)
+            ->where('train_id', $trainID)
             ->whereHas('ticket', function ($query) {
-                $query->where('ticket_status', 1); 
+                $query->where('ticket_status', 1);
             })
-            ->pluck('seat_number'); 
-            
+            ->pluck('seat_number');
+
         return response()->json($soldSeats->toArray());
     }
 }
