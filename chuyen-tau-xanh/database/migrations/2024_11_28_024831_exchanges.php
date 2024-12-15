@@ -10,8 +10,8 @@ class Exchanges extends Migration
     {
         Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('old_ticket_id');
-            $table->unsignedBigInteger('new_ticket_id');
+            $table->string('old_ticket_id');
+            $table->string('new_ticket_id');
             $table->string('booking_id');
             $table->unsignedBigInteger('customer_id');
             $table->double('old_price');
@@ -19,14 +19,14 @@ class Exchanges extends Migration
             $table->double('additional_price');
             $table->string('payment_method')->nullable();
             $table->string('exchange_status')->default('pending');
-            $table->date('exchange_date');
-            $table->date('refund_date_processed')->nullable();
+            $table->dateTime('exchange_time');
+            $table->dateTime('exchange_time_processed')->nullable();
             $table->timestamps();
 
-            $table->foreign('old_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
-            $table->foreign('new_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
-            $table->foreign('booking_id') -> references('id')->on('bookings')->onDelete('cascade');
-            $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
+            // $table->foreign('old_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
+            // $table->foreign('new_ticket_id') -> references('id')->on('tickets')->onDelete('cascade');
+            // $table->foreign('booking_id') -> references('id')->on('bookings')->onDelete('cascade');
+            // $table->foreign('customer_id') -> references('id')->on('customers')->onDelete('cascade');
         });
     }
 
@@ -35,6 +35,6 @@ class Exchanges extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('exchanges');
     }
 };

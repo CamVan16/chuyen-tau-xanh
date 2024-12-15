@@ -11,10 +11,10 @@ class Customers extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name');
-            $table->string('customer_type');
-            $table->string('email');
-            $table->string('citizen_id');
-            $table->string('phone');
+            $table->string('customer_type')->nullable();
+            $table->string('email')->nullable();
+            $table->string('citizen_id')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }

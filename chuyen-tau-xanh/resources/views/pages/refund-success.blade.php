@@ -29,7 +29,7 @@
         <div class="card-body">
             <h5 class="card-title">Thông tin giao dịch</h5>
             <p><strong>Mã đặt chỗ:</strong> {{ $refund->booking_id }} </p>
-            <p><strong>Ngày trả vé:</strong> {{ $refund->refund_date }}</p>
+            <p><strong>Ngày trả vé:</strong> {{ $refund->refund_time }}</p>
             <p><strong>Số tiền hoàn:</strong> {{ number_format($refund->refund_amount) }} VNĐ </p>
         </div>
     </div>

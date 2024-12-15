@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Booking;
@@ -12,7 +12,12 @@ use App\Models\Schedule;
 
 class Ticket extends Model
 {
+    use CrudTrait;
     use HasFactory;
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'booking_id',
@@ -22,7 +27,20 @@ class Ticket extends Model
         'schedule_id',
         'price',
         'discount_price',
+        'ticket_status'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = strtoupper(bin2hex(random_bytes(4)));
+            }
+        });
+    }
+
 
     public function booking()
     {

@@ -9,6 +9,7 @@ class Routes extends Migration
     public function up()
     {
         Schema::create('routes', function (Blueprint $table) {
+            // $table->integer('id')->primary();
             $table->id();
             $table->string('route_name');
             $table->string('train_mark');

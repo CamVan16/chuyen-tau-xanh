@@ -4,23 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @yield('head')
     <title>Chuyến tàu xanh</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 
     <style>
         /* Cấu trúc Flexbox cho body để footer luôn ở dưới cùng */
         body {
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Đảm bảo chiều cao của body là 100% chiều cao màn hình */
+            min-height: 100vh;
+            /* Đảm bảo chiều cao của body là 100% chiều cao màn hình */
         }
 
         .container {
-            flex: 1; /* Chiếm phần còn lại của trang */
+            flex: 1;
+            /* Chiếm phần còn lại của trang */
         }
 
         .header {
@@ -37,6 +45,26 @@
 
         .header-top img.logo {
             max-height: 80px;
+        }
+
+        .banner-container {
+            display: flex;
+            justify-content: space-between;
+            /* Căn giữa hai banner */
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .banner-left,
+        .banner-right {
+            width: 15%;
+        }
+
+        .banner-left img,
+        .banner-right img {
+            width: 80%;
+            height: auto;
+            margin: 20px 20px;
         }
 
         .header-top .date {
@@ -134,7 +162,7 @@
             gap: 10px;
         }
 
-        .footer .social-icons{
+        .footer .social-icons {
             width: 50px;
             transition: color 0.3s;
         }
@@ -162,14 +190,14 @@
         </div>
         <nav class="navbar">
             <ul>
-                <li><a href="#">Trang chủ</a></li>
+                <li><a href="/tim-cho">Trang chủ</a></li>
                 <li><a href="/tim-cho">Tìm vé</a></li>
                 <li><a href="/thong-tin-dat-cho">Thông tin đặt chỗ</a></li>
                 <li><a href="/tra-ve">Trả vé</a></li>
                 <li><a href="/kiem-tra-ve">Kiểm tra vé</a></li>
                 <li><a href="/doi-ve">Đổi vé</a></li>
                 <li><a href="/giotau-giave">Giờ tàu - Giá vé</a></li>
-                <li><a href="/khuyen-mau">Khuyến mại</a></li>
+                <li><a href="/khuyen-mai">Khuyến mại</a></li>
                 <li><a href="/quy-dinh">Các quy định</a></li>
                 <li><a href="/huong-dan">Hướng dẫn</a></li>
                 <li><a href="/lien-he">Liên hệ</a></li>
@@ -177,8 +205,16 @@
         </nav>
     </header>
 
-    <div class="container mt-3">
-        @yield('content')
+    <div class="banner-container">
+        <div class="banner-left">
+            <img src="/banner1.png" alt="Banner Left">
+        </div>
+        <div class="container mt-3">
+            @yield('content')
+        </div>
+        <div class="banner-right">
+            <img src="/banner2.png" alt="Banner Right">
+        </div>
     </div>
 
     <!-- Footer -->
@@ -196,7 +232,8 @@
             <div class="footer-column">
                 <h4>QUY ĐỊNH VÀ ĐIỀU KHOẢN</h4>
                 <ul>
-                    <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách vận chuyển hành khách</a></li>
+                    <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách vận chuyển hành khách</a>
+                    </li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách đổi trả, hoàn vé</a></li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách bảo mật</a></li>
                     <li><a href="/quy-dinh"><i class="fa fa-chevron-right"></i> Chính sách & Quy định chung</a></li>
@@ -214,7 +251,7 @@
                 <div class="payment-icons">
                     <img src="/visa.png" alt="Visa">
                     <img src="/mastercard.png" alt="Mastercard">
-                    <img src="/JCB.png" alt="JCB">
+                    <img src="/vnpay.png" alt="VNPay">
                     <img src="/zalopay.png" alt="Zalopay">
                     <img src="/momo.png" alt="Momo">
                 </div>
@@ -228,7 +265,9 @@
     <script>
         const currentDate = new Date();
         const daysOfWeek = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
-        const monthsOfYear = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        const monthsOfYear = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
+            'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ];
         const dayOfWeek = daysOfWeek[currentDate.getDay()];
         const day = currentDate.getDate();
         const month = monthsOfYear[currentDate.getMonth()];
@@ -236,6 +275,7 @@
         const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;
         document.querySelector('.date').textContent = formattedDate;
     </script>
+    @yield('scripts')
 </body>
 
 </html>

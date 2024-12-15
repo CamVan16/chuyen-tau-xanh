@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="text-primary">Hướng Dẫn Sử Dụng Dịch Vụ</h2>
+        <h2 class="text-primary">HƯỚNG DẪN SỬ DỤNG DỊCH VỤ</h2>
         <div class="alert alert-info mt-4">
             <strong>Chào mừng bạn đến với hướng dẫn sử dụng dịch vụ của chúng tôi!</strong><br>
             Dưới đây là các bước chi tiết để bạn có thể sử dụng dịch vụ một cách hiệu quả nhất.
@@ -24,7 +24,9 @@
                     </div>
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            Để bắt đầu, truy cập vào trang "Tìm Vé" trên website. Nhập thông tin điểm đi, điểm đến, và ngày giờ khởi hành. Sau đó, hệ thống sẽ tự động hiển thị các chuyến tàu phù hợp với yêu cầu của bạn. Bạn có thể lựa chọn chuyến tàu phù hợp với lịch trình của mình và tiếp tục sang bước đặt vé.
+                            Để bắt đầu, truy cập vào trang "Tìm Vé" trên website. Nhập thông tin điểm đi, điểm đến, và ngày
+                            giờ khởi hành. Sau đó, hệ thống sẽ tự động hiển thị các chuyến tàu phù hợp với yêu cầu của bạn.
+                            Bạn có thể lựa chọn chuyến tàu phù hợp với lịch trình của mình và tiếp tục sang bước đặt vé.
                         </div>
                     </div>
                 </div>
@@ -41,7 +43,10 @@
                     </div>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="card-body">
-                            Sau khi lựa chọn chuyến tàu mong muốn, bạn sẽ cần điền đầy đủ thông tin hành khách. Các trường thông tin cần nhập sẽ bao gồm tên, số điện thoại và các yêu cầu đặc biệt nếu có. Sau khi hoàn tất, bạn có thể tiến hành thanh toán qua các phương thức thanh toán trực tuyến. Hãy chắc chắn kiểm tra lại các thông tin hành khách và vé trước khi thanh toán.
+                            Sau khi lựa chọn chuyến tàu mong muốn, bạn sẽ cần điền đầy đủ thông tin hành khách. Các trường
+                            thông tin cần nhập sẽ bao gồm tên, số điện thoại và các yêu cầu đặc biệt nếu có. Sau khi hoàn
+                            tất, bạn có thể tiến hành thanh toán qua các phương thức thanh toán trực tuyến. Hãy chắc chắn
+                            kiểm tra lại các thông tin hành khách và vé trước khi thanh toán.
                         </div>
                     </div>
                 </div>
@@ -58,7 +63,10 @@
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         <div class="card-body">
-                            Sau khi hoàn tất việc đặt vé, bạn có thể kiểm tra lại thông tin vé của mình trong mục "Kiểm tra vé". Tại đây, bạn sẽ thấy tất cả các chi tiết về hành trình, bao gồm giờ khởi hành, điểm đến, thông tin hành khách và tình trạng vé của bạn. Nếu có sự thay đổi về vé hoặc hành trình, bạn sẽ được thông báo qua email hoặc SMS.
+                            Sau khi hoàn tất việc đặt vé, bạn có thể kiểm tra lại thông tin vé của mình trong mục "Kiểm tra
+                            vé". Tại đây, bạn sẽ thấy tất cả các chi tiết về hành trình, bao gồm giờ khởi hành, điểm đến,
+                            thông tin hành khách và tình trạng vé của bạn. Nếu có sự thay đổi về vé hoặc hành trình, bạn sẽ
+                            được thông báo qua email hoặc SMS.
                         </div>
                     </div>
                 </div>
@@ -75,7 +83,10 @@
                     </div>
                     <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
                         <div class="card-body">
-                            Nếu bạn cần thay đổi thông tin vé hoặc hủy vé đã đặt, bạn có thể thực hiện các yêu cầu này thông qua mục "Trả vé". Tại đây, bạn có thể yêu cầu đổi chuyến tàu, thay đổi giờ khởi hành hoặc hủy vé hoàn toàn. Lưu ý rằng mọi yêu cầu thay đổi hay hủy vé sẽ tuân theo chính sách hoàn vé và phí hủy vé của chúng tôi. Hãy kiểm tra kỹ trước khi quyết định.
+                            Nếu bạn cần thay đổi thông tin vé hoặc hủy vé đã đặt, bạn có thể thực hiện các yêu cầu này thông
+                            qua mục "Trả vé". Tại đây, bạn có thể yêu cầu đổi chuyến tàu, thay đổi giờ khởi hành hoặc hủy vé
+                            hoàn toàn. Lưu ý rằng mọi yêu cầu thay đổi hay hủy vé sẽ tuân theo chính sách hoàn vé và phí hủy
+                            vé của chúng tôi. Hãy kiểm tra kỹ trước khi quyết định.
                         </div>
                     </div>
                 </div>
@@ -92,7 +103,10 @@
                     </div>
                     <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
                         <div class="card-body">
-                            Nếu bạn gặp bất kỳ khó khăn nào trong quá trình sử dụng dịch vụ, đội ngũ hỗ trợ khách hàng của chúng tôi luôn sẵn sàng trợ giúp. Bạn có thể liên hệ với chúng tôi qua các kênh hỗ trợ như email, điện thoại, hoặc chat trực tuyến. Chúng tôi cam kết giải quyết mọi vấn đề của bạn một cách nhanh chóng và hiệu quả.
+                            Nếu bạn gặp bất kỳ khó khăn nào trong quá trình sử dụng dịch vụ, đội ngũ hỗ trợ khách hàng của
+                            chúng tôi luôn sẵn sàng trợ giúp. Bạn có thể liên hệ với chúng tôi qua các kênh hỗ trợ như
+                            email, điện thoại, hoặc chat trực tuyến. Chúng tôi cam kết giải quyết mọi vấn đề của bạn một
+                            cách nhanh chóng và hiệu quả.
                         </div>
                     </div>
                 </div>

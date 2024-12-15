@@ -3,13 +3,14 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
 class Exchange extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
 
@@ -24,8 +25,8 @@ class Exchange extends Model
         'new_price',
         'additional_price',
         'exchange_status',
-        'exchange_date',
-        'exchange_date_processed',
+        'exchange_time',
+        'exchange_time_processed',
     ];
 
 
@@ -39,4 +40,23 @@ class Exchange extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::updated(function ($exchange) {
+    //         if ($exchange->isDirty('exchange_status') && $exchange->exchange_status === 'completed') {
+    //             $exchange->restoreTicket();
+    //         }
+    //     });
+    // }
+
+    // public function restoreTicket()
+    // {
+    //     $ticket = Ticket::where('exchange_id', $this->id)->first();
+    //     Ticket::create([
+    //         'schedule_id' => $ticket->schedule_id,
+    //         'price'       => $ticket->price,
+    //     ]);
+    // }
 }

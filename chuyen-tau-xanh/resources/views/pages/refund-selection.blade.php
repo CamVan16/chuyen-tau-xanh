@@ -82,19 +82,20 @@
                                     <p><strong>Toa:</strong> {{ $ticket?->schedule?->car_name }} - Ghế:
                                         {{ $ticket?->schedule?->seat_number }}</p>
                                 </td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price), 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * 0.2, 0, ',', '.') }}</td>
-                                <td>{{ number_format($ticket->price * (1 - $ticket->discount_price - 0.2), 0, ',', '.') }}
-                                </td>
+                                <td>{{ number_format($ticket->price - $ticket->discount_price, 0, ',', '.') }}</td>
+                                @if ($ticket->refund_fee !== 1)
+                                    <td>{{ number_format($ticket->refund_fee * $ticket->price, 0, ',', '.') }}</td>
+                                    <td class="refund-return">{{ number_format($ticket->price * (1- $ticket->refund_fee) - $ticket->discount_price , 0, ',', '.') }}
+                                    </td>
+                                @else
+                                    <td>X</td>
+                                    <td class="refund-return">X</td>
+                                @endif
                                 <td>
                                     @if ($ticket->exchange)
                                         @switch($ticket->exchange->exchange_status)
                                             @case('completed')
                                                 <span class="badge badge-success">Đã đổi vé</span>
-                                            @break
-
-                                            @case('confirmed')
-                                                <span class="badge badge-info">Đã xác nhận đổi vé</span>
                                             @break
 
                                             @case('pending')
@@ -109,10 +110,6 @@
                                         @switch($ticket->refund->refund_status)
                                             @case('completed')
                                                 <span class="badge badge-success">Đã trả vé</span>
-                                            @break
-
-                                            @case('confirmed')
-                                                <span class="badge badge-info">Đã xác nhận trả vé</span>
                                             @break
 
                                             @case('pending')
@@ -130,8 +127,8 @@
                                 <td>
                                     <input type="checkbox" name="ticket_array[]" value="{{ $ticket->id }}"
                                         id="ticket_{{ $ticket->id }}" class="ticket-checkbox"
-                                        @if ($ticket->exchange?->exchange_status === 'completed' || $ticket->exchange?->exchange_status === 'confirmed') disabled
-                                        @elseif ($ticket->refund?->refund_status === 'completed' || $ticket->refund?->refund_status === 'confirmed')
+                                        @if ($ticket->exchange?->exchange_status === 'completed') disabled
+                                        @elseif ($ticket->refund?->refund_status === 'completed')
                                             disabled @endif />
                                 </td>
                             </tr>
@@ -180,6 +177,15 @@
             const submitButton = document.getElementById('submit-button');
 
             checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+
+                const refundCell = row.querySelector('.refund-return');
+                const refundValue = refundCell?.textContent.trim();
+
+                if (refundValue === 'X') {
+                    checkbox.disabled = true;
+                }
+
                 checkbox.addEventListener('change', function() {
                     const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
                     submitButton.disabled = !isAnyChecked;

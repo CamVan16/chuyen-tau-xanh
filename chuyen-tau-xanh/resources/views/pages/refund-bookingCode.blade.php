@@ -1,28 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h2>Nhập Email Để Lấy Mã Đặt Chỗ</h2>
+    <div class="container mt-4">
+        <h2 class="text-primary text-center mb-4">LẤY LẠI MÃ ĐẶT CHỖ</h2>
 
-    <form action="{{ route('refund.sendBookingCode') }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+        <div class="alert alert-info">
+            <p>Nhập email của bạn để nhận mã đặt chỗ mới nhất qua email. Nếu bạn gặp khó khăn, vui lòng liên hệ với chúng
+                tôi để được hỗ trợ.</p>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success mt-2">{{ session('success') }}</div>
-        @endif
+        <div class="card shadow-sm p-4">
+            <form action="{{ route('refund.sendBookingCode') }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="email">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}"
+                        required placeholder="Nhập email đã đăng ký">
+                </div>
 
-        @if($errors->has('error'))
-            <div class="alert alert-danger mt-2">{{ $errors->first('error') }}</div>
-        @endif
+                @if (session('success'))
+                    <div class="alert alert-success mt-2">{{ session('success') }}</div>
+                @endif
 
-        <div class="d-flex justify-content-between">
-            <button type="submit" class="btn btn-primary">Gửi mã</button>
-            <a href="/tra-ve" class="btn btn-link">Quay lại</a>
+                @if ($errors->has('error'))
+                    <div class="alert alert-danger mt-2">{{ $errors->first('error') }}</div>
+                @endif
+
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="submit" class="btn btn-primary">Gửi mã</button>
+                    <a href="/tra-ve" class="btn btn-link">Quay lại</a>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+    </div>
 @endsection

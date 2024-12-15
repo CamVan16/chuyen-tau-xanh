@@ -14,11 +14,11 @@ class Refunds extends Migration
             $table->id();
             $table->string('booking_id');
             $table->string('refund_status')->default('pending');
-            $table->date('refund_date');
+            $table->dateTime('refund_time');
             $table->unsignedBigInteger('customer_id');
             $table->string('payment_method')->nullable();
             $table->double('refund_amount');
-            $table->date('refund_date_processed')->nullable();
+            $table->dateTime('refund_time_processed')->nullable();
             $table->timestamps();
 
             $table->foreign('booking_id') -> references('id')->on('bookings')->onDelete('cascade');

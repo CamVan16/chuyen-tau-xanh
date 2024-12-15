@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingControllerTest;
 use App\Http\Controllers\ExchangeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StationAreaController;
@@ -7,9 +8,22 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\CheckTicketController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BookingLookupController;
+use App\Http\Controllers\TrainController;
+use App\Http\Controllers\RouteStationController;
+use App\Http\Controllers\VNPayController;
+use App\Http\Controllers\ZaloPayController;
+use App\Http\Controllers\MomoController;
+use App\Http\Controllers\RegulationController;
+use App\Http\Controllers\RouteController;
+use App\Http\Controllers\SeatController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
-Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers']);
+Route::get('/trains/results', [StationAreaController::class, 'search']);
+Route::get('/ga', [StationAreaController::class, 'getAllStationName'])->name('stations.name');
+Route::get('/train/{id}/details', [TrainController::class, 'showDetails'])->name('train.details');
+
 
 Route::get('/tra-ve', [RefundController::class, 'getPageRefund'])->name('refund.getPageRefund');
 Route::get('/tra-ve/quen-ma', [RefundController::class, 'showBookingCodeForm'])->name('refund.showBookingCodeForm');
@@ -25,13 +39,12 @@ Route::get('/doi-ve/quen-ma', [ExchangeController::class, 'showBookingCodeForm']
 Route::post('/doi-ve/quen-ma', [ExchangeController::class, 'sendBookingCode'])->name('exchange.sendBookingCode');
 Route::match(['get', 'post'], '/doi-ve/chon-ve', [ExchangeController::class, 'findBooking'])->name('exchange.findBooking');
 Route::match(['get', 'post'], '/doi-ve/chon-ve-doi', [ExchangeController::class, 'findTicket'])->name('exchange.findTicket');
-Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/1', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
-Route::post('/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
-Route::get('/doi-ve/step-2', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
-Route::get('/doi-ve/thanh-cong/{refund_id}', [ExchangeController::class, 'success'])->name('refund.success');
-Route::get('/quy-dinh', function () {
-    return view('pages.regulations');
-});
+Route::get('/doi-ve/chon-ve-doi/{selectedTicketId}', [ExchangeController::class, 'search'])->name('exchange.search');
+Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
+Route::post('/doi-ve/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
+Route::get('/doi-ve/step-2/{selectedTicketId}', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
+Route::get('/doi-ve/thanh-cong/{exchange_id}', [ExchangeController::class, 'success'])->name('exchange.success');
+Route::get('/quy-dinh', [RegulationController::class, 'index'])->name('regulations.index');
 Route::get('/huong-dan', function () {
     return view('pages.guides');
 });
@@ -44,3 +57,44 @@ Route::get('/admin/get-list-refund', [RefundController::class, 'getListAll'])->n
 
 Route::get('/kiem-tra-ve', [CheckTicketController::class, 'showForm'])->name('check-ticket.form');
 Route::post('/kiem-tra-ve', [CheckTicketController::class, 'checkTicket'])->name('check-ticket.process');
+
+Route::get('/thong-tin-dat-cho', [BookingLookupController::class, 'showForm'])->name('booking.lookup.form');
+Route::post('/thong-tin-dat-cho', [BookingLookupController::class, 'processLookup'])->name('booking.lookup.process');
+Route::get('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'showForgotCodeForm'])->name('booking.forgot');
+Route::post('/thong-tin-dat-cho/quen-ma-dat-cho', [BookingLookupController::class, 'sendBookingCode'])->name('booking.forgot.process');
+// Route::controller(RouteStationController::class);
+Route::controller(TrainController::class)
+    ->group(function () {
+        //
+    });
+Route::controller(SeatController::class)
+    ->group(function () {
+        Route::post('timkiem/ketqua', 'getSeatsByCarId')->name('seat.getSeatsByCarId');
+    });
+Route::controller(RouteController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('routes.index');
+        Route::post('/timkiem', 'search')->name('routes.search');
+    });
+
+// Booking Routes
+Route::post('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
+Route::post('/booking/payment', [BookingControllerTest::class, 'processPayment'])->name('booking.processPayment');
+
+// VNPay Routes
+Route::post('/payment/vnpay', [VNPayController::class, 'processPayment'])->name('vnpay.process');
+Route::get('/payment/vnpay/callback', [VNPayController::class, 'handleVNPayResponse'])->name('vnpay.response'); // điều chỉnh lại route cho phù hợp
+
+// ZaloPay Routes
+Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->name('zalopay.process');
+Route::get('/payment/zalopay/callback', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
+
+// Momo Routes 
+Route::post('/payment/momo', [MomoController::class, 'processPayment'])->name('payment.momo');
+Route::get('/payment/momo/complete', [MomoController::class, 'completePayment'])->name('payment.momoComplete');
+Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('payment.momoIPN');
+
+Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers'])->name('vouchers.index');
+Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouchers.show');
+
+Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo'); 

@@ -18,7 +18,7 @@ class CheckTicketController extends Controller
     {
         // Validate dữ liệu từ form
         $request->validate([
-            'ticket_id' => 'required|numeric',
+            'ticket_id' => 'required|string|max:8',
             'train_mark' => 'nullable|string|max:10',
             'station_start' => 'nullable|string|max:25',
             'station_end' => 'nullable|string|max:25',

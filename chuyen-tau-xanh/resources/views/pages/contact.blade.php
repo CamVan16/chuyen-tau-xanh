@@ -3,7 +3,7 @@
 @section('title', 'Liên Hệ')
 
 @section('content')
-    <div class="container mt-5">
+    <div class="container mt-4">
         <h2 class="text-primary text-center mb-4">LIÊN HỆ VỚI CHÚNG TÔI</h2>
         <div class="row">
             <div class="col-md-">

@@ -9,7 +9,8 @@ class RouteStations extends Migration
     public function up()
     {
         Schema::create('route_stations', function (Blueprint $table) {
-            $table->integer('route_id');
+            $table->unsignedBigInteger('route_id');
+            $table->unsignedBigInteger('station_id');
             $table->string('station_code');
             $table->string('station_name');
             $table->integer('km');
@@ -18,6 +19,10 @@ class RouteStations extends Migration
             $table->time('arrival_time');
             $table->date('departure_date')->nullable();
             $table->timestamps();
+
+            $table->primary(['route_id', 'station_id']);
+            $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
+            $table->foreign('station_id')->references('id')->on('station_areas')->onDelete('cascade');
         });
     }
 

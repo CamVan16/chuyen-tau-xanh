@@ -7,16 +7,18 @@ use Illuminate\Support\Carbon;
 use App\Mail\BookingCodeEmail;
 use App\Mail\ExchangeConfirmation;
 use App\Mail\ExchangeSuccessMail;
-use App\Mail\RefundConfirmation;
-use App\Mail\RefundSuccessMail;
 use Illuminate\Http\Request;
 use App\Models\Refund;
 use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Exchange;
+use App\Models\ExchangePolicy;
 use App\Models\Ticket;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\RouteController;
+use App\Models\Schedule;
+use Illuminate\Support\Facades\DB;
 
 class ExchangeController extends Controller
 {
@@ -30,9 +32,9 @@ class ExchangeController extends Controller
         return view('pages.exchange-selection');
     }
 
-    public function getPageExchangeStep2()
+    public function getPageExchangeStep2($selectedTicketID)
     {
-        return view('pages.exchange-verify');
+        return view('pages.exchange-verify', ['ticketID' => $selectedTicketID]);
     }
 
     public function findBooking(Request $request)
@@ -64,6 +66,19 @@ class ExchangeController extends Controller
         }
 
         $tickets = $booking->tickets;
+        foreach ($tickets as $ticket) {
+            $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
+            $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+            $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+                ->where('max_hours', '>=', $hoursToDeparture)
+                ->first();
+            if ($exchangePolicy) {
+                $exchangeFee = $exchangePolicy->exchange_fee;
+            } else {
+                $exchangeFee = 1;
+            }
+            $ticket->exchange_fee = $exchangeFee;
+        }
 
         return view('pages.exchange-selection', ['booking' => $booking, 'tickets' => $tickets]);
     }
@@ -117,84 +132,134 @@ class ExchangeController extends Controller
             ->get();
 
         if ($tickets->isEmpty()) {
-            return redirect()->route('exchange.selection', ['booking_id' => $booking->id])
+            return redirect()->back()
                 ->with('warning', 'Không có vé nào có thể đổi cho mã đặt vé này.');
         }
 
-        return view('exchange-selection', [
-            'booking' => $booking,
-            'tickets' => $tickets
+        if ($request->has('ticket_array')) {
+            $selectedTicket = Ticket::find($request->input('ticket_array'));
+
+            return redirect()->route('exchange.search', ['selectedTicketId' => $selectedTicket->id])
+                ->with('success', 'Vé đã được chọn. Tiến hành tìm vé để đổi.');
+        }
+
+        return redirect()->back()
+            ->withErrors(['error' => 'Vui lòng chỉ chọn một vé để đổi']);
+    }
+
+    public function search($ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+
+        $stationA = $ticket->schedule->station_start;
+        $stationB = $ticket->schedule->station_end;
+        $departureDate = $ticket->schedule->date_start;
+
+        $routeController = new RouteController();
+        $goRoutes = $routeController->findRoutes($stationA, $stationB);
+        $routeController->findTrains($goRoutes, $departureDate);
+        $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
+        $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+        $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+            ->where('max_hours', '>=', $hoursToDeparture)
+            ->first();
+        if ($exchangePolicy) {
+            $exchangeFee = $exchangePolicy->exchange_fee;
+        } else {
+            $exchangeFee = 1;
+        }
+        $ticket->exchange_fee = $exchangeFee;
+
+        return view('pages.exchange-search', [
+            'ticket' => $ticket,
+            'goRoutes' => $goRoutes,
+            'departureDate' => $departureDate
         ]);
     }
 
     public function createExchange(Request $request)
     {
-        $request->validate([
-            'booking_id' => 'required|string',
-            'old_ticket_id' => 'required|integer',
-            'new_ticket_id' => 'required|integer',
-            'payment_method' => 'required|string',
-        ]);
-
-        $booking = Booking::where('id', $request->booking_id)->first();
-
-        if (!$booking) {
-            return redirect()->back()->withErrors(['error' => 'Thông tin mã đặt chỗ không chính xác.']);
-        }
-
-        $oldTicket = Ticket::where('id', $request->old_ticket_id)
-            ->whereNull('exchange_id')
-            ->where('booking_id', $booking->id)
-            ->first();
-
-        if (!$oldTicket) {
-            return redirect()->back()->withErrors(['error' => 'Vé cũ không hợp lệ hoặc đã được đổi.']);
-        }
-
-        $newTicket = Ticket::where('id', $request->new_ticket_id)->first();
-
-        if (!$newTicket) {
-            return redirect()->back()->withErrors(['error' => 'Vé mới không tồn tại.']);
-        }
-
-        $newPrice = $newTicket->price*(1-$newTicket->discount_price - 0.1);
-        $oldPrice = $newTicket->price*(1-$oldTicket->discount_price);
-        $additional_price = max(0, $newPrice - $oldPrice);
-        $exchangeDate = Carbon::now();
-
-        $exchange = Exchange::create([
-            'old_ticket_id' => $oldTicket->id,
-            'new_ticket_id' => $newTicket->id,
-            'booking_id' => $booking->id,
-            'exchange_status' => 'pending',
-            'exchange_date' => $exchangeDate,
-            'customer_id' => $booking->customer_id,
-            'payment_method' => $request->payment_method,
-            'additional_price' => $additional_price,
-            'old_price' => $oldPrice,
-            'new_price' => $newPrice,
-        ]);
-
-        $oldTicket->update(['exchange_id' => $exchange->id]);
-
-        $confirmation_code = Str::random(6);
-
-        session(['exchange_id' => $exchange->id, 'confirmation_code' => $confirmation_code]);
-
-        $details = [
-            'subject' => 'Mã xác nhận đổi vé',
-            'booking_id' => $booking->id,
-            'confirmation_code' => $confirmation_code,
-        ];
+        $oldTicketId = $request->input('old_ticket_id');
+        $newTrainId = $request->input('new_train_id');
+        $departureDate = $request->input('departure_date');
+        $departureTime = $request->input('departure_time');
+        $arrivalDate = $request->input('arrival_date');
+        $arrivalTime = $request->input('arrival_time');
+        $customerId = $request->input('customer_id');
+        $seat_number = $request->input('seat_number');
+        $car_name = $request->input('car_name');
+        $paymentMethod = $request->input('payment_method');
+        DB::beginTransaction();
 
         try {
-            $customer = $booking->customer;
-            Mail::to($customer->email)->send(new ExchangeConfirmation($details));
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Có lỗi xảy ra khi gửi email xác nhận.']);
-        }
+            // Lấy vé cũ và thông tin khách hàng
+            $oldTicket = Ticket::findOrFail($oldTicketId);
+            $customer = Customer::findOrFail($customerId);
 
-        return view('pages.exchange-verify');
+            $newSchedule = Schedule::create([
+                'train_id' => $newTrainId,
+                'train_mark' => $oldTicket->schedule->train_mark,
+                'day_start' => $departureDate,
+                'time_start' => $departureTime,
+                'day_end' => $arrivalDate,
+                'time_end' => $arrivalTime,
+                // 'station_start' => $newStationStart,
+                // 'station_end' => $newStationEnd,
+                'seat_number' => $oldTicket->schedule->seat_number,
+                'car_name' => $oldTicket->schedule->car_name
+            ]);
+
+            // Tạo một booking mới
+            $booking = Booking::create([
+                'customer_id' => $customerId,
+                'discount_price' => $oldTicket->discount_price,
+                'booked_time' => now(),
+                'booking_status' => 'booked',
+                'total_price' => $oldTicket->price, // Tổng giá vé mới
+                'payment_method' => $paymentMethod
+            ]);
+
+            // Tạo vé mới dựa trên lịch trình mới
+            $newTicket = Ticket::create([
+                'booking_id' => $booking->id,
+                'customer_id' => $customerId,
+                'schedule_id' => $newSchedule->id,
+                'price' => $oldTicket->price, // Giá của vé mới (có thể tính lại nếu cần)
+                'discount_price' => $oldTicket->discount_price, // Giảm giá tương tự vé cũ
+                'ticket_status' => 'new'
+            ]);
+
+            // Tạo bản ghi Exchange để ghi nhận việc đổi vé
+            $exchange = Exchange::create([
+                'old_ticket_id' => $oldTicketId,
+                'new_ticket_id' => $newTicket->id,
+                'booking_id' => $booking->id,
+                'customer_id' => $customerId,
+                'payment_method' => $paymentMethod,
+                'old_price' => $oldTicket->price,
+                'new_price' => $oldTicket->price, // Điều chỉnh nếu có thay đổi giá
+                'additional_price' => 0, // Nếu không có phí thêm
+                'exchange_status' => 'processed',
+                'exchange_time' => now(),
+                'exchange_time_processed' => now()
+            ]);
+
+            // Commit giao dịch
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Đổi vé và tạo lịch trình mới thành công!',
+                'new_ticket' => $newTicket,
+                'new_schedule' => $newSchedule,
+                'exchange' => $exchange
+            ], 200);
+        } catch (\Exception $e) {
+            // Nếu có lỗi thì rollback giao dịch
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function verifyConfirmation(Request $request)
@@ -213,8 +278,14 @@ class ExchangeController extends Controller
             $exchange = Exchange::find($exchange_id);
 
             if ($exchange) {
-                $$exchange->$exchange_status = 'confirmed';
-                $$exchange->save();
+                $exchange->exchange_status = 'completed';
+                $exchange->save();
+            }
+
+            $newTicket = Ticket::find($exchange->new_ticket_id);
+            if ($newTicket) {
+                $newTicket->booking_id = $exchange->booking_id;
+                $newTicket->save();
             }
 
             return redirect()->route('exchange.success', ['exchange_id' => $exchange_id])->with('message', 'Xác nhận thành công!');
@@ -246,41 +317,13 @@ class ExchangeController extends Controller
         ]);
     }
 
-    // public function updateRefundStatus()
-    // {
-    //     $refunds = Refund::whereIn('refund_status', ['pending', 'confirmed'])->get();
-
-    //     foreach ($refunds as $refund) {
-    //         if ($refund->refund_status === 'pending' && Carbon::parse($refund->refund_date)->diffInDays(Carbon::now()) > 3) {
-    //             $refund->refund_status = 'rejected';
-    //             $refund->save();
-    //         }
-
-    //         if ($refund->refund_status === 'confirmed' && Carbon::parse($refund->refund_date)->diffInDays(Carbon::now()) > 3) {
-    //             $refund->refund_status = 'completed';
-    //             $refund->refund_date_processed = Carbon::now();
-    //             $refund->save();
-    //         }
-    //     }
-    //     return response()->json(['message' => 'Refund statuses updated successfully.']);
-    // }
     public function updateExchangeStatus()
     {
-        $exchanges = exchange::whereIn('exchange_status', ['pending', 'confirmed'])->get();
+        $exchanges = exchange::whereIn('exchange_status', ['pending'])->get();
 
         foreach ($exchanges as $exchange) {
-            if ($exchange->exchange_status === 'pending' && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) > 3) {
+            if ($exchange->exchange_status === 'pending' && Carbon::parse($exchange->exchange_time)->diffInDays(Carbon::now()) > 3) {
                 $exchange->exchange_status = 'rejected';
-                $exchange->save();
-            }
-
-            if ($exchange->exchange_status === 'confirmed' && !$exchange->payment_method && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) > 3) {
-                $exchange->exchange_status = 'rejected';
-                $exchange->save();
-            }
-            if ($exchange->exchange_status === 'confirmed' && $exchange->payment_method && Carbon::parse($exchange->exchange_date)->diffInDays(Carbon::now()) < 3) {
-                $exchange->exchange_status = 'completed';
-                $exchange->exchange_date_processed = 'completed';
                 $exchange->save();
             }
         }
@@ -327,20 +370,20 @@ class ExchangeController extends Controller
             $request->validate([
                 'booking_id' => 'required|string|max:20',
                 'refund_status' => 'required|string|max:20',
-                'refund_date' => 'required|date',
+                'refund_time' => 'required|date',
                 'customer_id' => 'required|exists:customers,id',
                 'payment_method' => 'nullable|string|max:20',
                 'refund_amount' => 'required|numeric',
-                'refund_date_processed' => 'nullable|date',
+                'refund_time_processed' => 'nullable|date',
             ]);
 
             $refund->booking_id = $request->input('booking_id');
             $refund->refund_status = $request->input('refund_status');
-            $refund->refund_date = $request->input('refund_date');
+            $refund->refund_time = $request->input('refund_time');
             $refund->customer_id = $request->input('customer_id');
             $refund->payment_method = $request->input('payment_method');
             $refund->refund_amount = $request->input('refund_amount');
-            $refund->refund_date_processed = $request->input('refund_date_processed');
+            $refund->refund_time_processed = $request->input('refund_time_processed');
 
             $refund->save();
 
@@ -389,8 +432,18 @@ class ExchangeController extends Controller
 
         $newTicket = Ticket::where('id', $request->new_ticket_id)->first();
 
-        $newPrice = $newTicket->price*(1-$newTicket->discount_price - 0.1);
-        $oldPrice = $newTicket->price*(1-$oldTicket->discount_price);
+        $newPrice = $newTicket->price - $newTicket->discount_price;
+        $scheduleStart = $oldTicket->schedule->day_start . ' ' . $oldTicket->schedule->time_start;
+        $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+        $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+            ->where('max_hours', '>=', $hoursToDeparture)
+            ->first();
+        if ($exchangePolicy) {
+            $exchangeFee = $exchangePolicy->exchange_fee;
+        } else {
+            $exchangeFee = 1;
+        }
+        $oldPrice = $newTicket->price * (1 - $exchangeFee) - $oldTicket->discount_price;
         $additional_price = max(0, $newPrice - $oldPrice);
         $exchangeDate = Carbon::now();
 
@@ -399,8 +452,8 @@ class ExchangeController extends Controller
             'new_ticket_id' => $newTicket->id,
             'booking_id' => $booking->id,
             'exchange_status' => 'completed',
-            'exchange_date' => $exchangeDate,
-            'exchange_date_processed' => $exchangeDate,
+            'exchange_time' => $exchangeDate,
+            'exchange_time_processed' => $exchangeDate,
             'customer_id' => $booking->customer_id,
             'payment_method' => $request->payment_method,
             'additional_price' => $additional_price,

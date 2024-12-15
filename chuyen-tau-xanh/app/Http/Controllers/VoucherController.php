@@ -15,16 +15,16 @@ class VoucherController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|string',
-            'name' => 'required|string',
-            'min_price_order' => 'required|double',
-            'percent' => 'required|integer',
-            'max_price_discount' => 'required|double',
-            'type' => 'required|integer',
-            'from_date' => 'required|date',
-            'to_date' => 'required|date',
-            'quantity' => 'required|quantity',
-            'description' => 'string'
+            'code' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'min_price_order' => 'required|numeric',
+            'percent' => 'required|integer|min:1|max:100',
+            'max_price_discount' => 'required|numeric',
+            'type' => 'required|integer|in:0,1,2',
+            'from_date' => 'required|date|after_or_equal:today',
+            'to_date' => 'required|date|after:from_date',
+            'quantity' => 'required|integer|min:0',
+            'description' => 'nullable|string|max:255',
         ]);
 
         return Voucher::create($request->all());
@@ -32,7 +32,8 @@ class VoucherController extends Controller
 
     public function show($id)
     {
-        return Voucher::findOrFail($id);
+        $voucher = Voucher::findOrFail($id);
+        return response()->json($voucher);
     }
 
     public function update(Request $request, $id)
@@ -53,6 +54,17 @@ class VoucherController extends Controller
 
     public function showVouchers()
     {
-        // return view('vouchers');
+        $vouchers = Voucher::where('from_date', '<=', now())
+            ->where('to_date', '>=', now())
+            ->get();
+
+        return view('pages.voucher', compact('vouchers'));
+    }
+
+    public function showVouchersForBooking()
+    {
+        return Voucher::where('from_date', '<=', now())
+            ->where('to_date', '>=', now())
+            ->get();
     }
 }

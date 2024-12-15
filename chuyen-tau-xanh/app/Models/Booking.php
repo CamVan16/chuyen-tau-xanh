@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ticket;
 
 class Booking extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
     protected $primaryKey = 'id';
@@ -21,6 +22,7 @@ class Booking extends Model
         'booked_time',
         'booking_status',
         'total_price',
+        'payment_method',
     ];
 
     protected static function boot()
@@ -29,19 +31,19 @@ class Booking extends Model
 
         static::creating(function ($model) {
             if (empty($model->id)) {
-                $model->id = strtoupper(bin2hex(random_bytes(3)));
+                $model->id = strtoupper(bin2hex(random_bytes(4)));
             }
         });
     }
 
     public function refunds()
     {
-        return $this->hasMany(Refund::class,'booking_id');
+        return $this->hasMany(Refund::class, 'booking_id');
     }
 
     public function exchanges()
     {
-        return $this->hasMany(Exchange::class,'booking_id');
+        return $this->hasMany(Exchange::class, 'booking_id');
     }
 
     public function tickets()
