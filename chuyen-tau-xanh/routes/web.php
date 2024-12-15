@@ -21,6 +21,7 @@ use App\Http\Controllers\TransactionController;
 
 Route::get('/giotau-giave', [StationAreaController::class, 'showStations']);
 Route::get('/trains/results', [StationAreaController::class, 'search']);
+Route::get('/ga', [StationAreaController::class, 'getAllStationName'])->name('stations.name');
 Route::get('/train/{id}/details', [TrainController::class, 'showDetails'])->name('train.details');
 
 

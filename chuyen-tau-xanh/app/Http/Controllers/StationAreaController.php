@@ -115,4 +115,9 @@ class StationAreaController extends Controller
             }
         }
     }
+
+    public function getAllStationName() {
+        $stationNames = StationArea::all(['station_name as name']); 
+        return response()->json($stationNames);
+    }
 }
