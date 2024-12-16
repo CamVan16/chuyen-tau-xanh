@@ -16,6 +16,7 @@ Route::group([
     ),
     'namespace' => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
+    Route::get('dashboard', 'DashboardController@index');
     Route::crud('customer', 'CustomerCrudController');
     Route::crud('refund-policy', 'RefundPolicyCrudController');
     Route::crud('exchange-policy', 'ExchangePolicyCrudController');
