@@ -1,79 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
-<script>
-    $(document).ready(function () {
-    // var bookingData = $('#booking-data').data('booking');
-
-    // var booking = JSON.parse(bookingData);
-
-    // console.log("Booking Data:", booking);
-
-    });
-</script>
-    <div>
-        <h1>Transaction Information</h1>
-
-        <!-- <div class="transaction-status">
-            @if ($status === 'success')
-                <h2 style="color: green;">Transaction Successful</h2>
-                <p>Thank you for your payment!</p>
-            @else
-                <h2 style="color: red;">Transaction Failed</h2>
-                <p>Unfortunately, your payment was unsuccessful. Please try again!</p>
-            @endif
-        </div>
-        <div class="payment-method">
-            <h3>Payment Method: {{ ucfirst($payment) }}</h3>
-        </div>
-
-        @if (!empty($booking))
-        <div class="booking-info">
-            <h3>Booking Information</h3>
-
-            {{-- Hiển thị thông tin người đặt (booker) --}}
+<div>
+    <h1 class="text-center">THÔNG TIN GIAO DỊCH</h1>
+    
+    <div class="transaction-result">
+        @if ($status !== 'success')
+            <h3 style="color: red;" class="text-center">Thanh toán không thành công</h3>
+            <span class="text-center">Đã có lỗi xảy ra. Vui lòng thử lại!</span>
+        @else
             <div class="booker-info">
-                <h4>Booker Information</h4>
-                <p><strong>Name:</strong> {{ $booking['booker']['name'] }}</p>
-                <p><strong>Email:</strong> {{ $booking['booker']['email'] }}</p>
-                <p><strong>Phone:</strong> {{ $booking['booker']['phone'] }}</p>
+                <h3>Thông tin người đặt</h3>
+                <p><strong>Họ tên:</strong> {{ $booking['booker']['name'] }}</p>
+                <p><strong>Email:</strong> {{ $booking['booker']['email'] ?: 'Không có' }}</p>
+                <p><strong>Số định danh:</strong> {{ $booking['booker']['citizen'] }}</p>
+                <p><strong>Số điện thoại:</strong> {{ $booking['booker']['phone'] }}</p>
             </div>
 
-            {{-- Hiển thị danh sách vé (tickets) --}}
-            <div id="booking-data" data-booking="{{ htmlspecialchars(json_encode($booking)) }}" class="ticket-info">
-                <h4>Tickets</h4>
+            <div class="ticket-info">
+                <h3>Thông tin vé</h3>
                 <table border="1" style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th>Seat</th>
-                            <th>Price</th>
+                            <th>Thông tin hành khách</th>
+                            <th>Thông tin vé</th>
+                            <th>Thành tiền</th>
+                            <th>Tình trạng</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($booking['tickets'] as $ticket)
                             <tr>
-                                <td>{{ $ticket['seat'] }}</td>
-                                <td>{{ number_format($ticket['price'], 0, ',', '.') }} VND</td>
+                                <td>
+                                    Họ tên:{{ $ticket['passenger_name'] }} <br>
+                                    Đối tượng: {{ $ticket['customer_type'] }} <br>
+                                    Số định danh: {{ $ticket['passenger_citizen'] }} <br>
+                                </td>
+                                <td>
+                                    {{ $ticket['train_mark'] }} <br>
+                                    Khởi hành: {{ $ticket['day_start'] }} {{ $ticket['time_start'] }} ({{ $ticket['station_start'] }}) <br>
+                                    Toa: {{ $ticket['car_name'] }}, Ghế số: {{ $ticket['seat_number'] }} <br>
+                                </td>
+                                <td>{{ number_format($ticket['ticket_price'], 0, ',', '.') }} VND</td>
+                                <td>Đã thanh toán</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
-            {{-- Hiển thị tổng số tiền (amount) --}}
-            <div class="amount-info">
-                <h4>Total Amount</h4>
-                <p><strong>{{ number_format($booking['amount'], 0, ',', '.') }} VND</strong></p>
-            </div>
-        </div>
-
-        @else
-            <p>No booking information found.</p>
-        @endif -->
+        @endif
     </div>
-</body>
-</html>
-
-
-@endsection 
-
+    
+</div>
+@endsection

@@ -57,8 +57,32 @@
             background-color: #ff8a8a;
             color: white;
         }
+        .seat[data-index="null"] {
+            display: none;
+        }
         .compartment {
             text-align: center;
+            border-left: 2px solid #385d8a;
+            border-right: 2px solid #385d8a;
+        }
+        .partition {
+            border: 1px solid #385d8a;
+        }
+        .layer {
+            gap: 7px;
+            border-bottom: 2px solid #385d8a;
+            justify-content: space-between;
+        }
+        .countdown {
+            color: #008ecf;
+        }
+        .seats {
+            border: 4px solid #385d8a;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin: auto;
+            height: 230px;
+            margin-bottom: 50px;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -69,7 +93,7 @@
             const timers = new Map();
             var groutes = $('.go-routes').data('groutes');
             var rroutes = $('.return-routes').data('rroutes');
-            console.log(groutes);
+            console.log(rroutes);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -155,8 +179,8 @@
                             for (let i = 0; i < 7; i++) {
                                 const $compartmentDiv = $(`<div class="compartment"></div>`);
                                 for (let j = 1; j <= 3; j++) {
-                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
-                                    $layer.append(`<button class="btn seat"
+                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"><div class="partition"></div></div>`);
+                                    $layer.prepend(`<button class="btn seat"
                                                         data-index="${i * 6 + (j * 2) - 1}"
                                                         data-status="${seats[i * 6 + (j * 2) - 1-1]?.seat_status}"
                                                         data-id="${seats[i * 6 + (j * 2) - 1-1]?.id}"
@@ -183,8 +207,8 @@
                             for (let i = 0; i < 7; i++) {
                                 const $compartmentDiv = $(`<div class="compartment"></div>`);
                                 for (let j = 1; j <= 2; j++) {
-                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
-                                    $layer.append(`<button class="btn seat"
+                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"><div class="partition"></div>`);
+                                    $layer.prepend(`<button class="btn seat"
                                                         data-index="${i * 4 + (j * 2) - 1}"
                                                         data-status="${seats[i * 4 + (j * 2) - 1-1]?.seat_status}"
                                                         data-id="${seats[i * 4 + (j * 2) - 1-1]?.id}"
@@ -213,10 +237,10 @@
                             for (let i = 0; i < 7; i++) {
                                 const $compartmentDiv = $(`<div class="compartment"></div>`);
                                 for (let j = 1; j <= 2; j++) {
-                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
+                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"><div class="partition"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -235,7 +259,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -266,10 +290,10 @@
                             for (let i = 0; i < 6; i++) {
                                 const $compartmentDiv = $(`<div class="compartment"></div>`);
                                 for (let j = 1; j <= 2; j++) {
-                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
+                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"><div class="partition"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -288,7 +312,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -319,10 +343,10 @@
                             for (let i = 0; i < 7; i++) {
                                 const $compartmentDiv = $(`<div class="compartment"></div>`);
                                 for (let j = 1; j <= 2; j++) {
-                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"></div>`);
+                                    const $layer = $(`<div class="layer d-flex justify-content-center m-3"><div class="partition"></div>`);
                                     if (j === 1) {
                                         // if (t1[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t1[i * 2]}"
                                                                 data-status="${seats[(t1[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t1[i * 2])-1]?.id}"
@@ -341,7 +365,7 @@
                                         // }
                                     } else {
                                         // if (t2[i*2]) {
-                                            $layer.append(`<button class="btn seat"
+                                            $layer.prepend(`<button class="btn seat"
                                                                 data-index="${t2[i * 2]}"
                                                                 data-status="${seats[(t2[i * 2])-1]?.seat_status}"
                                                                 data-id="${seats[(t2[i * 2])-1]?.id}"
@@ -418,6 +442,34 @@
                 // const departureDateGo = $firstGoTrain.data('date');
                 // const departureTimeGo = $firstGoTrain.data('time');
                 renderCars(defaultGoCars, '#go-cars-container', trainMarkGo);
+                const $firstGoCar = $('#go-cars-container .car').first();
+                $firstGoCar.addClass('active');
+                var carId = parseInt($firstGoCar.data('id'));
+                var carLayout = parseInt($firstGoCar.data('layout'));
+                var numOfSeats = parseInt($firstGoCar.data('count'));
+                // var trainMarkGo = $firstGoCar.data('mark');
+                var departureDate = groutes.find(route => route.train_mark === trainMarkGo).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMarkGo).train_id;
+                // var departureTime = $firstGoCar.data('time');
+                var carName = $firstGoCar.data('name');
+                $('.go-car-description').text(`Toa số ${carName}: ${$firstGoCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMarkGo,
+                        departure_date: departureDate,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMarkGo);
+                        applyPrice('#go-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             }
 
             const $firstReturnTrain = $('.return-trains .train').first();
@@ -428,6 +480,34 @@
                 // const departureDateReturn = $firstReturnTrain.data('date');
                 // const departureTimeReturn = $firstReturnTrain.data('time');
                 renderCars(defaultReturnCars, '#return-cars-container', trainMarkReturn);
+                const $firstReturnCar = $('#return-cars-container .car').first();
+                $firstReturnCar.addClass('active');
+                var carId = parseInt($firstReturnCar.data('id'));
+                var carLayout = parseInt($firstReturnCar.data('layout'));
+                var numOfSeats = parseInt($firstReturnCar.data('count'));
+                // var trainMarkReturn = $firstReturnCar.data('mark');
+                var departureDate = rroutes.find(route => route.train_mark === trainMarkReturn).departure_date;
+                var trainID = rroutes.find(route => route.train_mark === trainMarkReturn).train_id;
+                // var departureTime = $firstReturnCar.data('time');
+                var carName = $firstReturnCar.data('name');
+                $('.return-car-description').text(`Toa số ${carName}: ${$firstReturnCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMarkReturn,
+                        departure_date: departureDate,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#return-seats-container', carName, carLayout, numOfSeats, trainMarkReturn);
+                        applyPrice('#return-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             }
 
             $('.go-trains .train').on('click', function () {
@@ -441,6 +521,34 @@
                 $('#go-seats-container').empty();
                 $('.go-car-description').empty();
                 renderCars(cars, '#go-cars-container', trainMark);
+                const $firstGoCar = $('#go-cars-container .car').first();
+                $firstGoCar.addClass('active');
+                var carId = parseInt($firstGoCar.data('id'));
+                var carLayout = parseInt($firstGoCar.data('layout'));
+                var numOfSeats = parseInt($firstGoCar.data('count'));
+                // var trainMarkGo = $firstGoCar.data('mark');
+                var departureDate = groutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
+                // var departureTime = $firstGoCar.data('time');
+                var carName = $firstGoCar.data('name');
+                $('.go-car-description').text(`Toa số ${carName}: ${$firstGoCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMark,
+                        departure_date: departureDate,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMark);
+                        applyPrice('#go-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             });
 
             $('.return-trains .train').on('click', function () {
@@ -454,6 +562,34 @@
                 $('#return-seats-container').empty();
                 $('.return-car-description').empty();
                 renderCars(cars, '#return-cars-container', trainMark);
+                const $firstReturnCar = $('#return-cars-container .car').first();
+                $firstReturnCar.addClass('active');
+                var carId = parseInt($firstReturnCar.data('id'));
+                var carLayout = parseInt($firstReturnCar.data('layout'));
+                var numOfSeats = parseInt($firstReturnCar.data('count'));
+                // var trainMarkReturn = $firstReturnCar.data('mark');
+                var departureDate = rroutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = rroutes.find(route => route.train_mark === trainMark).train_id;
+                // var departureTime = $firstReturnCar.data('time');
+                var carName = $firstReturnCar.data('name');
+                $('.return-car-description').text(`Toa số ${carName}: ${$firstReturnCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMark,
+                        departure_date: departureDate,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#return-seats-container', carName, carLayout, numOfSeats, trainMark);
+                        applyPrice('#return-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             });
 
             $(document).on('click', '#go-cars-container .car', function () {
@@ -529,19 +665,21 @@
                     $cart.append('<p>Chưa có vé.</p>');
                     return;
                 }
-                const $ticketList = $('<ul class="ticket-list"></ul>');
+                const $ticketList = $('<div class="ticket-list"></div>');
                 tickets.forEach(ticket => {
                     const $ticketItem = $(`
-                        <li class="ticket-item">
-                            ${ticket.from_station} - ${ticket.to_station}
-                            Khởi hành: ${ticket.departure_date} lúc ${ticket.departure_time}
-                            Tàu: ${ticket.train_mark} <br>
+                        <div class="ticket-item border p-2">
+                            ${ticket.from_station} - ${ticket.to_station} <br />
+                            Khởi hành: ${ticket.departure_date} ${ticket.departure_time} <br />
+                            Tàu: ${ticket.train_mark}
                             Toa số: ${ticket.car} <br>
-                            Ghế số: ${ticket.seat_index} - Loại: ${ticket.seat_type} - Giá: ${(ticket.price).toLocaleString()} VNĐ
+                            Ghế số: ${ticket.seat_index} - Loại: ${ticket.seat_type} <br />
+                            Giá: ${(ticket.price).toLocaleString()} VNĐ <br />
                             <button class="remove-ticket btn btn-sm btn-danger" data-id="${ticket.seat_id}" data-train="${ticket.train_mark}">
                                 Xóa
                             </button>
-                        </li>
+                            <span class="countdown">${Math.round((600000 - (Date.now() - ticket.start_time))/1000)}</span>
+                        </div>
                     `);
                     $(`.seat[data-id="${ticket.seat_id}"][data-mark="${ticket.train_mark}"]`).addClass("reserve");
                     $ticketList.append($ticketItem);
@@ -549,10 +687,15 @@
                 $cart.append($ticketList);
                 const $checkoutButton = $('<button class="checkout-tickets btn btn-primary mt-3">Mua vé</button>');
                 $cart.append($checkoutButton);
-
             }
-
+            function updateCountdown() {
+                $('.ticket-item').each(function() {
+                    const countdown = $(this).find('.countdown').text();
+                    $(this).find('.countdown').text(parseInt(countdown) - 1);
+                });
+            }
             loadCart();
+            setInterval(updateCountdown, 1000);
             function loadCart() {
                 var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
                 // console.log(tickets);
@@ -710,9 +853,11 @@
                 <p>Không tìm thấy tuyến tàu phù hợp.</p>
             @endforelse
         </div>
-        <div id="go-cars-container" class="cars"></div>
-        <h4 class="go-car-description"></h4>
-        <div id="go-seats-container" class="seats justify-content-center"></div>
+        @if (count($goRoutes) > 0)
+            <div id="go-cars-container" class="cars"></div>
+            <h4 class="go-car-description text-center m-3"></h4>
+            <div id="go-seats-container" class="seats justify-content-center"></div>
+        @endif
 
         @if ($ticketType === 'round-trip')
             <div class="return-routes d-none" data-rroutes='@json($returnRoutes)'></div>
@@ -735,15 +880,17 @@
                     <p>Không tìm thấy tuyến tàu phù hợp.</p>
                 @endforelse
             </div>
-            <div id="return-cars-container" class="cars"></div>
-            <h4 class="return-car-description"></h4>
-            <div id="return-seats-container" class="seats"></div>
+            @if (count($returnRoutes) > 0)
+                <div id="return-cars-container" class="cars"></div>
+                <h4 class="return-car-description text-center m-3"></h4>
+                <div id="return-seats-container" class="seats"></div>
+            @endif
         @endif
     </div>
     <div class="col-xs-12 col-sm-3 col-md-3 part-right">
-        <div class="cart border">
-            <div class="go-tickets" style="display:none;"></div>
-            <div class="return-tickets" style="display:none;"></div>
+        <div>
+            <div class="text-center text-white bg-info">Giỏ vé</div>
+            <div class="cart border small"></div>
         </div>
     </div>
 </div>

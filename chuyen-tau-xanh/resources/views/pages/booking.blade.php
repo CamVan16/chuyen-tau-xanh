@@ -5,6 +5,9 @@
     table p {
         margin: 0;
     }
+    .countdown {
+        color: #008ecf;
+    }
 </style>
 <script>
     $(document).ready(function () {
@@ -57,7 +60,12 @@
                             <td class="discount">0</td>
                             <td class="vouchers">${checkVouchers(departure.price, 0)}</td>
                             <td class="money">${departure.price.toLocaleString()}</td>
-                            <td>1</td>
+                            <td>
+                                <p class="countdown">${Math.round((600000 - (Date.now() - departure.start_time))/1000)}</p>
+                                <button class="remove-ticket btn btn-sm btn-danger" data-id="${departure.seat_id}" data-train="${departure.train_mark}">
+                                Xoá
+                                </button>
+                            </td>
                         </tr>
                         <tr data-seat="${returnTicket.seat_id}" data-train="${returnTicket.train_mark}">
                             <td><p>${returnTicket.train_mark} ${returnTicket.from_station} - ${returnTicket.to_station} </p>
@@ -69,7 +77,12 @@
                             <td class="discount">0</td>
                             <td class="vouchers">${checkVouchers(returnTicket.price, 0)}</td>
                             <td class="money">${returnTicket.price.toLocaleString()}</td>
-                            <td>1</td>
+                            <td>
+                                <p class="countdown">${Math.round((600000 - (Date.now() - returnTicket.start_time))/1000)}</p>
+                                <button class="remove-ticket btn btn-sm btn-danger" data-id="${returnTicket.seat_id}" data-train="${returnTicket.train_mark}">
+                                Xoá
+                                </button>
+                            </td>
                         </tr>
                     `);
                 } else {
@@ -96,7 +109,12 @@
                             <td class="discount">0</td>
                             <td class="vouchers">${checkVouchers(ticket.price, 0)}</td>
                             <td class="money">${ticket.price.toLocaleString()}</td>
-                            <td>1</td>
+                            <td>
+                                <p class="countdown">${Math.round((600000 - (Date.now() - ticket.start_time))/1000)}</p>
+                                <button class="remove-ticket btn btn-sm btn-danger" data-id="${ticket.seat_id}" data-train="${ticket.train_mark}">
+                                Xoá
+                                </button>
+                            </td>
                         </tr>
                     `);
                 }
@@ -129,6 +147,12 @@
             renderTicketByType(unmatchedDepartures, '#departure-tickets');
             renderTicketByType(unmatchedReturns, '#return-tickets');
             updateTotalPrice();
+        }
+        function updateCountdown() {
+            $('table tbody tr').each(function() {
+                const countdown = $(this).find('.countdown').text();
+                $(this).find('.countdown').text(parseInt(countdown) - 1);
+            });
         }
         function loadCart() {
             var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
@@ -224,6 +248,26 @@
                 updateMoney($nextRow)
             }
         }
+        $(document).on('click', '.remove-ticket', function () {
+            const seatID = $(this).data('id');
+            const trainMark = $(this).data('train');
+            let cart = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
+            cart = cart.filter(item => !(item.seat_id === seatID && item.train_mark === trainMark));
+            localStorage.setItem('ticket-pocket', JSON.stringify(cart));
+            timers.delete({id: seatID, train: trainMark}); 
+            const $row = $(this).closest('tr');
+            const $passengerCell = $row.find('.passenger-info');
+            if ($passengerCell.length === 0) {
+                $row.prev('tr').find('.passenger-info').attr('rowspan', '1');
+            } else {
+                if ($passengerCell.attr('rowspan') === '2') {
+                    $passengerCell.attr('rowspan','1');
+                    $row.next('tr').prepend($passengerCell);
+                }
+            }
+            $row.remove();
+            updateTotalPrice();    
+        });
         $(document).on('click', '.select-voucher-btn', function () {
             const $row = $(this).closest('tr');
             const ticketPrice = parseInt($row.find('.ticket-price').text().replace(/,/g, '')) || 0; 
@@ -311,6 +355,7 @@
             }
         });
         loadCart();
+        setInterval(updateCountdown, 1000);
         function generateOrderId() {
             const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             let orderId = "";
@@ -339,6 +384,9 @@
                 const $step1Content = $('#step-1').find('table').clone();
                 $step1Content.find('input').each(function () {
                     $(this).attr('readonly', true); 
+                });
+                $step1Content.find('button').each(function () {
+                    $(this).hide(); 
                 });
                 $step1Content.find('select').each(function (index, element) {
                     // console.log(cusTypes[index]);

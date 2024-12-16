@@ -116,7 +116,6 @@ class ZaloPayController extends Controller
 
     public function handleResponse(Request $request)
     {
-
         $bookingEncoded = $request->query('booking_info');
         $amount = $request->query('amount');
         $appTransId = $request->query('apptransid');

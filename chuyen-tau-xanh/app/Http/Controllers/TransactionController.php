@@ -164,8 +164,10 @@ class TransactionController extends Controller
         $booking = json_decode(base64_decode($bookingInfo), true);
         $payment = $request->query('payment_method');
         if ($status === 'success') {
+            // dd($booking);
             $this->storeTransactionData($booking, $payment);
         }
+        $booking = json_decode($booking, true);
         return view('pages.transaction_information', compact('status', 'booking', 'payment'));
     }
 
