@@ -105,3 +105,4 @@ Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouche
 
 Route::get('/thongtingiaodich/doi-ve', [TransactionController::class, 'showInfoExchange'])->name('transaction.showInfoExchange');
 Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo');
+Route::get('dashboard', 'Admin\DashboardController@index');
