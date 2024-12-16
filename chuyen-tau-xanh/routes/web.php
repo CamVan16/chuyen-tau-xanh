@@ -41,9 +41,12 @@ Route::match(['get', 'post'], '/doi-ve/chon-ve', [ExchangeController::class, 'fi
 Route::match(['get', 'post'], '/doi-ve/chon-ve-doi', [ExchangeController::class, 'findTicket'])->name('exchange.findTicket');
 Route::get('/doi-ve/chon-ve-doi/{selectedTicketId}', [ExchangeController::class, 'search'])->name('exchange.search');
 Route::match(['get', 'post'], '/doi-ve/chon-ve-doi/xac-nhan', [ExchangeController::class, 'createExchange'])->name('exchange.createExchange');
+Route::post('/exchange-ticket', [ExchangeController::class, 'exchangeTicket'])->name('exchange.exchangeTicket');
 Route::post('/doi-ve/xac-nhan', [ExchangeController::class, 'verifyConfirmation'])->name('exchange.verifyConfirmation');
 Route::get('/doi-ve/step-2/{selectedTicketId}', [ExchangeController::class, 'getPageExchangeStep2'])->name('exchange.getPageExchangeStep2');
 Route::get('/doi-ve/thanh-cong/{exchange_id}', [ExchangeController::class, 'success'])->name('exchange.success');
+Route::post('/doi-ve/thanh-toan', [BookingControllerTest::class, 'processPaymentExchange'])->name('booking.processPaymentExchange');
+Route::get('/exchange-success', [ExchangeController::class, 'showSuccess'])->name('exchange.success');
 Route::get('/quy-dinh', [RegulationController::class, 'index'])->name('regulations.index');
 Route::get('/huong-dan', function () {
     return view('pages.guides');
@@ -84,12 +87,15 @@ Route::post('/booking/payment', [BookingControllerTest::class, 'processPayment']
 // VNPay Routes
 Route::post('/payment/vnpay', [VNPayController::class, 'processPayment'])->name('vnpay.process');
 Route::get('/payment/vnpay/callback', [VNPayController::class, 'handleVNPayResponse'])->name('vnpay.response'); // điều chỉnh lại route cho phù hợp
-
+Route::post('/payment/vnpay/exchange', [VNPayController::class, 'processPaymentExchange'])->name('vnpay.processExchange');
+Route::get('/payment/vnpay/callback/exchange', [VNPayController::class, 'handleVNPayResponseExchange'])->name('vnpay.responseExchange');
 // ZaloPay Routes
 Route::post('/payment/zalopay', [ZaloPayController::class, 'processPayment'])->name('zalopay.process');
-Route::get('/payment/zalopay/callback', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response'); // điều chỉnh lại route cho phù hợp
+Route::get('/payment/zalopay/callback', [ZaloPayController::class, 'handleResponse'])->name('zalopay.response');
+Route::post('/payment/zalopay/exchange', [ZaloPayController::class, 'processPaymentExchange'])->name('zalopay.processExchange');
+Route::get('/payment/zalopay/callback/exchange', [ZaloPayController::class, 'handleResponseExchange'])->name('zalopay.responseExchange');
 
-// Momo Routes 
+// Momo Routes
 Route::post('/payment/momo', [MomoController::class, 'processPayment'])->name('payment.momo');
 Route::get('/payment/momo/complete', [MomoController::class, 'completePayment'])->name('payment.momoComplete');
 Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('payment.momoIPN');
@@ -97,4 +103,5 @@ Route::post('/payment/momo/ipn', [MomoController::class, 'handleIPN'])->name('pa
 Route::get('/khuyen-mai', [VoucherController::class, 'showVouchers'])->name('vouchers.index');
 Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouchers.show');
 
-Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo'); 
+Route::get('/thongtingiaodich/doi-ve', [TransactionController::class, 'showInfoExchange'])->name('transaction.showInfoExchange');
+Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo');

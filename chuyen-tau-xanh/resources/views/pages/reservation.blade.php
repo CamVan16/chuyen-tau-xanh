@@ -81,7 +81,7 @@
                 $container.empty();
                 if (cars.length > 0) {
                     cars.forEach(car => {
-                        $container.append(`<div data-id="${car.id}" 
+                        $container.append(`<div data-id="${car.id}"
                                                 data-name="${car.car_name}"
                                                 data-description="${car.car_description}"
                                                 data-count="${car.num_of_seats}"
@@ -107,7 +107,7 @@
                         const seatNMs = seats.filter(seat => seat.seat_type !== 'GP');
                         for (let i = 0; i < rows; i++) {
                             const $rowDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
-    
+
                             for (let j = 0; j < cols; j++) {
                                 let seatNumber;
                                 if (j * rows + i < seatNMs.length) {
@@ -116,7 +116,7 @@
                                     } else {
                                         seatNumber = rows - i + j * rows;
                                     }
-                                    const $seatDiv = $(`<button class="btn seat m-2" 
+                                    const $seatDiv = $(`<button class="btn seat m-2"
                                                             data-index="${seatNumber}"
                                                             data-status="${seatNMs[seatNumber-1]?.seat_status}"
                                                             data-id="${seatNMs[seatNumber-1]?.id}"
@@ -134,7 +134,7 @@
                         if (seatGPs.length > 0) {
                             const $rowGPDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
                             seatGPs.forEach(seat => {
-                                const $seatDiv = $(`<button class="btn seat m-2" 
+                                const $seatDiv = $(`<button class="btn seat m-2"
                                                             data-index="${seat.seat_index}"
                                                             data-status="${seat.seat_status}"
                                                             data-id="${seat.id}"
@@ -469,7 +469,7 @@
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.go-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
-                $.post("/timkiem/ketqua", { 
+                $.post("/timkiem/ketqua", {
                         car_id: carId,
                         car_name: carName,
                         train_mark: trainMark,
@@ -501,7 +501,7 @@
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.return-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
-                $.post("/timkiem/ketqua", { 
+                $.post("/timkiem/ketqua", {
                         car_id: carId,
                         car_name: carName,
                         train_mark: trainMark,
@@ -551,7 +551,7 @@
                 $cart.append($checkoutButton);
 
             }
-            
+
             loadCart();
             function loadCart() {
                 var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
@@ -565,10 +565,10 @@
                             let cart = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
                             cart = cart.filter(item => !(item.seat_id === ticket.seat_id && item.train_mark === ticket.train_mark));
                             localStorage.setItem('ticket-pocket', JSON.stringify(cart));
-                            timers.delete({id: ticket.seat_id, train: ticket.train_mark}); 
+                            timers.delete({id: ticket.seat_id, train: ticket.train_mark});
                             updateCart();
-                        }, remaining); 
-                        timers.set({id: ticket.seat_id, train: ticket.train_mark}, timer); 
+                        }, remaining);
+                        timers.set({id: ticket.seat_id, train: ticket.train_mark}, timer);
                         return true;
                     } else {
                         return false;
@@ -663,7 +663,7 @@
                 }
                 updateCart();
             });
-            
+
             $(document).on('click', '.checkout-tickets', function () {
                 const tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
                 if (tickets.length > 0) {
@@ -713,7 +713,7 @@
         <div id="go-cars-container" class="cars"></div>
         <h4 class="go-car-description"></h4>
         <div id="go-seats-container" class="seats justify-content-center"></div>
-    
+
         @if ($ticketType === 'round-trip')
             <div class="return-routes d-none" data-rroutes='@json($returnRoutes)'></div>
             <h3>Chiều về: ngày {{$returnDate}} từ {{$stationB}} đến {{$stationA}}</h3>

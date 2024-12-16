@@ -2,22 +2,9 @@
 
 @section('content')
 <div class="container mt-4">
-    <div class="d-flex justify-content-between mb-4">
-        <div class="step text-center">
-            <span class="badge badge-primary">1</span>
-            <p>Chọn vé đổi</p>
-        </div>
-        <div class="step text-center">
-            <span class="badge badge-primary">2</span>
-            <p>Xác nhận</p>
-        </div>
-        <div class="step text-center">
-            <span class="badge badge-primary">3</span>
-            <p>Hoàn tất</p>
-        </div>
-    </div>
 
-    <h2 class="text-primary">XÁC NHẬN ĐỔI VÉ THÀNH CÔNG</h2>
+    <!-- Success Message -->
+    <h2 class="text-primary text-center mb-4">XÁC NHẬN ĐỔI VÉ THÀNH CÔNG</h2>
 
     <div class="alert alert-success mt-4">
         <i class="fas fa-check-circle"></i> <strong>Giao dịch đổi vé đã hoàn tất!</strong><br>
@@ -25,6 +12,7 @@
         <p><strong>Lưu ý:</strong> Nếu có thắc mắc, vui lòng liên hệ bộ phận hỗ trợ khách hàng.</p>
     </div>
 
+    <!-- Exchange Transaction Details -->
     <div class="card mt-4">
         <div class="card-body">
             <h5 class="card-title">Thông tin giao dịch đổi vé</h5>
@@ -36,27 +24,15 @@
         </div>
     </div>
 
-    <div class="mt-4">
-        <a href="/" class="btn btn-primary">Quay về trang chủ</a>
-        <a href="{{ route('exchange.showTransactionDetails', ['exchange_id' => $exchange->id]) }}" class="btn btn-link">Xem chi tiết giao dịch</a>
+    <!-- Action Buttons -->
+    <div class="mt-4 text-center">
+        <a href="/" class="btn btn-primary btn-lg">Quay về trang chủ</a>
+        <a href="{{ route('exchange.showTransactionDetails', ['exchange_id' => $exchange->id]) }}" class="btn btn-link btn-lg">Xem chi tiết giao dịch</a>
     </div>
 </div>
 
 <style>
-    .step {
-        flex: 1;
-    }
-    .step .badge {
-        font-size: 1.2em;
-        padding: 10px;
-    }
-    .step p {
-        margin-top: 10px;
-    }
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
+    /* Custom Styles */
     .alert-success {
         color: #155724;
         background-color: #d4edda;
@@ -64,8 +40,29 @@
         padding: 15px;
         border-radius: 5px;
     }
+
     .alert-success i {
         margin-right: 10px;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+    }
+
+    .btn-link {
+        text-decoration: none;
+        color: #007bff;
     }
 </style>
 @endsection

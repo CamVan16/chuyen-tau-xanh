@@ -11,16 +11,16 @@ class ExchangeSuccessMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $exchange;
+    public $newExchange;
 
     /**
      * Create a new message instance.
      *
      * @param Exchange $Exchange
      */
-    public function __construct(Exchange $exchange)
+    public function __construct(Exchange $newExchange)
     {
-        $this->exchange = $exchange;
+        $this->newExchange = $newExchange;
     }
 
     /**
@@ -34,7 +34,7 @@ class ExchangeSuccessMail extends Mailable
             ->subject('ĐỔI VÉ THÀNH CÔNG')
             ->view('emails.exchange-success')
             ->with([
-                'exchange' => $this->exchange,
+                'newExchange' => $this->newExchange,
             ]);
     }
 }

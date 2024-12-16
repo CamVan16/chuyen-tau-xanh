@@ -14,7 +14,7 @@ class BookingControllerTest extends Controller
     private $zalopayController;
     private $momoController;
     private $voucherController;
-    
+
     public function __construct(
         VNPayController $vnpayController,
         ZaloPayController $zalopayController,
@@ -30,11 +30,30 @@ class BookingControllerTest extends Controller
     public function showBooking(Request $request)
     {
         $vouchers = $this->voucherController->showVouchersForBooking();
-        
+
         return view('pages.booking', compact('vouchers'));
     }
 
-    public function processPayment(Request $request)
+    public function processPaymentExchange(Request $request)
+    {
+        $method = $request->input('payment_method');
+
+        try {
+            if ($method === 'vnpay') {
+                return $this->vnpayController->processPaymentExchange($request);
+            } elseif ($method === 'zalopay') {
+                return $this->zalopayController->processPaymentExchange($request);
+            } elseif ($method === 'momo') {
+                return $this->momoController->processPaymentExchange($request);
+            } else {
+                return redirect()->back()->with('error', 'Phương thức thanh toán không hợp lệ!');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
+        }
+    }
+
+        public function processPayment(Request $request)
     {
         $method = $request->input('payment_method');
 
@@ -52,4 +71,5 @@ class BookingControllerTest extends Controller
             return redirect()->back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
+
 }

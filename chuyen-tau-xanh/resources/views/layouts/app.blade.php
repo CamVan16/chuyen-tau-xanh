@@ -64,7 +64,15 @@
         .banner-right img {
             width: 80%;
             height: auto;
-            margin: 20px 20px;
+        }
+
+        .banner-left img{
+            margin: 20px 0px 20px 40px;
+        }
+
+
+        .banner-right img{
+            margin: 20px 40px 20px 0px;
         }
 
         .header-top .date {
@@ -190,8 +198,8 @@
         </div>
         <nav class="navbar">
             <ul>
-                <li><a href="/tim-cho">Trang chủ</a></li>
-                <li><a href="/tim-cho">Tìm vé</a></li>
+                <li><a href="/">Trang chủ</a></li>
+                <li><a href="/timkiem">Tìm vé</a></li>
                 <li><a href="/thong-tin-dat-cho">Thông tin đặt chỗ</a></li>
                 <li><a href="/tra-ve">Trả vé</a></li>
                 <li><a href="/kiem-tra-ve">Kiểm tra vé</a></li>

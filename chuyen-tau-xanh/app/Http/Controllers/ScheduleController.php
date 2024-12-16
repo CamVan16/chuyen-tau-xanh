@@ -21,10 +21,10 @@ class ScheduleController extends Controller
             ->where('car_name', $carName)
             ->where('train_id', $trainID)
             ->whereHas('ticket', function ($query) {
-                $query->where('ticket_status', 1); 
+                $query->where('ticket_status', 1);
             })
-            ->pluck('seat_number'); 
-            
+            ->pluck('seat_number');
+
         return response()->json($soldSeats->toArray());
     }
 }

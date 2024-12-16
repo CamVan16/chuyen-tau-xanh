@@ -134,11 +134,14 @@
         var from_station = "{{ $ticket->schedule->station_start }}";
         var to_station = "{{ $ticket->schedule->station_end }}";
         var ticket_discount = "{{ $ticket->discount_price }}";
-        var departure_date = "{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('d/m/Y') }}";
+        var departure_date = "{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('Y-m-d') }}";
         var exchange_fee = "{{ $ticket->exchange_fee * $ticket->price }}";
+        var oldTicket = @json($ticket);
+        localStorage.setItem('oldTicket', JSON.stringify(oldTicket));
         $(document).ready(function() {
             const timers = new Map();
             var groutes = $('.go-routes').data('groutes');
+            var rroutes = $('.return-routes').data('rroutes');
             console.log(groutes);
             $.ajaxSetup({
                 headers: {
@@ -147,7 +150,6 @@
             });
 
             function renderCars(cars, container, trainMark) {
-                console.log('Danh sách cars:', cars);
                 const $container = $(container);
                 $container.empty();
                 if (cars.length > 0) {
@@ -175,12 +177,14 @@
                     if (carLayout % 2 === 0) {
                         const rows = 4;
                         const cols = numOfSeats / rows;
+                        const seatGPs = seats.filter(seat => seat.seat_type === 'GP');
+                        const seatNMs = seats.filter(seat => seat.seat_type !== 'GP');
                         for (let i = 0; i < rows; i++) {
                             const $rowDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
 
                             for (let j = 0; j < cols; j++) {
                                 let seatNumber;
-                                if (j * rows + i < seats.length) {
+                                if (j * rows + i < seatNMs.length) {
                                     if (j % 2 === 0) {
                                         seatNumber = i + 1 + j * rows;
                                     } else {
@@ -188,9 +192,9 @@
                                     }
                                     const $seatDiv = $(`<button class="btn seat m-2"
                                                             data-index="${seatNumber}"
-                                                            data-status="${seats[seatNumber-1]?.seat_status}"
-                                                            data-id="${seats[seatNumber-1]?.id}"
-                                                            data-type="${seats[seatNumber-1]?.seat_type}"
+                                                            data-status="${seatNMs[seatNumber-1]?.seat_status}"
+                                                            data-id="${seatNMs[seatNumber-1]?.id}"
+                                                            data-type="${seatNMs[seatNumber-1]?.seat_type}"
                                                             data-car="${carName}"
                                                             data-mark="${trainMark}"
                                                         >
@@ -200,6 +204,24 @@
                                 }
                             }
                             $container.append($rowDiv);
+                        }
+                        if (seatGPs.length > 0) {
+                            const $rowGPDiv = $('<div class="d-flex justify-content-center mb-3"></div>');
+                            seatGPs.forEach(seat => {
+                                const $seatDiv = $(`<button class="btn seat m-2"
+                                                            data-index="${seat.seat_index}"
+                                                            data-status="${seat.seat_status}"
+                                                            data-id="${seat.id}"
+                                                            data-type="${seat.seat_type}"
+                                                            data-car="${carName}"
+                                                            data-mark="${trainMark}"
+                                                        >
+                                                        GP
+                                                        </button>`);
+                                $rowGPDiv.append($seatDiv);
+                            })
+                            $container.append(`<h5 class="text-center">Ghế phụ</h5>`);
+                            $container.append($rowGPDiv);
                         }
                     } else {
                         if (carLayout === 7) {
@@ -444,6 +466,7 @@
                     $seat.attr('data-tdeparture', route.departure_time);
                     $seat.attr('data-darrival', route.arrival_date);
                     $seat.attr('data-tarrival', route.arrival_time);
+                    $seat.attr('data-trainid', route.train_id);
                     const ratio = route.ratio;
                     const type = route.seat_types.find(function(type) {
                         return type.seat_type_code === seat_type;
@@ -460,12 +483,21 @@
                 })
             }
             const $firstGoTrain = $('.go-trains .train').first();
-            console.log('$firstGoTrain', $firstGoTrain)
             if ($firstGoTrain.length) {
                 $firstGoTrain.addClass('active');
                 const defaultGoCars = $firstGoTrain.data('cars');
                 const trainMarkGo = $firstGoTrain.data('mark');
                 renderCars(defaultGoCars, '#go-cars-container', trainMarkGo);
+            }
+
+            const $firstReturnTrain = $('.return-trains .train').first();
+            if ($firstReturnTrain.length) {
+                $firstReturnTrain.addClass('active');
+                const defaultReturnCars = $firstReturnTrain.data('cars');
+                const trainMarkReturn = $firstReturnTrain.data('mark');
+                // const departureDateReturn = $firstReturnTrain.data('date');
+                // const departureTimeReturn = $firstReturnTrain.data('time');
+                renderCars(defaultReturnCars, '#return-cars-container', trainMarkReturn);
             }
 
             $('.go-trains .train').on('click', function() {
@@ -490,6 +522,8 @@
                 var numOfSeats = parseInt($this.data('count'));
                 var trainMark = $this.data('mark');
                 var departureDate = groutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
+                localStorage.setItem('currentTrainID', trainID);
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.go-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
@@ -497,8 +531,10 @@
                     car_id: carId,
                     car_name: carName,
                     train_mark: trainMark,
-                    departure_date: departureDate
+                    departure_date: departureDate,
+                    train_id: trainID,
                 }, function(data, status) {
+                    console.log('data', data);
                     renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats,
                         trainMark);
                     applyPrice('#go-seats-container .seat', 1);
@@ -533,7 +569,7 @@
     <div class="ticket-item">
         <div class="train-info">
             <strong>${ticket.train_mark}</strong> ${ticket.from_station} → ${ticket.to_station}
-            <p><strong>Khởi hành:</strong> ${ticket.departure_date} lúc ${ticket.departure_time}</p>
+            <p><strong>Khởi hành:</strong> ${departure_date} lúc ${ticket.departure_time}</p>
             <p>Toa: ${ticket.car} | Ghế: ${ticket.seat_index} | ${ticket.seat_type}</p>
         </div>
         <div class="ticket-footer">
@@ -547,7 +583,8 @@
                 $(`.seat[data-id="${ticket.seat_id}"][data-mark="${ticket.train_mark}"]`).addClass("reserve");
                 $cart.append($ticketItem);
 
-                const $checkoutButton = $('<button class="checkout-tickets btn btn-primary">Đổi vé</button>');
+                const $checkoutButton = $(
+                    '<button class="checkout-tickets btn btn-primary" id="exchange-ticket-btn">Đổi vé</button>');
                 $cart.append($checkoutButton);
                 updateInfo();
             }
@@ -555,8 +592,19 @@
 
             loadCart();
 
+            function generateOrderId() {
+                const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                let orderId = "";
+                for (let i = 0; i < 8; i++) {
+                    const randomIndex = Math.floor(Math.random() * characters.length);
+                    orderId += characters[randomIndex];
+                }
+                return orderId;
+            }
+
             function loadCart() {
                 var tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
+                // console.log(tickets);
                 const now = Date.now();
                 tickets = tickets.filter(ticket => {
                     const elapsed = now - ticket.start_time;
@@ -656,12 +704,59 @@
 
             $(document).on('click', '.checkout-tickets', function() {
                 const tickets = JSON.parse(localStorage.getItem('ticket-pocket')) || [];
+                const trainID = localStorage.getItem('currentTrainID');
+                let oldTicket = JSON.parse(localStorage.getItem('oldTicket'))
+                const orderId = generateOrderId();
                 if (tickets.length > 0) {
-                    const form = $(
-                        '<form action="/booking" method="POST">@csrf</form>');
+                    const currentTicket = tickets[tickets.length - 1];
+                    console.log('ticket', currentTicket);
+                    const schedule = {
+                        train_id: trainID,
+                        train_mark: currentTicket.train_mark,
+                        day_start: departure_date,
+                        time_start: currentTicket.departure_time,
+                        day_end: currentTicket.arrival_date,
+                        time_end: currentTicket.arrival_time,
+                        station_start: currentTicket.from_station,
+                        station_end: currentTicket.to_station,
+                        seat_number: currentTicket.seat_index,
+                        car_name: currentTicket.car,
+                    };
 
-                    $('body').append(form);
-                    form.submit();
+                    const ticket = {
+                        price: currentTicket.price,
+                        ticket_status: 1,
+                    };
+                    const data = {
+                        schedule: schedule,
+                        ticket: ticket,
+                        oldTicket: oldTicket
+                    };
+                    console.log('data', data);
+                    let amount = localStorage.getItem('amount');
+                    if (amount < 0) {
+                        $.ajax({
+                            url: '/exchange-ticket',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            success: function(response) {
+                                window.location.href = response.redirect_url;
+                            },
+                            error: function(error) {
+                                alert('Đổi vé thất bại. Vui lòng thử lại.');
+                                console.error(error);
+                            }
+                        });
+                        return;
+                    }
+                    localStorage.setItem('exchangeData', JSON.stringify(data));
+                    $('#exchange-info').val(JSON.stringify(data));
+
+                    // window.location.href = 'exchange-ticket/payment';
+                    $('#order_id').val(orderId);
+                    $('#ticket-exchange-section').addClass('d-none');
+                    $('#payment-section').removeClass('d-none');
                 }
             });
 
@@ -686,12 +781,16 @@
             $('#ticketSummary tr').slice(1).remove();
 
             if (currentTicket) {
-                const totalPrice = currentTicket.price - ticket_discount;
+                const totalPrice = currentTicket.price - currentTicket.price * oldTicket.discount_percent / 100;
                 const exchangeFee = parseFloat(exchange_fee);
                 const totalAmount = totalPrice - oldTotal + exchangeFee;
 
                 const isNegativeAmount = totalAmount < 0;
-                const displayAmount = Math.abs(totalAmount); ;
+                const displayAmount = Math.abs(totalAmount);;
+                localStorage.setItem('amount', totalAmount);
+                let amount = localStorage.getItem('amount');
+                document.getElementById('amount').value = amount;
+                console.log('amount', amount);
                 const row = `
             <tr>
                 <td>Vé mới</td>
@@ -701,7 +800,7 @@
                 <td>${currentTicket.car}</td>
                 <td>${currentTicket.seat_index}</td>
                 <td>${currentTicket.price.toLocaleString()}</td>
-                <td>${ticket_discount.toLocaleString()}</td>
+                <td>${(currentTicket.price*oldTicket.discount_percent/100).toLocaleString()}</td>
                 <td>${totalPrice.toLocaleString()}</td>
             </tr>
         `;
@@ -720,9 +819,8 @@
             }
         }
     </script>
-    <div class="row">
+    <div class="row" id="ticket-exchange-section">
         <div class="col-xs-12 col-sm-9 col-md-9">
-
             <div class="go-routes d-none" data-groutes='@json($goRoutes)'></div>
             <h3>Thông tin đổi vé</h3>
             <table class="table table-bordered mt-3">
@@ -744,7 +842,7 @@
                         <td>Vé cũ</td>
                         <td>{{ $ticket->schedule->train_mark }}</td>
                         <td>{{ $ticket->schedule->station_start }} → {{ $ticket->schedule->station_end }}</td>
-                        <td>{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('d/m/Y') }}
+                        <td>{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('Y-m-d') }}
                             {{ $ticket->schedule->time_start }}</td>
                         <td>{{ $ticket->schedule->car_name }}</td>
                         <td>{{ $ticket->schedule->seat_number }}</td>
@@ -754,15 +852,14 @@
                     </tr>
                 </tbody>
             </table>
-
-            <h3>Chiều đi: ngày {{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('d/m/Y') }} từ
+            <h3>Chiều đi: ngày {{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('Y-m-d') }} từ
                 {{ $ticket->schedule->station_start }} đến {{ $ticket->schedule->station_end }}</h3>
             <div class="go-trains">
                 @forelse($goRoutes as $route)
                     <div class="train" data-cars='@json($route->cars)' data-mark = "{{ $route->train_mark }}">
                         <h4>{{ $route->train_mark }}</h4>
                         <p>TG đi <span
-                                class="go-departure-date">{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('d/m/Y') }}</span>
+                                class="go-departure-date">{{ \Carbon\Carbon::parse($ticket->schedule->date_start)->format('Y-m-d') }}</span>
                             <span class="go-departure-time">{{ $route->departure_time }}</span>
                         </p>
                         <p>
@@ -785,6 +882,58 @@
                     <!-- Vé sẽ được render ở đây -->
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="payment-section" class="row d-none">
+        <div class="col-xs-16 col-sm-9 col-md-9">
+            <form action="{{ route('booking.processPaymentExchange') }}" method="POST" class="mt-4">
+                @csrf
+                <div class="mb-3">
+                    <label for="order_id" class="form-label">Booking ID (Order ID):</label>
+                    <input readonly type="text" name="order_id" id="order_id" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Tổng tiền (Total Price):</label>
+                    <input readonly type="number" name="amount" id="amount" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="order_desc" class="form-label">Mô tả (Order Description):</label>
+                    <input type="text" name="order_desc" id="order_desc" class="form-control"
+                        value="Thanh toán đổi vé tàu" required>
+                </div>
+                <div class="mb-3">
+                    <label for="order_type" class="form-label">Loại đơn hàng (Order Type):</label>
+                    <input type="text" name="order_type" id="order_type" class="form-control" value="billpayment"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="language" class="form-label">Ngôn ngữ (Language):</label>
+                    <select name="language" id="language" class="form-select">
+                        <option value="vn">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="bank_code" class="form-label">Ngân hàng (Bank Code):</label>
+                    <select name="bank_code" id="bank_code" class="form-select">
+                        <option value="">Không chọn</option>
+                        <option value="NCB">Ngân hàng NCB</option>
+                        <option value="VCB">Ngân hàng Vietcombank</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_method" class="form-label">Phương thức thanh toán (Payment Method):</label>
+                    <select name="payment_method" id="payment_method" class="form-select" required>
+                        <option value="vnpay">VNPay</option>
+                        <option value="zalopay">ZaloPay</option>
+                        <option value="momo">Momo</option>
+                    </select>
+                </div>
+                <input type="hidden" name="exchange-info" id="exchange-info">
+                <button type="button" class="btn btn-secondary back-btn" data-prev="step-2">Quay lại</button>
+                <button type="submit" class="btn btn-primary">Thanh Toán</button>
+            </form>
         </div>
     </div>
 @endsection
