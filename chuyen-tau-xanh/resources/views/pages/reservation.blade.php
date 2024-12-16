@@ -468,7 +468,7 @@
                 var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
-                $('.go-car-description').text(Toa số ${carName}: ${$this.data('description')})
+                $('.go-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
                 $.post("/timkiem/ketqua", {
                         car_id: carId,
                         car_name: carName,
@@ -500,7 +500,7 @@
                 var trainID = rroutes.find(route => route.train_mark === trainMark).train_id;
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
-                $('.return-car-description').text(Toa số ${carName}: ${$this.data('description')})
+                $('.return-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
                 $.post("/timkiem/ketqua", {
                         car_id: carId,
                         car_name: carName,

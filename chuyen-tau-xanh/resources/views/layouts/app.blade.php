@@ -64,7 +64,15 @@
         .banner-right img {
             width: 80%;
             height: auto;
-            margin: 20px 20px;
+        }
+
+        .banner-left img{
+            margin: 20px 0px 20px 40px;
+        }
+
+
+        .banner-right img{
+            margin: 20px 40px 20px 0px;
         }
 
         .header-top .date {

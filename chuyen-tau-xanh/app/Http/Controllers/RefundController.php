@@ -13,6 +13,7 @@ use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\RefundPolicy;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
@@ -41,9 +42,19 @@ class RefundController extends Controller
             'phone' => 'required|string',
         ]);
 
-        $customer = Customer::where('email', $request->email)
-            ->where('phone', $request->phone)
+        $booking = Booking::where('id', $request->booking_id)
             ->first();
+
+        if (!$booking) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Thông tin đặt chỗ không đúng, vui lòng kiểm tra lại.']);
+        }
+
+        $customer = Customer::where('email', $request->email)
+        ->where('phone', $request->phone)
+        ->where('id', $booking->customer_id)
+        ->first();
 
         if (!$customer) {
             return redirect()->back()
@@ -51,23 +62,20 @@ class RefundController extends Controller
                 ->withErrors(['error' => 'Thông tin vé cần trả không đúng, vui lòng kiểm tra lại']);
         }
 
-        $booking = Booking::where('id', $request->booking_id)
-            ->where('customer_id', $customer->id)
-            ->first();
-
-        if (!$booking) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['error' => 'Thông tin vé cần trả không đúng, vui lòng kiểm tra lại.']);
-        }
-
         $tickets = $booking->tickets;
+        $tickets = Ticket::where('booking_id', $booking->id)
+            ->where('ticket_status', 1)
+            ->get();
+        if ($tickets->isEmpty()) {
+            return redirect()->back()
+                ->with('warning', 'Không có vé nào có thể trả cho mã đặt vé này.');
+        }
         foreach ($tickets as $ticket) {
             $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
             $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
             $refundPolicy = RefundPolicy::where('min_hours', '<=', $hoursToDeparture)
-            ->where('max_hours', '>=', $hoursToDeparture)
-            ->first();
+                ->where('max_hours', '>=', $hoursToDeparture)
+                ->first();
             if ($refundPolicy) {
                 $refundFee = $refundPolicy->refund_fee;
             } else {
@@ -115,59 +123,61 @@ class RefundController extends Controller
         $request->validate([
             'booking_id' => 'required|string',
             'ticket_array' => 'required|array',
-            'ticket_array.*' => 'integer',
+            'ticket_array.*' => 'string',
         ]);
 
-        $booking = Booking::where('id', $request->booking_id)->first();
-
+        // Find the booking
+        $booking = Booking::find($request->booking_id);
         if (!$booking) {
-            return redirect()->back()->withErrors(['error' => 'Thông tin mã đặt chỗ không chính xác.']);
+            return redirect()->route('refund.error')->withErrors(['error' => 'Thông tin mã đặt chỗ không chính xác.']);
         }
+
         $totalRefund = 0;
+        $validTickets = [];
+
         foreach ($request->ticket_array as $ticket_id) {
             $ticket = Ticket::where('id', $ticket_id)
                 ->whereNull('refund_id')
                 ->where('booking_id', $booking->id)
                 ->first();
+
             if ($ticket) {
-                $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
-                $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+                $scheduleStart = Carbon::parse($ticket->schedule->day_start . ' ' . $ticket->schedule->time_start);
+                $hoursToDeparture = Carbon::now()->diffInHours($scheduleStart, false);
+
                 $refundPolicy = RefundPolicy::where('min_hours', '<=', $hoursToDeparture)
-                ->where('max_hours', '>=', $hoursToDeparture)
-                ->first();
-                if ($refundPolicy) {
-                    $refundFee = $refundPolicy->refund_fee;
-                } else {
-                    $refundFee = 1;
+                    ->where('max_hours', '>=', $hoursToDeparture)
+                    ->first();
+
+                $refundFee = $refundPolicy ? $refundPolicy->refund_fee : 1;
+                $refundAmount = $ticket->price * (1 - $refundFee) - $ticket->discount_price;
+
+                if ($refundAmount > 0) {
+                    $totalRefund += $refundAmount;
+                    $validTickets[] = $ticket;
                 }
-                $totalRefund += $ticket->price * (1 - $refundFee) -  $ticket->discount_price;
             }
         }
 
-        if ($totalRefund <= 0) {
-            return redirect()->back()->withErrors(['error' => 'Không có vé hợp lệ để hoàn.']);
+        if (count($validTickets) === 0) {
+            return redirect()->route('refund.error')->withErrors(['error' => 'Không có vé hợp lệ để hoàn.']);
         }
 
         $refund = Refund::create([
             'booking_id' => $booking->id,
             'refund_status' => 'pending',
             'refund_amount' => $totalRefund,
+            'payment_method' => $booking->payment_method,
             'refund_time' => Carbon::now(),
+            'refund_time_processed' => Carbon::now(),
             'customer_id' => $booking->customer_id,
         ]);
 
-        foreach ($request->ticket_array as $ticket_id) {
-            $ticket = Ticket::where('id', $ticket_id)
-                ->whereNull('refund_id')
-                ->where('booking_id', $booking->id)
-                ->first();
-            if ($ticket) {
-                $ticket->update(['refund_id' => $refund->id]);
-            }
+        foreach ($validTickets as $ticket) {
+            $ticket->update(['refund_id' => $refund->id]);
         }
 
-        $confirmation_code = Str::random(rand(6, 6));
-
+        $confirmation_code = Str::random(6);
         session(['refund_id' => $refund->id, 'confirmation_code' => $confirmation_code]);
 
         $details = [
@@ -180,10 +190,10 @@ class RefundController extends Controller
             $customer = $booking->customer;
             Mail::to($customer->email)->send(new RefundConfirmation($details));
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Có lỗi xảy ra khi gửi email xác nhận.']);
+            Log::error('Error sending refund confirmation email: ' . $e->getMessage());
         }
 
-        return view('pages.refund-verify');
+        return redirect()->route('refund.verify')->with('message', 'Vui lòng kiểm tra email để xác nhận hoàn vé.');
     }
 
     public function verifyConfirmation(Request $request)
@@ -205,8 +215,9 @@ class RefundController extends Controller
                 $refund->refund_status = 'completed';
                 $refund->save();
             }
-            $ticket = Ticket::where('refund_id',$refund_id);
+            $ticket = Ticket::where('refund_id', $refund_id)->first();
             if ($ticket) {
+                $ticket->ticket_status = $ticket->ticket_status ?? 1;
                 $ticket->ticket_status = -1;
                 $ticket->save();
             }
@@ -240,8 +251,8 @@ class RefundController extends Controller
             $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
             $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
             $refundPolicy = RefundPolicy::where('min_hours', '<=', $hoursToDeparture)
-            ->where('max_hours', '>=', $hoursToDeparture)
-            ->first();
+                ->where('max_hours', '>=', $hoursToDeparture)
+                ->first();
             if ($refundPolicy) {
                 $refundFee = $refundPolicy->refund_fee;
             } else {
@@ -379,9 +390,8 @@ class RefundController extends Controller
 
         $booking = Booking::find($request->booking_id);
 
-        $tickets = Ticket::whereIn('id', $request->ticket_array)
-            ->whereNull('refund_id')
-            ->where('booking_id', $booking->id)
+        $tickets = Ticket::where('booking_id', $booking->id)
+            ->where('ticket_status', 1)
             ->get();
 
         if ($tickets->isEmpty()) {
@@ -392,12 +402,12 @@ class RefundController extends Controller
             $hoursBeforeStart = Carbon::now()->diffInHours($ticket->schedule->day_start, false);
 
             $policy = RefundPolicy::where('min_hours', '<=', $hoursBeforeStart)
-                                  ->where('max_hours', '>=', $hoursBeforeStart)
-                                  ->first();
+                ->where('max_hours', '>=', $hoursBeforeStart)
+                ->first();
 
             $refundFee = $policy ? $policy->refund_fee : 1;
 
-            return $ticket->price * (1 - $refundFee)- $ticket->discount_price;
+            return $ticket->price * (1 - $refundFee) - $ticket->discount_price;
         });
 
         $refund = Refund::create([

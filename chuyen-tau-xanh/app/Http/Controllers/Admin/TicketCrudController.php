@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\TicketRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class TicketCrudController
@@ -14,7 +15,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class TicketCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -169,5 +170,32 @@ class TicketCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    protected function store()
+    {
+        $response = $this->traitStore();
+
+        $ticket = $this->crud->entry;
+
+        if ($ticket && isset($ticket->booking_id)) {
+            $this->updateBookingTotalPrice($ticket->booking_id);
+        }
+
+        return $response;
+    }
+
+    protected function updateBookingTotalPrice($bookingId)
+    {
+        $booking = \App\Models\Booking::find($bookingId);
+
+        $tickets = \App\Models\Ticket::where('booking_id', $bookingId)->get();
+        $totalPrice = 0;
+        foreach($tickets as $ticket)
+        {
+            $totalPrice += $ticket->price - $ticket->discount_price;
+        }
+        $booking->total_price = $totalPrice;
+        $booking->save();
     }
 }

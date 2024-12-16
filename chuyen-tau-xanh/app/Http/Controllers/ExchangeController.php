@@ -66,6 +66,9 @@ class ExchangeController extends Controller
         }
 
         $tickets = $booking->tickets;
+        $tickets = Ticket::where('booking_id', $booking->id)
+            ->where('ticket_status', 1)
+            ->get();
         foreach ($tickets as $ticket) {
             $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
             $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
@@ -127,8 +130,7 @@ class ExchangeController extends Controller
         }
 
         $tickets = Ticket::where('booking_id', $booking->id)
-            ->whereNull('exchange_id')
-            ->whereNull('refund_id')
+            ->where('ticket_status', 1)
             ->get();
 
         if ($tickets->isEmpty()) {
@@ -169,7 +171,28 @@ class ExchangeController extends Controller
             $exchangeFee = 1;
         }
         $ticket->exchange_fee = $exchangeFee;
-
+        $customer = Customer::where('id', $ticket->customer_id)->first();
+        $discount_percent = 0;
+        if ($customer) {
+            switch ($customer->customer_type) {
+                case 'Trẻ em':
+                    $discount_percent = 25;
+                    break;
+                case 'Sinh viên':
+                    $discount_percent = 10;
+                    break;
+                case 'Người cao tuổi':
+                    $discount_percent = 15;
+                    break;
+                case 'Đoàn viên Công Đoàn':
+                    $discount_percent = 5;
+                    break;
+                default:
+                    $discount_percent = 0;
+                    break;
+            }
+        }
+        $ticket->discount_percent = $discount_percent;
         return view('pages.exchange-search', [
             'ticket' => $ticket,
             'goRoutes' => $goRoutes,
@@ -177,90 +200,148 @@ class ExchangeController extends Controller
         ]);
     }
 
-    public function createExchange(Request $request)
+    public function exchangeTicket(Request $request)
     {
-        $oldTicketId = $request->input('old_ticket_id');
-        $newTrainId = $request->input('new_train_id');
-        $departureDate = $request->input('departure_date');
-        $departureTime = $request->input('departure_time');
-        $arrivalDate = $request->input('arrival_date');
-        $arrivalTime = $request->input('arrival_time');
-        $customerId = $request->input('customer_id');
-        $seat_number = $request->input('seat_number');
-        $car_name = $request->input('car_name');
-        $paymentMethod = $request->input('payment_method');
-        DB::beginTransaction();
+        $data = $request->json()->all();
 
-        try {
-            // Lấy vé cũ và thông tin khách hàng
-            $oldTicket = Ticket::findOrFail($oldTicketId);
-            $customer = Customer::findOrFail($customerId);
+        $scheduleData = $data['schedule'];
+        $ticketData = $data['ticket'];
+        $oldTicketData = $data['oldTicket'];
 
-            $newSchedule = Schedule::create([
-                'train_id' => $newTrainId,
-                'train_mark' => $oldTicket->schedule->train_mark,
-                'day_start' => $departureDate,
-                'time_start' => $departureTime,
-                'day_end' => $arrivalDate,
-                'time_end' => $arrivalTime,
-                // 'station_start' => $newStationStart,
-                // 'station_end' => $newStationEnd,
-                'seat_number' => $oldTicket->schedule->seat_number,
-                'car_name' => $oldTicket->schedule->car_name
-            ]);
+        // Tạo lịch trình mới
+        $schedule = Schedule::create([
+            'train_id' => $scheduleData['train_id'],
+            'train_mark' => $scheduleData['train_mark'],
+            'day_start' => $scheduleData['day_start'],
+            'time_start' => $scheduleData['time_start'],
+            'day_end' => $scheduleData['day_end'],
+            'time_end' => $scheduleData['time_end'],
+            'station_start' => $scheduleData['station_start'],
+            'station_end' => $scheduleData['station_end'],
+            'seat_number' => $scheduleData['seat_number'],
+            'car_name' => $scheduleData['car_name'],
+        ]);
 
-            // Tạo một booking mới
-            $booking = Booking::create([
-                'customer_id' => $customerId,
-                'discount_price' => $oldTicket->discount_price,
-                'booked_time' => now(),
-                'booking_status' => 'booked',
-                'total_price' => $oldTicket->price, // Tổng giá vé mới
-                'payment_method' => $paymentMethod
-            ]);
-
-            // Tạo vé mới dựa trên lịch trình mới
-            $newTicket = Ticket::create([
-                'booking_id' => $booking->id,
-                'customer_id' => $customerId,
-                'schedule_id' => $newSchedule->id,
-                'price' => $oldTicket->price, // Giá của vé mới (có thể tính lại nếu cần)
-                'discount_price' => $oldTicket->discount_price, // Giảm giá tương tự vé cũ
-                'ticket_status' => 'new'
-            ]);
-
-            // Tạo bản ghi Exchange để ghi nhận việc đổi vé
-            $exchange = Exchange::create([
-                'old_ticket_id' => $oldTicketId,
-                'new_ticket_id' => $newTicket->id,
-                'booking_id' => $booking->id,
-                'customer_id' => $customerId,
-                'payment_method' => $paymentMethod,
-                'old_price' => $oldTicket->price,
-                'new_price' => $oldTicket->price, // Điều chỉnh nếu có thay đổi giá
-                'additional_price' => 0, // Nếu không có phí thêm
-                'exchange_status' => 'processed',
-                'exchange_time' => now(),
-                'exchange_time_processed' => now()
-            ]);
-
-            // Commit giao dịch
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Đổi vé và tạo lịch trình mới thành công!',
-                'new_ticket' => $newTicket,
-                'new_schedule' => $newSchedule,
-                'exchange' => $exchange
-            ], 200);
-        } catch (\Exception $e) {
-            // Nếu có lỗi thì rollback giao dịch
-            DB::rollBack();
-            return response()->json([
-                'error' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
+        // Kiểm tra nếu oldTicket hợp lệ
+        if (!isset($oldTicketData['customer_id'])) {
+            return response()->json(['message' => 'Old ticket data is invalid.'], 400);
         }
+
+        // Kiểm tra booking cũ
+        $oldBooking = Booking::where('id', $oldTicketData['booking_id'])->first();
+        if (!$oldBooking) {
+            return response()->json(['message' => 'Old booking not found.'], 404);
+        }
+
+        if (!isset($oldTicketData['customer_id'])) {
+            return response()->json(['message' => 'customer_id is missing in ticket data.'], 400);
+        }
+
+        // Lấy customer_id từ ticketData
+        $customerId = $oldTicketData['customer_id'];
+        $customerBookingId = $oldBooking->customer_id;
+
+        // Kiểm tra thông tin khách hàng
+        $customer = Customer::where('id', $customerId)->first();
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found.'], 404);
+        }
+
+        // Tính toán phần trăm giảm giá
+        $discount_percent = 0;
+        switch ($customer->customer_type) {
+            case 'Trẻ em':
+                $discount_percent = 0.25;
+                break;
+            case 'Sinh viên':
+                $discount_percent = 0.10;
+                break;
+            case 'Người cao tuổi':
+                $discount_percent = 0.15;
+                break;
+            case 'Đoàn viên Công Đoàn':
+                $discount_percent = 0.5;
+                break;
+            default:
+                $discount_percent = 0;
+                break;
+        }
+
+        // Tính số giờ còn lại trước khi chuyến đi
+        $scheduleStart = $oldTicketData['schedule']['day_start'] . ' ' . $oldTicketData['schedule']['time_start'];
+        $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+
+        // Lấy phí đổi vé
+        $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+            ->where('max_hours', '>=', $hoursToDeparture)
+            ->first();
+        $exchangeFee = $exchangePolicy ? $exchangePolicy->exchange_fee : 1;
+
+        // Tạo booking mới
+        $booking = Booking::create([
+            'customer_id' => $customerBookingId,
+            'booked_time' => now(),
+            'booking_status' => 1,
+            'total_price' => ($ticketData['price'] * (1 - $discount_percent)),
+            'payment_method' => $oldBooking->payment_method,
+        ]);
+
+        // Tạo vé mới
+        $newTicket = Ticket::create([
+            'booking_id' => $booking->id,
+            'customer_id' => $customerId,
+            'schedule_id' => $schedule->id,
+            'price' => $ticketData['price'],
+            'discount_price' => ($ticketData['price'] * ($discount_percent)),
+            'ticket_status' => 1,
+        ]);
+
+        // Tạo thông tin đổi vé
+        $exchange = Exchange::create([
+            'old_ticket_id' => $oldTicketData['id'],
+            'new_ticket_id' => $newTicket->id,
+            'booking_id' => $oldBooking->id,
+            'customer_id' => $customerId,
+            'payment_method' => $oldBooking->payment_method,
+            'old_price' => $oldTicketData['price'] - $oldTicketData['discount_price'],
+            'new_price' => ($ticketData['price'] * (1 - $discount_percent)),
+            'additional_price' => ($ticketData['price'] * (1 - $discount_percent)) - ($oldTicketData['price'] - $oldTicketData['discount_price']) + ($oldTicketData['price'] * $exchangeFee),
+            'exchange_status' => 'completed',
+            'exchange_time' => now(),
+            'exchange_time_processed' => now(),
+        ]);
+
+        // Cập nhật trạng thái vé cũ
+        $oldTicket = Ticket::find($oldTicketData['id']);
+        if ($oldTicket) {
+            $oldTicket->exchange_id = $exchange->id;
+            $oldTicket->ticket_status = -1;
+            $oldTicket->save();
+        }
+
+        $newExchange = $exchange;
+
+        $newTicketId = $newExchange->new_ticket_id;
+
+        $ticket = Ticket::find($newTicketId);
+
+        if ($ticket) {
+            $bookingId = $ticket->booking_id;
+            $newExchange->newBookingId = $bookingId;
+        }
+        $booking = Booking::find($newExchange->booking_id);
+        $customer = Customer::find($booking->customer_id);
+        Mail::to($customer->email)->send(new \App\Mail\ExchangeSuccessMail($newExchange));
+        session()->put('message', 'Đổi vé thành công');
+        session()->put('exchange', $exchange);
+        session()->put('newTicket', $newTicket);
+
+        return response()->json([
+            'message' => 'Đổi vé thành công!',
+            'redirect_url' => route('exchange.success')
+        ]);
     }
+
 
     public function verifyConfirmation(Request $request)
     {
@@ -463,7 +544,14 @@ class ExchangeController extends Controller
 
         $oldTicket->update(['exchange_id' => $exchange->id]);
 
-        // return redirect()->route('admin.refund.index')->with('success', 'Hoàn vé đã được tạo thành công.');
         return redirect()->back()->with('success', 'Đổi vé thành công.');
+    }
+    public function showSuccess(Request $request)
+    {
+        return view('pages.exchange-success-nonpay', [
+            'message' => $request->session()->get('message'),
+            'exchange' => $request->session()->get('exchange'),
+            'newTicket' => $request->session()->get('newTicket'),
+        ]);
     }
 }

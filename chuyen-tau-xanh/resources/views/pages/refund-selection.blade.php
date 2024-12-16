@@ -44,7 +44,7 @@
 
         <!-- Danh sách vé -->
         <h4 class="mb-3">Các giao dịch thành công:</h4>
-        @if (!$tickets)
+        @if ($tickets->isEmpty())
             <div class="alert alert-warning">
                 Không có vé nào để trả cho mã đặt chỗ này.
             </div>
