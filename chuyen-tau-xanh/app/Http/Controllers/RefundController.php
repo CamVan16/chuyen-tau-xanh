@@ -133,9 +133,6 @@ class RefundController extends Controller
 
         // Find the booking
         $booking = Booking::find($request->booking_id);
-        if (!$booking) {
-            return redirect()->route('refund.error')->withErrors(['error' => 'Thông tin mã đặt chỗ không chính xác.']);
-        }
 
         $totalRefund = 0;
         $validTickets = [];
@@ -162,10 +159,6 @@ class RefundController extends Controller
                     $validTickets[] = $ticket;
                 }
             }
-        }
-
-        if (count($validTickets) === 0) {
-            return redirect()->route('refund.error')->withErrors(['error' => 'Không có vé hợp lệ để hoàn.']);
         }
 
         $refund = Refund::create([
@@ -198,7 +191,7 @@ class RefundController extends Controller
             Log::error('Error sending refund confirmation email: ' . $e->getMessage());
         }
 
-        return redirect()->route('refund.verify')->with('message', 'Vui lòng kiểm tra email để xác nhận hoàn vé.');
+        return redirect()->route('refund.getPageRefundStep2')->with('message', 'Vui lòng kiểm tra email để xác nhận hoàn vé.');
     }
 
     public function verifyConfirmation(Request $request)

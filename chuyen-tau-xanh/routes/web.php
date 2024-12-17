@@ -30,8 +30,8 @@ Route::get('/tra-ve/quen-ma', [RefundController::class, 'showBookingCodeForm'])-
 Route::post('/tra-ve/quen-ma', [RefundController::class, 'sendBookingCode'])->name('refund.sendBookingCode');
 Route::match(['get', 'post'], '/tra-ve/chon-ve', [RefundController::class, 'findBooking'])->name('refund.findBooking');
 Route::match(['get', 'post'], '/tra-ve/chon-ve-tra', [RefundController::class, 'createRefund'])->name('refund.createRefund');
-Route::post('/tra-ve/xac-nhan/thanh-cong', [RefundController::class, 'verifyConfirmation'])->name('refund.verifyConfirmation');
 Route::get('/tra-ve/xac-nhan', [RefundController::class, 'getPageRefundStep2'])->name('refund.getPageRefundStep2');
+Route::match(['get', 'post'],'/tra-ve/xac-nhan/thanh-cong', [RefundController::class, 'verifyConfirmation'])->name('refund.verifyConfirmation');
 Route::get('/tra-ve/thanh-cong/{refund_id}', [RefundController::class, 'success'])->name('refund.success');
 Route::get('/tra-ve/thanh-cong/{refund_id}/details', [RefundController::class, 'showTransactionDetails'])->name('refund.showTransactionDetails');
 Route::get('/doi-ve', [ExchangeController::class, 'getPageExchange'])->name('refund.getPageExchange');
@@ -105,4 +105,3 @@ Route::get('/khuyen-mai/{id}', [VoucherController::class, 'show'])->name('vouche
 
 Route::get('/thongtingiaodich/doi-ve', [TransactionController::class, 'showInfoExchange'])->name('transaction.showInfoExchange');
 Route::get('/thongtingiaodich', [TransactionController::class, 'showInfo'])->name('transaction.showInfo');
-Route::get('dashboard', 'Admin\DashboardController@index');
