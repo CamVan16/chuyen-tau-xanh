@@ -1,10 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    $(document).ready(function() {
+        const result = $('.transaction-result').data('result');
+        if (result === "success") {
+            localStorage.removeItem('ticket-pocket');
+        }
+    })
+</script>
 <div>
     <h1 class="text-center text-primary">THÔNG TIN GIAO DỊCH</h1>
 
-    <div class="transaction-result">
+    <div data-result="{{ $status }}" class="transaction-result">
         @if ($status !== 'success')
             <h3 style="color: red;" class="text-center">Thanh toán không thành công</h3>
             <span class="text-center">Đã có lỗi xảy ra. Vui lòng thử lại!</span>

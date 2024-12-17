@@ -500,7 +500,7 @@
                     }, function (data, status) {
                         console.log('data', data);
                         renderSeats(data, '#return-seats-container', carName, carLayout, numOfSeats, trainMarkReturn);
-                        applyPrice('#return-seats-container .seat', 1);
+                        applyPrice('#return-seats-container .seat', -1);
                         $('[data-toggle="popover"]').popover({
                             trigger: 'hover',
                             placement: "top"
@@ -582,7 +582,7 @@
                     }, function (data, status) {
                         console.log('data', data);
                         renderSeats(data, '#return-seats-container', carName, carLayout, numOfSeats, trainMark);
-                        applyPrice('#return-seats-container .seat', 1);
+                        applyPrice('#return-seats-container .seat', -1);
                         $('[data-toggle="popover"]').popover({
                             trigger: 'hover',
                             placement: "top"
