@@ -537,7 +537,7 @@
             <h3>Thanh toán</h3>
             <form action="{{ route('booking.processPayment') }}" method="POST" class="mt-4">
                 @csrf
-                <div class="mb-3">
+                <div class="mb-3 d-none">
                     <label for="order_id" class="form-label">Booking ID (Order ID):</label>
                     <input readonly type="text" name="order_id" id="order_id" class="form-control">
                 </div>

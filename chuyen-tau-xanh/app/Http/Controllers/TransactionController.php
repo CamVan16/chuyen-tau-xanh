@@ -165,10 +165,10 @@ class TransactionController extends Controller
         $payment = $request->query('payment_method');
         if ($status === 'success') {
             // dd($booking);
-            $this->storeTransactionData($booking, $payment);
+            $booking_id = $this->storeTransactionData($booking, $payment);
         }
         $booking = json_decode($booking, true);
-        return view('pages.transaction_information', compact('status', 'booking', 'payment'));
+        return view('pages.transaction_information', compact('status', 'booking', 'booking_id', 'payment'));
     }
 
     private function storeTransactionData($bookingInfo, $payment)
@@ -226,5 +226,6 @@ class TransactionController extends Controller
                 'ticket_status' => 1
             ]);
         }
+        return $booking->id;
     }
 }

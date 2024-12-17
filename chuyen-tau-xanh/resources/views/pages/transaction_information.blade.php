@@ -18,6 +18,7 @@
             <span class="text-center">Đã có lỗi xảy ra. Vui lòng thử lại!</span>
         @else
             <div class="booker-info">
+                <h3 class="text-primary">Mã đơn đặt của bạn:</strong> {{ $booking_id }}</h3>
                 <h3>Thông tin người đặt</h3>
                 <p><strong>Họ tên:</strong> {{ $booking['booker']['name'] }}</p>
                 <p><strong>Email:</strong> {{ $booking['booker']['email'] ?: 'Không có' }}</p>
