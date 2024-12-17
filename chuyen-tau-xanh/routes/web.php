@@ -79,7 +79,6 @@ Route::controller(RouteController::class)
         Route::get('/', 'index')->name('routes.index');
         Route::post('/timkiem', 'search')->name('routes.search');
     });
-
 // Booking Routes
 Route::post('/booking', [BookingControllerTest::class, 'showBooking'])->name('booking.form');
 Route::post('/booking/payment', [BookingControllerTest::class, 'processPayment'])->name('booking.processPayment');
