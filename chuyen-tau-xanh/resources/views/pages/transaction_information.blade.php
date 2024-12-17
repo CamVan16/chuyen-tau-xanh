@@ -2,8 +2,8 @@
 
 @section('content')
 <div>
-    <h1 class="text-center">THÔNG TIN GIAO DỊCH</h1>
-    
+    <h1 class="text-center text-primary">THÔNG TIN GIAO DỊCH</h1>
+
     <div class="transaction-result">
         @if ($status !== 'success')
             <h3 style="color: red;" class="text-center">Thanh toán không thành công</h3>
@@ -50,6 +50,6 @@
             </div>
         @endif
     </div>
-    
+
 </div>
 @endsection
