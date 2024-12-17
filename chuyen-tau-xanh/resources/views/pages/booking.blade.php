@@ -203,7 +203,7 @@
         }
         function updateTotalPrice() {
             let totalPrice = 0;
-            $('table tbody tr').each(function () {
+            $('#step-1 table tbody tr').each(function () {
                 const ticketPrice = parseInt($(this).find('.money').text().replace(/,/g, '')) || 0;
                 totalPrice += ticketPrice;
             });
@@ -422,14 +422,16 @@
                     console.log('cart', cart);
                     const ticket = cart.find(item => (item.seat_id === $(this).data('seat') && item.train_mark === $(this).data('train')));
                     console.log('ticket', ticket.train_mark);
-                    const ticketPrice = parseInt($(this).find('.money').text().replace(/,/g, '')) || 0;
-                    const ticketDiscount = (parseInt($(this).find('.ticket-price').text().replace(/,/g, '')) || 0) - ticketPrice;
+                    const ticketPrice = parseInt($(this).find('.ticket-price').text().replace(/,/g, '')) || 0;
+                    const money = parseInt($(this).find('.money').text().replace(/,/g, '')) || 0;
+                    const ticketDiscount = (parseInt($(this).find('.ticket-price').text().replace(/,/g, '')) || 0) - money;
                     tickets.push({
                         passenger_name: $passengerCell.find('.passenger-name').val(),
                         customer_type: $passengerCell.find('.customer-type option:selected').text(),
                         passenger_citizen: $passengerCell.find('.passenger-number').val(),
                         ticket_price: ticketPrice,
                         discount: ticketDiscount,
+                        money: money,
                         train_id: ticket.train_id,
                         train_mark: ticket.train_mark,
                         day_start: ticket.departure_date,

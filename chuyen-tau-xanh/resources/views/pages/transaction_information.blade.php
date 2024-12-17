@@ -49,7 +49,7 @@
                                     Khởi hành: {{ $ticket['day_start'] }} {{ $ticket['time_start'] }} ({{ $ticket['station_start'] }}) <br>
                                     Toa: {{ $ticket['car_name'] }}, Ghế số: {{ $ticket['seat_number'] }} <br>
                                 </td>
-                                <td>{{ number_format($ticket['ticket_price'], 0, ',', '.') }} VND</td>
+                                <td>{{ number_format($ticket['money'], 0, ',', '.') }} VND</td>
                                 <td>Đã thanh toán</td>
                             </tr>
                         @endforeach
