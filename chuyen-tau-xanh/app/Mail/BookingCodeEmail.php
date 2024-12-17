@@ -11,17 +11,19 @@ class BookingCodeEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $booking;
+    public $bookings;
 
-    public function __construct(Booking $booking)
+    public function __construct($bookings)
     {
-        $this->booking = $booking;
+        $this->bookings = $bookings;
     }
 
     public function build()
     {
-        return $this->view('emails.bookingCode')
-                    ->subject('Mã Đặt Chỗ Của Bạn')
-                    ->with('booking', $this->booking);
+        return $this->subject('Danh sách mã đặt chỗ')
+                    ->view('emails.bookingCode')  // Chỉ định view của email
+                    ->with([
+                        'bookings' => $this->bookings,  // Truyền danh sách bookings vào view
+                    ]);
     }
 }

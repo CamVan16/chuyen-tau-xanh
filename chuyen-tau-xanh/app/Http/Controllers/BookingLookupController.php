@@ -65,27 +65,31 @@ class BookingLookupController extends Controller
 
     public function sendBookingCode(Request $request)
     {
-        // Validate email
         $request->validate([
             'email' => 'required|email',
         ]);
 
-        // Tìm khách hàng theo email
-        $customer = Customer::where('email', $request->email)->first();
+        $email = $request->email;
 
-        if (!$customer) {
-            return back()->withErrors(['error' => 'Không tìm thấy khách hàng với email này.']);
+        $customers = Customer::where('email', $email)->get();
+
+        if ($customers->isEmpty()) {
+            return redirect()->back()->withErrors(['error' => 'Không tìm thấy khách hàng với email này.']);
         }
 
-        $booking = Booking::where('customer_id', $customer->id)->first();;
+        $bookings = collect();
 
-        if (!$booking) {
+        foreach ($customers as $customer) {
+            $customerBookings = Booking::where('customer_id', $customer->id)->get();
+
+            $bookings = $bookings->merge($customerBookings);
+        }
+
+        if ($bookings->isEmpty()) {
             return redirect()->back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ liên quan đến email này.']);
         }
+        Mail::to($email)->send(new BookingCodeEmail($bookings));
 
-        // Gửi email với đối tượng booking
-        Mail::to($customer->email)->send(new BookingCodeEmail($booking));
-
-        return redirect()->back()->with('success', 'Mã đặt chỗ đã được gửi đến email của bạn.');
+        return redirect()->back()->with('success', 'Danh sách mã đặt chỗ đã được gửi tới email của bạn.');
     }
 }

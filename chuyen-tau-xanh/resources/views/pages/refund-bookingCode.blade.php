@@ -5,7 +5,7 @@
         <h2 class="text-primary text-center mb-4">LẤY LẠI MÃ ĐẶT CHỖ</h2>
 
         <div class="alert alert-info">
-            <p>Nhập email của bạn để nhận mã đặt chỗ mới nhất qua email. Nếu bạn gặp khó khăn, vui lòng liên hệ với chúng
+            <p>Nhập email của bạn để nhận mã đặt chỗ qua email. Nếu bạn gặp khó khăn, vui lòng liên hệ với chúng
                 tôi để được hỗ trợ.</p>
         </div>
 
