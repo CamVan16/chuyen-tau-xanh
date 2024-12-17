@@ -66,12 +66,12 @@
             height: auto;
         }
 
-        .banner-left img{
+        .banner-left img {
             margin: 20px 0px 20px 40px;
         }
 
 
-        .banner-right img{
+        .banner-right img {
             margin: 20px 40px 20px 0px;
         }
 
@@ -205,7 +205,7 @@
                 <li><a href="/kiem-tra-ve">Kiểm tra vé</a></li>
                 <li><a href="/doi-ve">Đổi vé</a></li>
                 <li><a href="/giotau-giave">Giờ tàu - Giá vé</a></li>
-                <li><a href="/khuyen-mai">Khuyến mại</a></li>
+                <li><a href="/khuyen-mai">Khuyến mãi</a></li>
                 <li><a href="/quy-dinh">Các quy định</a></li>
                 <li><a href="/huong-dan">Hướng dẫn</a></li>
                 <li><a href="/lien-he">Liên hệ</a></li>

@@ -57,15 +57,15 @@
     </ul>
 </li>
 
-{{-- Quản lý khuyến mại --}}
+{{-- Quản lý khuyến mãi --}}
 <li class="nav-item menu-group">
     <a class="nav-link" href="#" onclick="toggleMenu('voucher-menu')">
-        <i class="la la-gift nav-icon"></i> Quản lý khuyến mại
+        <i class="la la-gift nav-icon"></i> Quản lý khuyến mãi
     </a>
     <ul class="nav nav-treeview" id="voucher-menu"
         style="{{ request()->is('admin/voucher*') ? 'display: block;' : 'display: none;' }}">
         <li class="nav-item"><a class="nav-link {{ request()->is('admin/voucher*') ? 'active' : '' }}"
-                href="{{ backpack_url('voucher') }}"><i class="la la-percent nav-icon"></i> Khuyến mại</a></li>
+                href="{{ backpack_url('voucher') }}"><i class="la la-percent nav-icon"></i> Khuyến mãi</a></li>
     </ul>
 </li>
 
