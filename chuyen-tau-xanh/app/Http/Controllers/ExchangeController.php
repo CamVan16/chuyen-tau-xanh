@@ -45,45 +45,53 @@ class ExchangeController extends Controller
             'phone' => 'required|string',
         ]);
 
-        $customer = Customer::where('email', $request->email)
+        // Lấy tất cả customers
+        $customers = Customer::where('email', $request->email)
             ->where('phone', $request->phone)
-            ->first();
+            ->get();
 
-        if (!$customer) {
+        if ($customers->isEmpty()) {
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => 'Thông tin vé cần đổi không đúng, vui lòng kiểm tra lại']);
         }
 
-        $booking = Booking::where('id', $request->booking_id)
-            ->where('customer_id', $customer->id)
-            ->first();
+        $allTickets = collect();
 
-        if (!$booking) {
+        // Duyệt qua từng customer để tìm bookings
+        foreach ($customers as $customer) {
+            $booking = Booking::where('id', $request->booking_id)
+                ->where('customer_id', $customer->id)
+                ->first();
+
+            if ($booking) {
+                $tickets = Ticket::where('booking_id', $booking->id)
+                    ->where('ticket_status', 1)
+                    ->get();
+
+                foreach ($tickets as $ticket) {
+                    $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
+                    $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
+
+                    $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
+                        ->where('max_hours', '>=', $hoursToDeparture)
+                        ->first();
+
+                    $exchangeFee = $exchangePolicy ? $exchangePolicy->exchange_fee : 1;
+                    $ticket->exchange_fee = $exchangeFee;
+
+                    $allTickets->push($ticket);
+                }
+            }
+        }
+
+        if ($allTickets->isEmpty()) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Thông tin vé cần đổi không đúng, vui lòng kiểm tra lại.']);
+                ->withErrors(['error' => 'Không tìm thấy vé nào thỏa mãn điều kiện.']);
         }
 
-        $tickets = $booking->tickets;
-        $tickets = Ticket::where('booking_id', $booking->id)
-            ->where('ticket_status', 1)
-            ->get();
-        foreach ($tickets as $ticket) {
-            $scheduleStart = $ticket->schedule->day_start . ' ' . $ticket->schedule->time_start;
-            $hoursToDeparture = Carbon::now()->diffInHours(Carbon::parse($scheduleStart), false);
-            $exchangePolicy = ExchangePolicy::where('min_hours', '<=', $hoursToDeparture)
-                ->where('max_hours', '>=', $hoursToDeparture)
-                ->first();
-            if ($exchangePolicy) {
-                $exchangeFee = $exchangePolicy->exchange_fee;
-            } else {
-                $exchangeFee = 1;
-            }
-            $ticket->exchange_fee = $exchangeFee;
-        }
-
-        return view('pages.exchange-selection', ['booking' => $booking, 'tickets' => $tickets]);
+        return view('pages.exchange-selection', ['booking'=>$booking, 'tickets' => $allTickets]);
     }
 
     public function showBookingCodeForm()
