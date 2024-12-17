@@ -8,11 +8,9 @@
 
 @section('content')
     <style>
-        .go-trains,
-        .return-trains {
+.go-trains, .return-trains {
             display: flex;
         }
-
         .train {
             display: inline;
             border: 1px solid black;
@@ -23,20 +21,16 @@
             text-align: center;
             cursor: pointer;
         }
-
         .train.active {
             background-color: #c6e7ff;
         }
-
         .car.active {
             background-color: lightgreen;
         }
-
         .cars {
             margin-top: 20px;
             display: flex;
         }
-
         .car {
             border: 1px solid black;
             width: 50px;
@@ -47,7 +41,6 @@
             font-size: 14px;
             text-align: center;
         }
-
         .seat {
             width: 25px;
             height: 25px;
@@ -56,19 +49,40 @@
             /* align-items: center; */
             padding: 0;
         }
-
         .seat.reserve {
             background-color: #feee91;
         }
-
         .seat[data-status="1"] {
             pointer-events: none;
             background-color: #ff8a8a;
             color: white;
         }
-
+        .seat[data-index="null"] {
+            display: none;
+        }
         .compartment {
             text-align: center;
+            border-left: 2px solid #385d8a;
+            border-right: 2px solid #385d8a;
+        }
+        .partition {
+            border: 1px solid #385d8a;
+        }
+        .layer {
+            gap: 7px;
+            border-bottom: 2px solid #385d8a;
+            justify-content: space-between;
+        }
+        .countdown {
+            color: #008ecf;
+        }
+        .seats {
+            border: 4px solid #385d8a;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin: auto;
+            height: 230px;
+            margin-bottom: 50px;
         }
 
         .ticket-item {
@@ -488,16 +502,6 @@
                 const defaultGoCars = $firstGoTrain.data('cars');
                 const trainMarkGo = $firstGoTrain.data('mark');
                 renderCars(defaultGoCars, '#go-cars-container', trainMarkGo);
-            }
-
-            const $firstReturnTrain = $('.return-trains .train').first();
-            if ($firstReturnTrain.length) {
-                $firstReturnTrain.addClass('active');
-                const defaultReturnCars = $firstReturnTrain.data('cars');
-                const trainMarkReturn = $firstReturnTrain.data('mark');
-                // const departureDateReturn = $firstReturnTrain.data('date');
-                // const departureTimeReturn = $firstReturnTrain.data('time');
-                renderCars(defaultReturnCars, '#return-cars-container', trainMarkReturn);
             }
 
             $('.go-trains .train').on('click', function() {
