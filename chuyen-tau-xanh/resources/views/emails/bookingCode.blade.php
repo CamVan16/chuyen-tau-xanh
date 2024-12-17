@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mã Đặt Chỗ</title>
+    <title>Danh sách mã đặt chỗ</title>
 </head>
 <body>
-    <p>Chúng tôi xin gửi mã đặt chỗ của bạn:</p>
-    <p><strong>Mã đặt chỗ: {{ $booking->id }}</strong></p>
-    <p><strong>Ngày đặt chỗ: {{ $booking->booked_time }}</strong></p>
-    <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+    <h1>Danh sách mã đặt chỗ của bạn</h1>
+    <p>Xin chào,</p>
+    <p>Dưới đây là danh sách các mã đặt chỗ của bạn:</p>
 
-    <p>Trân trọng,</p>
-    <p><strong>Hệ thống bán vé</strong></p>
+    <ul>
+        @foreach ($bookings as $booking)
+            <li>Mã đặt chỗ: {{ $booking->id }} (Khách hàng: {{ $booking->customer->customer_name }})</li>
+        @endforeach
+    </ul>
+
+    <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
 </body>
 </html>

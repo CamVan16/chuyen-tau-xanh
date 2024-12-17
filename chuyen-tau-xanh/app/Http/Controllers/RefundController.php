@@ -94,29 +94,34 @@ class RefundController extends Controller
 
     public function sendBookingCode(Request $request)
     {
-
         $request->validate([
             'email' => 'required|email',
         ]);
 
         $email = $request->email;
 
-        $customer = Customer::where('email', $email)->first();
+        $customers = Customer::where('email', $email)->get();
 
-        if (!$customer) {
+        if ($customers->isEmpty()) {
             return redirect()->back()->withErrors(['error' => 'Không tìm thấy khách hàng với email này.']);
         }
 
-        $booking = Booking::where('customer_id', $customer->id)->first();;
+        $bookings = collect();
 
-        if (!$booking) {
-            return redirect()->back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ liên quan đến email này.']);
+        foreach ($customers as $customer) {
+            $customerBookings = Booking::where('customer_id', $customer->id)->get();
+
+            $bookings = $bookings->merge($customerBookings);
         }
 
-        Mail::to($email)->send(new BookingCodeEmail($booking));
+        if ($bookings->isEmpty()) {
+            return redirect()->back()->withErrors(['error' => 'Không tìm thấy mã đặt chỗ liên quan đến email này.']);
+        }
+        Mail::to($email)->send(new BookingCodeEmail($bookings));
 
-        return redirect()->back()->with('success', 'Mã đặt chỗ đã được gửi tới email của bạn.');
+        return redirect()->back()->with('success', 'Danh sách mã đặt chỗ đã được gửi tới email của bạn.');
     }
+
 
     public function createRefund(Request $request)
     {
