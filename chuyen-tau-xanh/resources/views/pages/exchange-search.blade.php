@@ -501,10 +501,40 @@
                 $firstGoTrain.addClass('active');
                 const defaultGoCars = $firstGoTrain.data('cars');
                 const trainMarkGo = $firstGoTrain.data('mark');
+                // const departureDateGo = $firstGoTrain.data('date');
+                // const departureTimeGo = $firstGoTrain.data('time');
                 renderCars(defaultGoCars, '#go-cars-container', trainMarkGo);
+                const $firstGoCar = $('#go-cars-container .car').first();
+                $firstGoCar.addClass('active');
+                var carId = parseInt($firstGoCar.data('id'));
+                var carLayout = parseInt($firstGoCar.data('layout'));
+                var numOfSeats = parseInt($firstGoCar.data('count'));
+                // var trainMarkGo = $firstGoCar.data('mark');
+                var departureDate = groutes.find(route => route.train_mark === trainMarkGo).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMarkGo).train_id;
+                // var departureTime = $firstGoCar.data('time');
+                var carName = $firstGoCar.data('name');
+                $('.go-car-description').text(`Toa số ${carName}: ${$firstGoCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMarkGo,
+                        departure_date: departure_date,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMarkGo);
+                        applyPrice('#go-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             }
 
-            $('.go-trains .train').on('click', function() {
+            $('.go-trains .train').on('click', function () {
                 const $this = $(this);
                 $('.go-trains .train').removeClass('active');
                 $this.addClass('active');
@@ -515,9 +545,36 @@
                 $('#go-seats-container').empty();
                 $('.go-car-description').empty();
                 renderCars(cars, '#go-cars-container', trainMark);
+                const $firstGoCar = $('#go-cars-container .car').first();
+                $firstGoCar.addClass('active');
+                var carId = parseInt($firstGoCar.data('id'));
+                var carLayout = parseInt($firstGoCar.data('layout'));
+                var numOfSeats = parseInt($firstGoCar.data('count'));
+                // var trainMarkGo = $firstGoCar.data('mark');
+                var departureDate = groutes.find(route => route.train_mark === trainMark).departure_date;
+                var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
+                // var departureTime = $firstGoCar.data('time');
+                var carName = $firstGoCar.data('name');
+                $('.go-car-description').text(`Toa số ${carName}: ${$firstGoCar.data('description')}`)
+                $.post("/timkiem/ketqua", {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMark,
+                        departure_date: departure_date,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMark);
+                        applyPrice('#go-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
+                    alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
+                });
             });
-
-            $(document).on('click', '#go-cars-container .car', function() {
+            $(document).on('click', '#go-cars-container .car', function () {
                 const $this = $(this);
                 $('#go-cars-container .car').removeClass('active');
                 $this.addClass('active');
@@ -527,26 +584,25 @@
                 var trainMark = $this.data('mark');
                 var departureDate = groutes.find(route => route.train_mark === trainMark).departure_date;
                 var trainID = groutes.find(route => route.train_mark === trainMark).train_id;
-                localStorage.setItem('currentTrainID', trainID);
+
                 // var departureTime = $this.data('time');
                 var carName = $this.data('name');
                 $('.go-car-description').text(`Toa số ${carName}: ${$this.data('description')}`)
                 $.post("/timkiem/ketqua", {
-                    car_id: carId,
-                    car_name: carName,
-                    train_mark: trainMark,
-                    departure_date: departureDate,
-                    train_id: trainID,
-                }, function(data, status) {
-                    console.log('data', data);
-                    renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats,
-                        trainMark);
-                    applyPrice('#go-seats-container .seat', 1);
-                    $('[data-toggle="popover"]').popover({
-                        trigger: 'hover',
-                        placement: "top"
-                    });
-                }).fail(function() {
+                        car_id: carId,
+                        car_name: carName,
+                        train_mark: trainMark,
+                        departure_date: departure_date,
+                        train_id: trainID,
+                    }, function (data, status) {
+                        console.log('data', data);
+                        renderSeats(data, '#go-seats-container', carName, carLayout, numOfSeats, trainMark);
+                        applyPrice('#go-seats-container .seat', 1);
+                        $('[data-toggle="popover"]').popover({
+                            trigger: 'hover',
+                            placement: "top"
+                        });
+                }).fail(function () {
                     alert('Không thể tải danh sách ghế. Vui lòng thử lại.');
                 });
             });
@@ -935,7 +991,6 @@
                     </select>
                 </div>
                 <input type="hidden" name="exchange-info" id="exchange-info">
-                <button type="button" class="btn btn-secondary back-btn" data-prev="step-2">Quay lại</button>
                 <button type="submit" class="btn btn-primary">Thanh Toán</button>
             </form>
         </div>
