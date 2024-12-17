@@ -40,13 +40,13 @@
                 href="{{ backpack_url('route') }}"><i class="la la-route nav-icon"></i> Tuyến</a></li>
         <li class="nav-item"><a class="nav-link {{ request()->is('admin/train*') ? 'active' : '' }}"
                 href="{{ backpack_url('train') }}"><i class="la la-train nav-icon"></i> Tàu</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('admin/train-route*') ? 'active' : '' }}"
+        {{-- <li class="nav-item"><a class="nav-link {{ request()->is('admin/train-route*') ? 'active' : '' }}"
                 href="{{ backpack_url('train-route') }}"><i class="la la-project-diagram nav-icon"></i> Tàu - Tuyến</a>
-        </li>
+        </li> --}}
         <li class="nav-item"><a class="nav-link {{ request()->is('admin/station-area*') ? 'active' : '' }}"
                 href="{{ backpack_url('station-area') }}"><i class="la la-map-marker-alt nav-icon"></i> Ga</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('admin/route-station*') ? 'active' : '' }}"
-                href="{{ backpack_url('route-station') }}"><i class="la la-map-signs nav-icon"></i> Tuyến - Ga</a></li>
+        {{-- <li class="nav-item"><a class="nav-link {{ request()->is('admin/route-station*') ? 'active' : '' }}"
+                href="{{ backpack_url('route-station') }}"><i class="la la-map-signs nav-icon"></i> Tuyến - Ga</a></li> --}}
         <li class="nav-item"><a class="nav-link {{ request()->is('admin/car*') ? 'active' : '' }}"
                 href="{{ backpack_url('car') }}"><i class="la la-subway nav-icon"></i> Toa tàu</a></li>
         <li class="nav-item"><a class="nav-link {{ request()->is('admin/seat*') ? 'active' : '' }}"
