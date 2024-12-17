@@ -49,32 +49,25 @@
             <tbody>
                 @php
                     $counter = 1;
-                    $currentDate = \Carbon\Carbon::parse($ngay);
-                    $lastDepartureTime = \Carbon\Carbon::parse($ngay . ' ' . $routeStations->first()->departure_time);
+                    $baseDate = \Carbon\Carbon::parse($ngay);
+                    $gaDiIndex = $routeStations->firstWhere('station.station_name', $gaDi)->date_index ?? 0;
                 @endphp
+
                 @foreach ($routeStations as $station)
                     @php
+                        $dateOffset = $station->date_index - $gaDiIndex;
+                        $adjustedDate = $baseDate->copy()->addDays($dateOffset);
                         $departureTime = \Carbon\Carbon::parse(
-                            $currentDate->format('Y-m-d') . ' ' . $station->departure_time,
+                            $adjustedDate->format('Y-m-d') . ' ' . $station->departure_time,
                         );
                         $arrivalTime = \Carbon\Carbon::parse(
-                            $currentDate->format('Y-m-d') . ' ' . $station->arrival_time,
+                            $adjustedDate->format('Y-m-d') . ' ' . $station->arrival_time,
                         );
-
-                        // Điều chỉnh ngày đi nếu giờ đi nhỏ hơn giờ đi trước đó
-                        if ($departureTime->lt($lastDepartureTime)) {
-                            $currentDate->addDay();
-                            $departureTime = $departureTime->addDay();
-                            $arrivalTime = $arrivalTime->addDay();
-                        }
-
-                        // Cập nhật thời gian đi cuối cùng
-                        $lastDepartureTime = $departureTime;
                     @endphp
                     <tr @if ($station->station->station_name == $gaDi || $station->station->station_name == $gaDen) style="font-weight: bold;" @endif>
                         <td>{{ $counter++ }}</td>
                         <td>{{ $station->station->station_name }}</td>
-                        <td>{{ $currentDate->format('d/m/Y') }}</td>
+                        <td>{{ $adjustedDate->format('d/m/Y') }}</td>
                         <td>{{ $departureTime->format('H:i') }}</td>
                         <td>{{ $arrivalTime->format('H:i') }}</td>
                         <td>{{ $station->km }} km</td>
