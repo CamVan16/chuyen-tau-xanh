@@ -10,7 +10,7 @@ class Tickets extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->string('id', 8)->primary();
-            $table->string('booking_id')->nullable();
+            $table->string('booking_id',8)->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('refund_id')->nullable();
             $table->unsignedBigInteger('exchange_id')->nullable();
